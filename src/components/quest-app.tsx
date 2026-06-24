@@ -502,15 +502,12 @@ function ZoneColumn({
       </div>
 
       <div className="flex flex-1 flex-col gap-2">
+        {items.length === 0 && (
+          <div className="grid flex-1 place-items-center rounded-lg border border-dashed border-border/60 py-10 text-center text-[11px] text-muted-foreground">
+            Drop a quest here
+          </div>
+        )}
         <AnimatePresence initial={false}>
-          {items.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="grid flex-1 place-items-center rounded-lg border border-dashed border-border/60 py-10 text-center text-[11px] text-muted-foreground"
-            >
-              Drop a quest here
-            </motion.div>
-          )}
           {items.map((task) => (
             <TaskCard
               key={task.id}
