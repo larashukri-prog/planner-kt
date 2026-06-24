@@ -813,3 +813,137 @@ function groupByDay(items: Task[]) {
   }
   return Array.from(map.entries()).map(([label, items]) => ({ label, items }));
 }
+
+/* ----------------------------- DailyXPBar ----------------------------- */
+
+function isToday(ts: number | null | undefined) {
+  if (!ts) return false;
+  const d = new Date(ts);
+  const n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+
+function DailyXPBar({ tasks }: { tasks: Task[] }) {
+  const completedToday = tasks.filter((t) => t.status === "completed" && isToday(t.completedAt));
+  const nowCount = tasks.filter((t) => t.status === "now").length;
+  const denominator = nowCount + completedToday.length;
+  const percent = denominator === 0 ? 0 : Math.round((completedToday.length / denominator) * 100);
+
+  const prev = useRef(percent);
+  const [celebrate, setCelebrate] = useState(false);
+  const [showCleared, setShowCleared] = useState(false);
+
+  useEffect(() => {
+    if (prev.current < 100 && percent === 100) {
+      setCelebrate(true);
+      setShowCleared(true);
+      const a = setTimeout(() => setCelebrate(false), 750);
+      const b = setTimeout(() => setShowCleared(false), 1600);
+      prev.current = percent;
+      return () => { clearTimeout(a); clearTimeout(b); };
+    }
+    prev.current = percent;
+  }, [percent]);
+
+  const empty = denominator === 0;
+  const sparkles = Array.from({ length: 6 });
+
+  return (
+    <motion.section
+      animate={celebrate ? { scale: [1, 1.02, 1] } : { scale: 1 }}
+      transition={{ duration: 0.45 }}
+      className="quest-card relative px-4 py-4 md:px-5"
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon)" }} />
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon)" }}>
+            Daily XP
+          </h2>
+        </div>
+        <span className="font-mono text-[11px] text-muted-foreground">
+          {empty ? "—" : `${completedToday.length}/${denominator}`}
+        </span>
+      </div>
+
+      <div className="relative h-9 w-full overflow-hidden rounded-full border border-border bg-secondary/40 shadow-inner">
+        {/* Glow underlay */}
+        {!empty && (
+          <motion.div
+            aria-hidden
+            initial={false}
+            animate={{ width: `${percent}%` }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className="absolute inset-y-0 left-0 rounded-full opacity-60 blur-md"
+            style={{
+              background: "linear-gradient(90deg, var(--color-neon) 0%, var(--color-neon-2) 100%)",
+            }}
+          />
+        )}
+        {/* Fill */}
+        {!empty && (
+          <motion.div
+            initial={false}
+            animate={{ width: `${percent}%` }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+            style={{
+              background: "linear-gradient(90deg, var(--color-neon) 0%, var(--color-neon-2) 100%)",
+              boxShadow: "var(--shadow-neon)",
+            }}
+          >
+            {/* Shimmer */}
+            <motion.div
+              aria-hidden
+              className="absolute inset-y-0 w-1/3"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, color-mix(in oklab, white 35%, transparent) 50%, transparent 100%)",
+              }}
+              animate={{ x: ["-100%", "350%"] }}
+              transition={{ duration: 2.4, ease: "linear", repeat: Infinity }}
+            />
+          </motion.div>
+        )}
+
+        {/* Centered label */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <span
+            className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]"
+            style={{
+              color: empty ? "var(--color-muted-foreground)" : "var(--color-neon-foreground)",
+              textShadow: empty ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+            }}
+          >
+            {empty
+              ? "Ready for today's campaign."
+              : showCleared
+                ? "Campaign cleared!"
+                : `Daily Completion: ${percent}% XP`}
+          </span>
+        </div>
+
+        {/* Sparkles on 100% */}
+        <AnimatePresence>
+          {celebrate &&
+            sparkles.map((_, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, scale: 0.4, y: 0 }}
+                animate={{ opacity: [0, 1, 0], scale: [0.4, 1.2, 0.6], y: [-2, -18, -28] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.7, delay: i * 0.04, ease: "easeOut" }}
+                className="pointer-events-none absolute top-1/2 h-1.5 w-1.5 rounded-full"
+                style={{
+                  left: `${10 + i * 14}%`,
+                  background: "var(--color-neon)",
+                  boxShadow: "0 0 10px var(--color-neon), 0 0 20px var(--color-neon-2)",
+                }}
+              />
+            ))}
+        </AnimatePresence>
+      </div>
+    </motion.section>
+  );
+}
+
