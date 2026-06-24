@@ -206,7 +206,7 @@ function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void })
 
 /* --------------------------- QuickAddBar --------------------------- */
 
-function QuickAddBar({ onAdd, workspace }: { onAdd: (title: string) => void; workspace: OwnerId }) {
+function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
   const [value, setValue] = useState("");
   const ref = useRef<HTMLInputElement>(null);
   const [pulse, setPulse] = useState(false);
@@ -278,7 +278,7 @@ const QUEST_TEMPLATES = [
   { icon: "🗺️", label: "Explore", title: "Explore Burlington", subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"], tint: "oklch(0.7 0.18 290)" },
 ];
 
-function TemplateChips({ onCreate, workspace }: { onCreate: (title: string, subtasks: string[]) => void; workspace: OwnerId }) {
+function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: string[]) => void }) {
   const [clickedId, setClickedId] = useState<string | null>(null);
 
   const handleClick = (tpl: (typeof QUEST_TEMPLATES)[number]) => {
