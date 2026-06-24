@@ -49,7 +49,7 @@ export function AuthScreen() {
             <Swords className="h-5 w-5 text-[var(--color-neon-foreground)]" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">Planner-KT</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-tight">Planner-KT — Sign In</h1>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
               {mode === "signup" ? "Start your quest log" : "Welcome back"}
             </p>
