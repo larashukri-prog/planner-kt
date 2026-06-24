@@ -87,7 +87,7 @@ async function importLegacyTasks(userId: string): Promise<Task[]> {
         userId,
       ),
     );
-    const { data, error } = await supabase.from("tasks").insert(rows).select("*");
+    const { data, error } = await (supabase.from("tasks") as any).insert(rows).select("*");
     if (error) {
       console.error("[tasks] legacy import failed", error);
       return [];
@@ -175,7 +175,7 @@ export function useTasks() {
   const optimisticAdd = (t: Task) => {
     setTasks((prev) => [t, ...prev]);
     if (!userId) return;
-    void supabase.from("tasks").insert(taskToInsert(t, userId)).then(({ error }) => {
+    void (supabase.from("tasks") as any).insert(taskToInsert(t, userId)).then(({ error }) => {
       if (error) {
         console.error("[tasks] insert failed", error);
         setTasks((prev) => prev.filter((x) => x.id !== t.id));
@@ -221,7 +221,7 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, ...patch } : t)));
     if (!userId) return;
-    void supabase.from("tasks").update(patchToUpdate(patch)).eq("id", id).then(({ error }) => {
+    void (supabase.from("tasks") as any).update(patchToUpdate(patch)).eq("id", id).then(({ error }) => {
       if (error) {
         console.error("[tasks] update failed", error);
         if (prev) setTasks((cur) => cur.map((t) => (t.id === id ? prev : t)));
