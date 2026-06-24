@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import QuestApp from "@/components/quest-app";
+import { useAuth } from "@/lib/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,5 +15,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { session, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="grid min-h-screen place-items-center text-muted-foreground">
+        <div className="font-mono text-xs uppercase tracking-[0.18em]">Loading…</div>
+      </div>
+    );
+  }
+  if (!session) return <Navigate to="/auth" />;
   return <QuestApp />;
 }
