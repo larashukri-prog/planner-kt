@@ -1,41 +1,62 @@
 ## Goal
 
-Wire `posthog-js` into the app to track Executive Functioning engagement, fire-and-forget, with safe fallback when env vars are missing.
+Move task storage from LocalStorage to Lovable Cloud (Supabase) with strict per-user privacy. Add email/password auth gating the dashboard. Preserve current UX: optimistic updates, daily spawn engine, workspace switcher.
 
-## Steps
+## Phase 1 — Enable Lovable Cloud
+- Call `supabase--enable` to provision the backend (Postgres, Auth, generated client at `src/integrations/supabase/`).
 
-1. **Install dependency**
-   - `bun add posthog-js`
+## Phase 2 — Schema + RLS (migration)
 
-2. **Initialize PostHog (root)**
-   - In `src/routes/__root.tsx`, inside `RootComponent`, add a `useEffect` that runs once on the client and calls `posthog.init(...)` only if `import.meta.env.VITE_PUBLIC_POSTHOG_KEY` is set.
-   - Host defaults to `https://us.i.posthog.com` via `VITE_PUBLIC_POSTHOG_HOST`.
-   - Guard against SSR (`typeof window !== "undefined"`) and double-init (`posthog.__loaded`).
-   - If the key is missing, log a single dev-only notice and continue — no crash.
+Create `public.tasks`:
+- `id uuid pk default gen_random_uuid()`
+- `user_id uuid not null references auth.users(id) on delete cascade`
+- `title text not null`
+- `status text not null check (status in ('inbox','now','next','later','completed'))`
+- `subtasks jsonb not null default '[]'::jsonb`
+- `category text`
+- `owner_id text not null default 'solo'` (preserves workspace switcher)
+- `recurring_key text`
+- `due_date timestamptz`
+- `created_at timestamptz not null default now()`
+- `completed_at timestamptz`
 
-3. **Create `useAnalytics` hook** at `src/lib/use-analytics.ts`
-   - Exports a `track(event, props?)` function that wraps `posthog.capture` in a `try/catch` and a `queueMicrotask` so it never blocks the caller.
-   - No-ops cleanly when PostHog isn't initialized.
-   - Also exports `trackOncePerSession(event, props?)` using `sessionStorage` so "app_opened" fires once per browser session.
+Then in the same migration:
+- `GRANT SELECT, INSERT, UPDATE, DELETE ON public.tasks TO authenticated; GRANT ALL TO service_role;` (no `anon` grant)
+- `ENABLE ROW LEVEL SECURITY`
+- 4 policies (`SELECT/INSERT/UPDATE/DELETE`) all `USING (auth.uid() = user_id)` and `WITH CHECK (auth.uid() = user_id)`
+- Index on `(user_id, status)`
 
-4. **Wire the 4 events** in `src/components/quest-app.tsx`
-   - **`app_opened`** — in `QuestApp` (the app's top-level component; there is no separate `Dashboard`), call `trackOncePerSession('app_opened')` from a mount `useEffect`.
-   - **`manual_task_created`** — in `QuickAddBar.submit`, call `track('manual_task_created')` right after `onAdd(value)`.
-   - **`template_quest_used`** — in `TemplateChips.handleClick`, call `track('template_quest_used', { quest_name: tpl.label })`.
-   - **`task_completed`** — in `TaskCard.handleComplete`, call `track('task_completed', { has_subtasks: task.subtasks.length > 0, time_in_zone_ms: Date.now() - task.createdAt })` before the existing `setTimeout` so it never delays the completion animation. (Using `time_in_zone_ms` as a number is easier to chart in PostHog than a formatted string; happy to switch to a string if you prefer.)
+## Phase 3 — Auth route + gate
 
-5. **Document env vars**
-   - No `.env` committed; the user adds `VITE_PUBLIC_POSTHOG_KEY` (and optional `VITE_PUBLIC_POSTHOG_HOST`) locally / in deployment. App runs normally without them.
+- Disable "Confirm email" in auth settings (frictionless beta signup).
+- New public route `src/routes/auth.tsx`: clean Login/Signup screen, tabbed, email + password. Uses `supabase.auth.signInWithPassword` / `signUp` with `emailRedirectTo: window.location.origin`. On success → `navigate({ to: "/" })`.
+- New `src/lib/use-auth.ts`: subscribes to `supabase.auth.onAuthStateChange` first, then `getSession()`. Exposes `{ session, user, loading }`.
+- `src/routes/index.tsx`: render `<QuestApp />` only when `session` exists; while `loading` show a brief skeleton; otherwise `<Navigate to="/auth" />`. (Keeps the public landing simple; no SSR auth gate needed since data is per-user.)
+- Add "Sign Out" button in `Header` (top-right next to theme toggle) → `supabase.auth.signOut()`.
+
+## Phase 4 — Migrate state to Supabase
+
+Rewrite `src/lib/use-tasks.ts` to back the same API with Supabase + TanStack Query for cache + optimistic updates:
+- Query: `["tasks", userId]` → `select * from tasks where user_id = auth.uid()` (RLS enforces this anyway). Map `owner_id`→`ownerId`, `created_at`→`createdAt`, etc.
+- Mutations (`addTask`, `addRecurringTask`, `updateTask`, `moveTask`, `deleteTask`, `addSubtask`, `toggleSubtask`, `removeSubtask`): each does `queryClient.setQueryData` optimistically with a temp uuid (crypto.randomUUID), then awaits Supabase; on error rolls back via `onError` snapshot. No await on the UI path → instant feel preserved.
+- Realtime: subscribe to `postgres_changes` on `tasks` filtered by `user_id` → invalidate query so other devices sync live.
+- Keep `workspace` in `localStorage` (UI preference, not data); filter tasks by `ownerId` client-side as today.
+
+## Phase 5 — Local-data import on first signup
+
+- After successful `signUp`, read `questlog.tasks.v1` from localStorage. If non-empty, `insert` all rows with `user_id = auth.user.id` (stripping local ids, regenerated by db). On success, remove the localStorage key.
+- Runs once, wrapped in try/catch — failure doesn't block login.
+
+## Phase 6 — Cleanup
+- Remove LocalStorage read/write in `use-tasks.ts`; remove `seed()` (cloud account starts empty aside from any imported data).
+- Daily spawn engine untouched — it calls `addRecurringTask`/`updateTask`/`deleteTask`, which now hit Supabase.
 
 ## Files touched
+- new: migration, `src/routes/auth.tsx`, `src/lib/use-auth.ts`
+- edited: `src/lib/use-tasks.ts`, `src/routes/index.tsx`, `src/components/quest-app.tsx` (Header sign-out), `src/routes/__root.tsx` (auth state listener once)
+- auto-generated: `src/integrations/supabase/*`
 
-- `package.json` (via bun add)
-- `src/routes/__root.tsx` — init effect
-- `src/lib/use-analytics.ts` — new utility
-- `src/components/quest-app.tsx` — 4 capture call sites
-
-## Out of scope
-
-- User identification (`posthog.identify`) — no auth in this app yet.
-- Autocapture / pageview tracking config beyond defaults.
-- Server-side events.
+## Security guarantees
+- RLS policies key on `auth.uid() = user_id` for all 4 operations with `WITH CHECK` on writes — impossible to read/modify another user's rows even with a crafted client.
+- No `anon` grant on `tasks`. Service role used nowhere in client code.
+- `user_id` is `NOT NULL` and set server-side via `auth.uid()` default? No — set explicitly in insert payloads from the client; RLS `WITH CHECK` rejects mismatches.
