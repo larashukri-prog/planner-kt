@@ -752,7 +752,8 @@ function TaskCard({
                   <input
                     type="date"
                     autoFocus
-                    defaultValue={task.dueDate ? dateInputValue(task.dueDate) : ""}
+                    defaultValue={task.dueDate ? dateInputValue(task.dueDate) : dateInputValue(Date.now())}
+                    min={dateInputValue(Date.now())}
                     onChange={(e) => {
                       const ms = parseDateInput(e.target.value);
                       onUpdate(task.id, {
