@@ -1,13 +1,20 @@
-## Smooth date entry — stop committing/closing mid-type
+The Morning Routine subtasks live in two places:
 
-The native `<input type="date">` fires `onChange` every time a segment (MM, DD, YYYY) becomes individually valid. Right now `onChange` both writes to state AND closes the picker, so the field unmounts as soon as the user types the first digit of a 2-digit day. That's the "type 2, lose focus, have to reopen to add 5" bug.
+1. **Template chip** — `src/components/quest-app.tsx` line 274: the list shown to the user when they click the "Morning Armor" template chip.
+2. **Daily spawn** — `src/lib/use-daily-spawn.ts` line 23: the list used when the app auto-spawns the recurring Morning Routine quest each day.
 
-### Fix in `src/components/quest-app.tsx` (TaskCard date input only)
+Currently the two lists differ slightly (the daily spawn merges "Wash Face" + "Skincare" into one item).
 
-1. **Track the value in local state** (`pendingDate`) seeded from `task.dueDate`. Bind the input as a controlled component (`value`, not `defaultValue`).
-2. **`onChange` only updates local state** — it does NOT call `onUpdate` and does NOT close the picker. The user can freely tab/type through MM → DD → YYYY without losing focus.
-3. **Commit on `onBlur` and on `Enter`**: call `onUpdate(...)` with the parsed value and close the picker. If the field is empty on blur, clear `dueDate`.
-4. **Escape cancels**: closes the picker without committing.
-5. Keep `min={today}` and the today default so the picker still opens on 2026.
+## Changes
 
-No schema, logic, or styling changes outside this one input. Result: type 1/2/5/2/0/2/6 straight through, tab out (or press Enter) → due date saved.
+- In `src/components/quest-app.tsx` (line 274), append `"Hair"` to the subtasks array:
+  ```
+  ["Shower", "Brush Teeth", "Wash Face", "Skincare", "Deodorant", "Perfume", "Hair"]
+  ```
+
+- In `src/lib/use-daily-spawn.ts` (line 23), append `"Hair"` to the subtasks array:
+  ```
+  ["Shower", "Brush Teeth", "Wash Face & Skincare", "Hair"]
+  ```
+
+No other code changes required. The new subtask will appear in newly created or respawned Morning Routine quests immediately.
