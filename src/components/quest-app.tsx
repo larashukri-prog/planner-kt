@@ -449,7 +449,7 @@ function ZoneBoard({
 }
 
 function ZoneColumn({
-  zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, dragId, setDragId,
+  zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
 }: {
   zone: (typeof ZONES)[number];
   items: Task[];
@@ -458,6 +458,7 @@ function ZoneColumn({
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subId: string) => void;
   onRemoveSubtask: (taskId: string, subId: string) => void;
+  onUpdate: (id: string, patch: Partial<Task>) => void;
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
