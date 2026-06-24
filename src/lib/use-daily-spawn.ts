@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { Task, TaskStatus } from "./quest-types";
+import { uid } from "./quest-types";
 
 const TICK_KEY = "questlog.lastSpawnDate.v1";
 
@@ -117,6 +118,22 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
           // Adopt orphan (no recurringKey) — always safe.
           if (!keep.recurringKey) {
             updateTask(keep.id, { recurringKey: entry.key, title: entry.title });
+          }
+
+          // Backfill any template subtasks missing from the existing task.
+          const existingTexts = new Set(
+            keep.subtasks.map((s) => s.text.trim().toLowerCase()),
+          );
+          const missing = entry.subtasks.filter(
+            (text) => !existingTexts.has(text.trim().toLowerCase()),
+          );
+          if (missing.length > 0) {
+            updateTask(keep.id, {
+              subtasks: [
+                ...keep.subtasks,
+                ...missing.map((text) => ({ id: uid(), text, isCompleted: false })),
+              ],
+            });
           }
 
           // Refresh subtasks only when the calendar day rolls over.
