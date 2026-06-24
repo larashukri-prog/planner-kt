@@ -867,7 +867,7 @@ function DoneWall({
           <Trophy className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="font-display text-lg font-semibold leading-tight">Trophy Room</h2>
+          <h2 className="font-display text-lg font-semibold leading-tight">Done Today</h2>
           <p className="text-xs text-muted-foreground">
             {items.length === 0 ? "Nothing here yet — that's about to change." : `${items.length} cleared. Look at this.`}
           </p>
