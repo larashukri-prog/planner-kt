@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tasks: {
+        Row: {
+          category: string | null
+          completed_at: string | null
+          created_at: string
+          due_date: string | null
+          id: string
+          owner_id: string
+          recurring_key: string | null
+          status: string
+          subtasks: Json
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          owner_id?: string
+          recurring_key?: string | null
+          status: string
+          subtasks?: Json
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          completed_at?: string | null
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          owner_id?: string
+          recurring_key?: string | null
+          status?: string
+          subtasks?: Json
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
