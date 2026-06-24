@@ -507,7 +507,8 @@ function ZoneColumn({
             Drop a quest here
           </div>
         )}
-        <AnimatePresence initial={false}>
+        <AnimatePresence>
+
           {items.map((task) => (
             <TaskCard
               key={task.id}
@@ -607,7 +608,6 @@ function TaskCard({
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       animate={
         completing
