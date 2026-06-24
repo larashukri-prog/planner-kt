@@ -536,35 +536,67 @@ function TaskCard({
 }) {
   const [open, setOpen] = useState(false);
   const [subInput, setSubInput] = useState("");
+  const [completing, setCompleting] = useState(false);
   const total = task.subtasks.length;
   const done = task.subtasks.filter((s) => s.isCompleted).length;
   const pct = total === 0 ? 0 : (done / total) * 100;
   const allDone = total > 0 && done === total;
+  const readyToClaim = total === 0 || allDone;
+
+  const handleComplete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (completing) return;
+    setCompleting(true);
+    // Let the success flash play, then unmount via status change
+    window.setTimeout(() => onMove(task.id, "completed"), 320);
+  };
 
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      animate={
+        completing
+          ? {
+              opacity: 1,
+              scale: [1, 1.03, 0.96],
+              backgroundColor: [
+                "rgba(0,0,0,0)",
+                "color-mix(in oklab, var(--color-neon-3) 55%, transparent)",
+                "color-mix(in oklab, var(--color-neon-3) 25%, transparent)",
+              ],
+              boxShadow: [
+                "0 0 0 0 rgba(0,0,0,0)",
+                "0 0 32px 4px color-mix(in oklab, var(--color-neon-3) 55%, transparent)",
+                "0 0 0 0 rgba(0,0,0,0)",
+              ],
+            }
+          : { opacity: 1, y: 0, scale: 1 }
+      }
       exit={{ opacity: 0, scale: 0.9, x: 30, transition: { duration: 0.2 } }}
-      transition={{ type: "spring", stiffness: 380, damping: 32 }}
-      draggable
+      transition={
+        completing
+          ? { duration: 0.32, ease: [0.4, 0, 0.2, 1] }
+          : { type: "spring", stiffness: 380, damping: 32 }
+      }
+      draggable={!completing}
       onDragStart={() => setDragId(task.id)}
       onDragEnd={() => setDragId(null)}
       className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-card/80 active:cursor-grabbing"
       style={{ borderLeft: `2px solid ${zoneTint}` }}
     >
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-start gap-3 px-3 py-2.5 text-left"
-      >
+      <div className="flex w-full items-start gap-3 px-3 py-2.5">
         <CompleteCheckbox
-          checked={false}
-          onCheck={(e) => { e.stopPropagation(); onMove(task.id, "completed"); }}
+          onCheck={handleComplete}
           tint={zoneTint}
+          pulse={readyToClaim}
+          completing={completing}
         />
-        <div className="min-w-0 flex-1">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="min-w-0 flex-1 text-left"
+        >
           <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
           {total > 0 && (
             <div className="mt-2 flex items-center gap-2">
@@ -580,11 +612,17 @@ function TaskCard({
               <span className="font-mono text-[10px] text-muted-foreground">{done}/{total}</span>
             </div>
           )}
-        </div>
-        <motion.div animate={{ rotate: open ? 180 : 0 }} className="text-muted-foreground">
+        </button>
+        <motion.button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          animate={{ rotate: open ? 180 : 0 }}
+          className="mt-0.5 text-muted-foreground"
+          aria-label={open ? "Collapse" : "Expand"}
+        >
           <ChevronDown className="h-4 w-4" />
-        </motion.div>
-      </button>
+        </motion.button>
+      </div>
 
       <AnimatePresence initial={false}>
         {open && (
