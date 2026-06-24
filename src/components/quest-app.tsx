@@ -67,6 +67,7 @@ export default function QuestApp() {
                 onAddSubtask={t.addSubtask}
                 onToggleSubtask={t.toggleSubtask}
                 onRemoveSubtask={t.removeSubtask}
+                onUpdate={t.updateTask}
                 dragId={dragId}
                 setDragId={setDragId}
               />
