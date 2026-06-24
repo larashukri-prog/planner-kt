@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
   Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
-  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon,
+  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
