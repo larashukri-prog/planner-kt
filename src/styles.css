@@ -2,7 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark, .dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -41,9 +41,51 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
+/* ---------- Light Mode (default base, low-fatigue palette) ---------- */
 :root {
   --radius: 0.75rem;
-  /* Quest Log - dark mode default */
+
+  --background: oklch(0.985 0.003 250);
+  --foreground: oklch(0.22 0.02 270);
+  --card: oklch(0.995 0.002 250);
+  --card-foreground: oklch(0.22 0.02 270);
+  --popover: oklch(0.995 0.002 250);
+  --popover-foreground: oklch(0.22 0.02 270);
+  --primary: oklch(0.55 0.18 200);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0.01 250);
+  --secondary-foreground: oklch(0.25 0.02 270);
+  --muted: oklch(0.95 0.008 250);
+  --muted-foreground: oklch(0.48 0.02 260);
+  --accent: oklch(0.93 0.02 270);
+  --accent-foreground: oklch(0.22 0.02 270);
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.9 0.01 260);
+  --input: oklch(0.93 0.01 260);
+  --ring: oklch(0.6 0.18 200);
+
+  /* Neon accents — kept vivid in BOTH themes */
+  --neon: oklch(0.78 0.2 195);
+  --neon-foreground: oklch(0.15 0.02 260);
+  --neon-2: oklch(0.72 0.24 320);
+  --neon-3: oklch(0.82 0.22 135);
+
+  --zone-now: oklch(0.68 0.22 30);
+  --zone-next: oklch(0.7 0.2 200);
+  --zone-later: oklch(0.65 0.2 290);
+  --inbox: oklch(0.78 0.18 90);
+
+  --gradient-bg: radial-gradient(ellipse at top, oklch(0.97 0.015 260) 0%, oklch(0.95 0.01 250) 60%);
+  --gradient-neon: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
+  --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 45%, transparent),
+                 0 8px 30px -8px color-mix(in oklab, var(--neon) 45%, transparent);
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 4%),
+                 0 8px 24px -16px oklch(0 0 0 / 18%);
+}
+
+/* ---------- Dark Mode override ---------- */
+.dark {
   --background: oklch(0.16 0.02 270);
   --foreground: oklch(0.96 0.01 250);
   --card: oklch(0.21 0.025 270);
@@ -64,27 +106,21 @@
   --input: oklch(0.25 0.03 270);
   --ring: oklch(0.78 0.18 180);
 
-  /* Neon accent palette */
-  --neon: oklch(0.82 0.2 180);          /* cyan */
+  --neon: oklch(0.82 0.2 180);
   --neon-foreground: oklch(0.15 0.02 260);
-  --neon-2: oklch(0.78 0.22 320);       /* magenta */
-  --neon-3: oklch(0.88 0.2 130);        /* lime */
+  --neon-2: oklch(0.78 0.22 320);
+  --neon-3: oklch(0.88 0.2 130);
 
-  --zone-now: oklch(0.72 0.22 30);      /* warm orange */
-  --zone-next: oklch(0.82 0.2 180);     /* cyan */
-  --zone-later: oklch(0.7 0.18 290);    /* purple */
-  --inbox: oklch(0.85 0.18 95);         /* amber */
+  --zone-now: oklch(0.72 0.22 30);
+  --zone-next: oklch(0.82 0.2 180);
+  --zone-later: oklch(0.7 0.18 290);
+  --inbox: oklch(0.85 0.18 95);
 
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.22 0.05 280) 0%, oklch(0.14 0.02 270) 60%);
-  --gradient-neon: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
   --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),
                  0 8px 30px -8px color-mix(in oklab, var(--neon) 35%, transparent);
   --shadow-card: 0 1px 0 0 oklch(1 0 0 / 4%) inset,
                  0 8px 24px -12px oklch(0 0 0 / 60%);
-}
-
-.dark {
-  /* same as root - dark is default */
 }
 
 @layer base {
@@ -96,6 +132,7 @@
     color: var(--color-foreground);
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   ::selection { background: color-mix(in oklab, var(--neon) 40%, transparent); }
 }
