@@ -36,13 +36,13 @@ function rowToTask(r: TaskRow): Task {
   };
 }
 
-function taskToInsert(t: Task, userId: string) {
+function taskToInsert(t: Task, userId: string): Record<string, unknown> {
   return {
     id: t.id,
     user_id: userId,
     title: t.title,
     status: t.status,
-    subtasks: t.subtasks,
+    subtasks: t.subtasks as unknown,
     category: t.category,
     owner_id: t.ownerId,
     recurring_key: t.recurringKey ?? null,
