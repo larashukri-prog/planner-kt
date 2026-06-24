@@ -7,6 +7,7 @@ import {
 import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
 import { useDailySpawn } from "@/lib/use-daily-spawn";
+import { track, trackOncePerSession } from "@/lib/use-analytics";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 
 type View = "board" | "done";
@@ -23,6 +24,11 @@ export default function QuestApp() {
   useTheme();
   const [view, setView] = useState<View>("board");
   const [dragId, setDragId] = useState<string | null>(null);
+
+  useEffect(() => {
+    trackOncePerSession("app_opened");
+  }, []);
+
 
   const filtered = t.tasks.filter((x) => x.ownerId === t.workspace);
   const inbox = filtered.filter((x) => x.status === "inbox");
@@ -227,6 +233,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
     e.preventDefault();
     if (!value.trim()) return;
     onAdd(value);
+    track("manual_task_created");
     setValue("");
     setPulse(true);
     setTimeout(() => setPulse(false), 400);
@@ -284,6 +291,7 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
 
   const handleClick = (tpl: (typeof QUEST_TEMPLATES)[number]) => {
     onCreate(tpl.title, tpl.subtasks);
+    track("template_quest_used", { quest_name: tpl.label });
     setClickedId(tpl.label);
     setTimeout(() => setClickedId((cur) => (cur === tpl.label ? null : cur)), 600);
   };
@@ -600,6 +608,10 @@ function TaskCard({
   const handleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (completing) return;
+    track("task_completed", {
+      has_subtasks: task.subtasks.length > 0,
+      time_in_zone_ms: Date.now() - task.createdAt,
+    });
     setCompleting(true);
     window.setTimeout(() => onMove(task.id, "completed"), 320);
   };
