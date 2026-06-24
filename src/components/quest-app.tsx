@@ -271,7 +271,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
 /* -------------------------- Template Chips -------------------------- */
 
 const QUEST_TEMPLATES = [
-  { icon: "🛡️", label: "Morning Armor", title: "Morning Routine", subtasks: ["Shower", "Brush Teeth", "Wash Face", "Skincare", "Deodorant", "Perfume", "Hair"], tint: "oklch(0.72 0.18 85)" },
+  
   { icon: "🧺", label: "Laundry Loop", title: "Laundry", subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put in basket", "Put away"], tint: "oklch(0.7 0.16 230)" },
   { icon: "🛒", label: "Restock Fuel", title: "Grocery Run", subtasks: ["Check fridge & pantry", "Make list", "Go to store", "Unload and put away"], tint: "oklch(0.72 0.18 140)" },
   { icon: "🧹", label: "15-Min Reset", title: "Room Reset", subtasks: ["Pick up floor", "Clear surfaces", "Make bed", "Empty trash", "Quick vacuum"], tint: "oklch(0.7 0.16 25)" },
@@ -728,7 +728,8 @@ function TaskCard({
                 />
               </form>
 
-              {/* Due date control */}
+              {/* Due date control — not shown for recurring tasks */}
+              {!task.recurringKey && (
               <div className="flex items-center gap-2">
                 {task.dueDate && !showDatePicker ? (
                   <>
@@ -792,6 +793,7 @@ function TaskCard({
                   </button>
                 )}
               </div>
+              )}
 
               <div className="flex items-center justify-between pt-1">
                 <div className="flex gap-1">
