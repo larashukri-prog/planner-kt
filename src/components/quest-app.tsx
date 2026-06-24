@@ -20,6 +20,7 @@ const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; su
 export default function QuestApp() {
   const t = useTasks();
   useDailySpawn({ tasks: t.tasks, addRecurringTask: t.addRecurringTask, updateTask: t.updateTask, deleteTask: t.deleteTask });
+  useTheme();
   const [view, setView] = useState<View>("board");
   const [dragId, setDragId] = useState<string | null>(null);
 
@@ -125,8 +126,52 @@ function Header({
       <div className="flex flex-wrap items-center gap-2">
         <ViewToggle view={view} onView={onView} />
         <WorkspaceToggle workspace={workspace} onWorkspace={onWorkspace} />
+        <ThemeToggle />
       </div>
     </header>
+  );
+}
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
+  return (
+    <motion.button
+      onClick={toggleTheme}
+      whileTap={{ scale: 0.9 }}
+      whileHover={{ scale: 1.05 }}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="relative grid h-9 w-9 place-items-center rounded-xl border border-border bg-card/60 backdrop-blur transition-colors hover:bg-card"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.span
+            key="moon"
+            initial={{ opacity: 0, rotate: -90, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
+            transition={{ duration: 0.2 }}
+            className="grid place-items-center"
+            style={{ color: "var(--color-neon)" }}
+          >
+            <Moon className="h-4 w-4" strokeWidth={2.2} />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="sun"
+            initial={{ opacity: 0, rotate: 90, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: -90, scale: 0.6 }}
+            transition={{ duration: 0.2 }}
+            className="grid place-items-center"
+            style={{ color: "var(--color-zone-now)" }}
+          >
+            <Sun className="h-4 w-4" strokeWidth={2.2} />
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
   );
 }
 
