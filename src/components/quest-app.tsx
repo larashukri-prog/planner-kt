@@ -33,16 +33,14 @@ export default function QuestApp() {
     <div className="min-h-screen w-full text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
         <Header
-          workspace={t.workspace}
-          onWorkspace={t.setWorkspace}
           view={view}
           onView={setView}
           activeCount={activeCount}
           doneCount={completed.length}
         />
 
-        <TemplateChips onCreate={t.addTask} workspace={t.workspace} />
-        <QuickAddBar onAdd={t.addTask} workspace={t.workspace} />
+        <TemplateChips onCreate={t.addTask} />
+        <QuickAddBar onAdd={t.addTask} />
 
         <AnimatePresence mode="wait">
           {view === "board" ? (
@@ -98,10 +96,8 @@ export default function QuestApp() {
 /* ----------------------------- Header ----------------------------- */
 
 function Header({
-  workspace, onWorkspace, view, onView, activeCount, doneCount,
+  view, onView, activeCount, doneCount,
 }: {
-  workspace: OwnerId;
-  onWorkspace: (w: OwnerId) => void;
   view: View;
   onView: (v: View) => void;
   activeCount: number;
