@@ -410,7 +410,7 @@ function ZoneQuickButton({ label, tint, onClick }: { label: string; tint: string
 /* ----------------------------- ZoneBoard ----------------------------- */
 
 function ZoneBoard({
-  tasks, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, dragId, setDragId,
+  tasks, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
 }: {
   tasks: Task[];
   onMove: (id: string, s: TaskStatus) => void;
@@ -418,6 +418,7 @@ function ZoneBoard({
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subId: string) => void;
   onRemoveSubtask: (taskId: string, subId: string) => void;
+  onUpdate: (id: string, patch: Partial<Task>) => void;
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
@@ -436,6 +437,7 @@ function ZoneBoard({
               onAddSubtask={onAddSubtask}
               onToggleSubtask={onToggleSubtask}
               onRemoveSubtask={onRemoveSubtask}
+              onUpdate={onUpdate}
               dragId={dragId}
               setDragId={setDragId}
             />
