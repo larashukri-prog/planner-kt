@@ -375,8 +375,8 @@ function InboxStrip({
                 <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
                 <div className="mt-3 flex items-center gap-1">
                   <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
-                  <ZoneQuickButton label="Next"  tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
-                  <ZoneQuickButton label="Later" tint="var(--color-zone-later)" onClick={() => onMove(task.id, "later")} />
+                  <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
+                  <ZoneQuickButton label="Future" tint="var(--color-zone-later)" onClick={() => onMove(task.id, "later")} />
                   <button
                     onClick={() => onDelete(task.id)}
                     aria-label="Delete"
