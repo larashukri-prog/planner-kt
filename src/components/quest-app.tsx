@@ -18,6 +18,7 @@ const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; su
 
 export default function QuestApp() {
   const t = useTasks();
+  useDailySpawn({ tasks: t.tasks, addRecurringTask: t.addRecurringTask, updateTask: t.updateTask });
   const [view, setView] = useState<View>("board");
   const [dragId, setDragId] = useState<string | null>(null);
 
