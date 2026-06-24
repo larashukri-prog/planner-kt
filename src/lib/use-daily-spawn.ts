@@ -136,6 +136,22 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
         }
       }
 
+      // Auto-Escalation Engine — runs once per day rollover.
+      if (dateChanged) {
+        const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+        for (const task of current) {
+          if (task.status === "completed") continue;
+          if (task.dueDate == null) continue;
+          if (task.status === "now") continue; // never demote / re-touch
+          const daysUntil = Math.ceil((task.dueDate - todayMidnight) / 86400000);
+          if ((task.status === "later" || task.status === "next") && daysUntil <= 2) {
+            updateTask(task.id, { status: "now", escalatedAt: Date.now() });
+          } else if (task.status === "later" && daysUntil <= 7) {
+            updateTask(task.id, { status: "next", escalatedAt: Date.now() });
+          }
+        }
+      }
+
       if (dateChanged) {
         try {
           window.localStorage.setItem(TICK_KEY, todayKey);

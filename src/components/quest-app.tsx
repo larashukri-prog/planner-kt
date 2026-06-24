@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
   Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
-  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon,
+  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
@@ -67,6 +67,7 @@ export default function QuestApp() {
                 onAddSubtask={t.addSubtask}
                 onToggleSubtask={t.toggleSubtask}
                 onRemoveSubtask={t.removeSubtask}
+                onUpdate={t.updateTask}
                 dragId={dragId}
                 setDragId={setDragId}
               />
@@ -409,7 +410,7 @@ function ZoneQuickButton({ label, tint, onClick }: { label: string; tint: string
 /* ----------------------------- ZoneBoard ----------------------------- */
 
 function ZoneBoard({
-  tasks, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, dragId, setDragId,
+  tasks, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
 }: {
   tasks: Task[];
   onMove: (id: string, s: TaskStatus) => void;
@@ -417,6 +418,7 @@ function ZoneBoard({
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subId: string) => void;
   onRemoveSubtask: (taskId: string, subId: string) => void;
+  onUpdate: (id: string, patch: Partial<Task>) => void;
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
@@ -435,6 +437,7 @@ function ZoneBoard({
               onAddSubtask={onAddSubtask}
               onToggleSubtask={onToggleSubtask}
               onRemoveSubtask={onRemoveSubtask}
+              onUpdate={onUpdate}
               dragId={dragId}
               setDragId={setDragId}
             />
@@ -446,7 +449,7 @@ function ZoneBoard({
 }
 
 function ZoneColumn({
-  zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, dragId, setDragId,
+  zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
 }: {
   zone: (typeof ZONES)[number];
   items: Task[];
@@ -455,6 +458,7 @@ function ZoneColumn({
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subId: string) => void;
   onRemoveSubtask: (taskId: string, subId: string) => void;
+  onUpdate: (id: string, patch: Partial<Task>) => void;
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
@@ -517,6 +521,7 @@ function ZoneColumn({
               onAddSubtask={onAddSubtask}
               onToggleSubtask={onToggleSubtask}
               onRemoveSubtask={onRemoveSubtask}
+              onUpdate={onUpdate}
               setDragId={setDragId}
             />
           ))}
@@ -528,8 +533,37 @@ function ZoneColumn({
 
 /* ----------------------------- TaskCard ----------------------------- */
 
+function toLocalMidnight(ms: number): number {
+  const d = new Date(ms);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+function dateInputValue(ms: number): string {
+  const d = new Date(ms);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function parseDateInput(v: string): number | null {
+  if (!v) return null;
+  const [y, m, d] = v.split("-").map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d).getTime();
+}
+function formatDueLabel(due: number): { text: string; overdue: boolean } {
+  const today = new Date();
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const days = Math.ceil((due - todayMid) / 86400000);
+  if (days < 0) return { text: "Overdue", overdue: true };
+  if (days === 0) return { text: "Today", overdue: false };
+  if (days === 1) return { text: "Tomorrow", overdue: false };
+  if (days <= 7) return { text: `in ${days}d`, overdue: false };
+  const d = new Date(due);
+  return { text: `${d.getMonth() + 1}/${d.getDate()}`, overdue: false };
+}
+
 function TaskCard({
-  task, zoneTint, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, setDragId,
+  task, zoneTint, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, setDragId,
 }: {
   task: Task;
   zoneTint: string;
@@ -538,24 +572,40 @@ function TaskCard({
   onAddSubtask: (taskId: string, text: string) => void;
   onToggleSubtask: (taskId: string, subId: string) => void;
   onRemoveSubtask: (taskId: string, subId: string) => void;
+  onUpdate: (id: string, patch: Partial<Task>) => void;
   setDragId: (s: string | null) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [subInput, setSubInput] = useState("");
   const [completing, setCompleting] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const total = task.subtasks.length;
   const done = task.subtasks.filter((s) => s.isCompleted).length;
   const pct = total === 0 ? 0 : (done / total) * 100;
   const allDone = total > 0 && done === total;
   const readyToClaim = total === 0 || allDone;
 
+  // Escalation glow: active for 24h after auto-escalation.
+  const escalatedFresh =
+    !!task.escalatedAt && Date.now() - task.escalatedAt < 86400000;
+  const escalationClass = escalatedFresh
+    ? task.status === "now"
+      ? "escalated-act"
+      : "escalated-warn"
+    : "";
+
+  const clearEscalation = () => {
+    if (task.escalatedAt) onUpdate(task.id, { escalatedAt: null });
+  };
+
   const handleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (completing) return;
     setCompleting(true);
-    // Let the success flash play, then unmount via status change
     window.setTimeout(() => onMove(task.id, "completed"), 320);
   };
+
+  const dueLabel = task.dueDate ? formatDueLabel(task.dueDate) : null;
 
   return (
     <motion.div
@@ -588,7 +638,7 @@ function TaskCard({
       draggable={!completing}
       onDragStart={() => setDragId(task.id)}
       onDragEnd={() => setDragId(null)}
-      className="group relative cursor-grab overflow-hidden rounded-lg border border-border bg-card/80 active:cursor-grabbing"
+      className={`group relative cursor-grab overflow-hidden rounded-lg border border-border bg-card/80 active:cursor-grabbing ${escalationClass}`}
       style={{ borderLeft: `2px solid ${zoneTint}` }}
     >
       <div className="flex w-full items-start gap-3 px-3 py-2.5">
@@ -600,10 +650,22 @@ function TaskCard({
         />
         <button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => { setOpen((o) => !o); clearEscalation(); }}
           className="min-w-0 flex-1 text-left"
         >
           <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
+          {dueLabel && (
+            <span
+              className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
+                dueLabel.overdue
+                  ? "border-destructive/50 bg-destructive/10 text-destructive"
+                  : "border-border bg-muted text-muted-foreground"
+              }`}
+            >
+              <Calendar className="h-3 w-3" />
+              {dueLabel.text}
+            </span>
+          )}
           {total > 0 && (
             <div className="mt-2 flex items-center gap-2">
               <div className="h-1 flex-1 overflow-hidden rounded-full bg-secondary">
@@ -621,7 +683,7 @@ function TaskCard({
         </button>
         <motion.button
           type="button"
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => { setOpen((o) => !o); clearEscalation(); }}
           animate={{ rotate: open ? 180 : 0 }}
           className="mt-0.5 text-muted-foreground"
           aria-label={open ? "Collapse" : "Expand"}
@@ -665,6 +727,55 @@ function TaskCard({
                 />
               </form>
 
+              {/* Due date control */}
+              <div className="flex items-center gap-2">
+                {task.dueDate && !showDatePicker ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setShowDatePicker(true)}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      <Calendar className="h-3.5 w-3.5" />
+                      Due {new Date(task.dueDate).toLocaleDateString()}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onUpdate(task.id, { dueDate: null, escalatedAt: null })}
+                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                      aria-label="Clear due date"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </>
+                ) : showDatePicker || task.dueDate ? (
+                  <input
+                    type="date"
+                    autoFocus
+                    defaultValue={task.dueDate ? dateInputValue(task.dueDate) : ""}
+                    onChange={(e) => {
+                      const ms = parseDateInput(e.target.value);
+                      onUpdate(task.id, {
+                        dueDate: ms ? toLocalMidnight(ms) : null,
+                        escalatedAt: null,
+                      });
+                      setShowDatePicker(false);
+                    }}
+                    onBlur={() => setShowDatePicker(false)}
+                    className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-foreground outline-none"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowDatePicker(true)}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <Calendar className="h-3.5 w-3.5" />
+                    Add due date
+                  </button>
+                )}
+              </div>
+
               <div className="flex items-center justify-between pt-1">
                 <div className="flex gap-1">
                   {(["now", "next", "later", "inbox"] as TaskStatus[])
@@ -672,7 +783,7 @@ function TaskCard({
                     .map((s) => (
                       <button
                         key={s}
-                        onClick={() => onMove(task.id, s)}
+                        onClick={() => { onMove(task.id, s); clearEscalation(); }}
                         className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
                       >
                         → {s}
