@@ -182,6 +182,7 @@ export function useTasks() {
     workspace,
     setWorkspace,
     addTask,
+    addRecurringTask,
     updateTask,
     moveTask,
     deleteTask,
