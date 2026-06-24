@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Planner — Executive Functioning" },
+      { title: "Planner-KT — Executive Functioning" },
       { name: "description", content: "A frictionless, dopamine-friendly task planner for ADHD brains." },
       { name: "theme-color", content: "#1a1530" },
-      { property: "og:title", content: "Planner — Executive Functioning" },
+      { property: "og:title", content: "Planner-KT — Executive Functioning" },
       { property: "og:description", content: "A frictionless, dopamine-friendly task planner for ADHD brains." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

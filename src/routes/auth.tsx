@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/use-auth";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Planner" },
+      { title: "Sign in — Planner-KT" },
       { name: "description", content: "Sign in to sync your quests across devices." },
     ],
   }),
