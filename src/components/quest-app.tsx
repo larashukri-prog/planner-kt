@@ -13,8 +13,8 @@ type View = "board" | "done";
 
 const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string }[] = [
   { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)" },
-  { id: "next",  label: "NEXT",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)" },
-  { id: "later", label: "LATER", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)" },
+  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)" },
+  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)" },
 ];
 
 export default function QuestApp() {
