@@ -95,7 +95,7 @@ export default function QuestApp() {
         </AnimatePresence>
 
         <footer className="pt-6 pb-2 text-center text-xs text-muted-foreground">
-          <span className="font-mono">Planner v1</span> — built for the way your brain works.
+          <span className="font-mono">Planner v1</span> — built for optimal planning
         </footer>
       </div>
     </div>
