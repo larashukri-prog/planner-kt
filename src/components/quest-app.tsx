@@ -87,7 +87,7 @@ export default function QuestApp() {
         </AnimatePresence>
 
         <footer className="pt-6 pb-2 text-center text-xs text-muted-foreground">
-          <span className="font-mono">Quest Log v1</span> — built for the way your brain works.
+          <span className="font-mono">Planner v1</span> — built for the way your brain works.
         </footer>
       </div>
     </div>
@@ -113,7 +113,7 @@ function Header({
           </div>
         </div>
         <div>
-          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">Quest Log</h1>
+          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">Planner</h1>
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
             {activeCount} active · {doneCount} cleared
           </p>
