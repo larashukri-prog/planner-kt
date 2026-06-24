@@ -1,16 +1,14 @@
-## Plan
+## Fix high-severity dependency vulnerabilities
 
-1. **Extract the auth UI into a shared component**
-   - Move the current sign-in/sign-up screen logic out of `src/routes/auth.tsx` into a reusable component.
-   - Keep `src/routes/auth.tsx` as the canonical `/auth` page route.
+Update `@tanstack/react-start` to the latest patched version to pull in a fixed `undici` transitive dependency.
 
-2. **Add a defensive `/auth` fallback in the root not-found boundary**
-   - If the router falls into the root 404 while the current path is `/auth` or `/auth/`, render the shared auth screen instead of the 404 page.
-   - This directly addresses the live preview behavior where `/auth` is displaying the app’s root 404 even though the route exists in source.
+### Steps
 
-3. **Keep normal 404 behavior everywhere else**
-   - All other unknown paths will still show the existing 404 page.
+1. Run `bun add @tanstack/react-start@latest` to upgrade past 1.167.50.
+2. If the advisory persists (undici still pinned upstream), add a `resolutions`/`overrides` entry in `package.json` forcing `undici` to a patched version (≥6.21.2 / ≥7.x as required by the advisories).
+3. Verify the dev server still boots and `/auth` + `/` render correctly.
+4. Re-run the security scan to confirm the finding clears, then mark it fixed.
 
-4. **Verify**
-   - Re-check the live preview at `/auth` and confirm it renders the Planner-KT sign-in screen, not “Page not found”.
-   - Confirm `/` still redirects unauthenticated users to the auth screen.
+### Notes
+- `undici` is only used server-side by TanStack Start's Worker runtime; no app code change needed.
+- No functional/UI changes.
