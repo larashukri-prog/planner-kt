@@ -56,6 +56,7 @@ export default function QuestApp() {
                 dragId={dragId}
                 setDragId={setDragId}
               />
+              <DailyXPBar tasks={filtered} />
               <ZoneBoard
                 tasks={filtered}
                 onMove={t.moveTask}
@@ -66,6 +67,7 @@ export default function QuestApp() {
                 dragId={dragId}
                 setDragId={setDragId}
               />
+
             </motion.div>
           ) : (
             <motion.div
