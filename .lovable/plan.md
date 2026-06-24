@@ -1,12 +1,8 @@
-**Diagnosis:** The Morning Routine task already exists in your saved state from before today's edit. `useDailySpawn` only refreshes subtasks at midnight, and even then it just resets `isCompleted` on the existing subtasks — it never adds new items from the recurring template. So "Hair" won't appear until something inserts it.
+**Diagnosis:** In `src/components/quest-app.tsx` `ZoneColumn` (lines 504–513), the empty-state placeholder (`"Drop a quest here"`) is rendered inside the same `<AnimatePresence>` as the mapped `TaskCard`s, but it has no `key` prop. `AnimatePresence` requires every direct child to have a stable, unique `key` to track mount/unmount. Without one, when the column transitions from 0 items → 1 item, AnimatePresence can fail to remove the placeholder cleanly — the new `TaskCard` mounts but appears hidden / behind the placeholder / not laid out, producing the "I clicked Now but it didn't show" glitch.
 
-**Fix (in `src/lib/use-daily-spawn.ts`):**
+**Fix:** In `ZoneColumn`'s body (around lines 504–520):
 
-When the engine finds an existing recurring task (the `matches.length > 0` branch around lines 111–128), also reconcile the subtasks against `entry.subtasks`:
+1. Move the empty-state placeholder OUT of the `<AnimatePresence>` — render it as a plain conditional (`{items.length === 0 && <div>…</div>}`) above or below the AnimatePresence block. The placeholder doesn't need enter/exit animation; the cards do.
+2. Keep `<AnimatePresence initial={false}>` wrapping only the `items.map((task) => <TaskCard … key={task.id} />)` list.
 
-- Compare existing subtask texts (case-insensitive, trimmed) to the template list.
-- For any template item missing from the existing task, append a new `Subtask` (`{ id: uid(), text, isCompleted: false }`) to the end.
-- Apply this once per session regardless of `dateChanged`, so the new "Hair" item shows up immediately on next render — no need to wait for midnight.
-- Do NOT remove subtasks the user has added manually, and do NOT reorder existing ones — only append missing template items.
-
-This is general (works for any future template additions), not a one-off Hair patch. No schema changes; no UI changes.
+That's the only change. No schema, no state, no other components touched. After this, clicking "Now" on an inbox task (or any move that lands the first card in a previously-empty zone) will render the card reliably.
