@@ -93,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "A frictionless, dopamine-friendly task planner for ADHD brains." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Planner-KT — Executive Functioning" },
+      { name: "twitter:description", content: "A frictionless, dopamine-friendly task planner for ADHD brains." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dd408bb0-5f1a-4c63-9a73-5374d0d5ba44/id-preview-7c112e6e--3322c3f7-1533-4a18-ba3e-cf5418113c39.lovable.app-1782328769276.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dd408bb0-5f1a-4c63-9a73-5374d0d5ba44/id-preview-7c112e6e--3322c3f7-1533-4a18-ba3e-cf5418113c39.lovable.app-1782328769276.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
