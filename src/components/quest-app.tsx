@@ -808,7 +808,7 @@ function TaskCard({
                     className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <Calendar className="h-3.5 w-3.5" />
-                    Add due date
+                    Add date
                   </button>
                 )}
               </div>
