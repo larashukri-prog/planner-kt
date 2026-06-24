@@ -8,6 +8,8 @@ import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
 import { useDailySpawn } from "@/lib/use-daily-spawn";
 import { track, trackOncePerSession } from "@/lib/use-analytics";
+import { signOut } from "@/lib/use-auth";
+import { LogOut } from "lucide-react";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 
 type View = "board" | "done";
@@ -129,6 +131,14 @@ function Header({
       <div className="flex flex-wrap items-center gap-2">
         <ViewToggle view={view} onView={onView} />
         <ThemeToggle />
+        <button
+          onClick={() => { void signOut(); }}
+          aria-label="Sign out"
+          title="Sign out"
+          className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card/60 backdrop-blur transition-colors hover:bg-card"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </header>
   );
