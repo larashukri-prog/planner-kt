@@ -1,20 +1,7 @@
-The Morning Routine subtasks live in two places:
+Two small changes:
 
-1. **Template chip** — `src/components/quest-app.tsx` line 274: the list shown to the user when they click the "Morning Armor" template chip.
-2. **Daily spawn** — `src/lib/use-daily-spawn.ts` line 23: the list used when the app auto-spawns the recurring Morning Routine quest each day.
+1. **Remove "Morning Armor" from the 1-click template chips.** In `src/components/quest-app.tsx` (line 274), delete the Morning Armor entry from the `QUEST_TEMPLATES` array. The Morning Routine still spawns automatically via `useDailySpawn`, so there's no reason to also have a manual chip for it.
 
-Currently the two lists differ slightly (the daily spawn merges "Wash Face" + "Skincare" into one item).
+2. **Hide the due-date control on recurring tasks.** In `TaskCard` (`src/components/quest-app.tsx`, the "Due date control" block around lines 731–794), wrap the entire `<div className="flex items-center gap-2">…</div>` so it only renders when `!task.recurringKey`. Recurring quests reset every 24h, so a due date is meaningless for them — this hides both the "Add due date" button and the existing date pill for recurring tasks. Non-recurring tasks keep the full due-date UI unchanged.
 
-## Changes
-
-- In `src/components/quest-app.tsx` (line 274), append `"Hair"` to the subtasks array:
-  ```
-  ["Shower", "Brush Teeth", "Wash Face", "Skincare", "Deodorant", "Perfume", "Hair"]
-  ```
-
-- In `src/lib/use-daily-spawn.ts` (line 23), append `"Hair"` to the subtasks array:
-  ```
-  ["Shower", "Brush Teeth", "Wash Face & Skincare", "Hair"]
-  ```
-
-No other code changes required. The new subtask will appear in newly created or respawned Morning Routine quests immediately.
+No changes to schema, escalation engine, or non-recurring task behavior.
