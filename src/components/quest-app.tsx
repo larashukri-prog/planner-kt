@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
   Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, Users, User,
-  ChevronDown, X, Flame, Layers, Hourglass,
+  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon,
 } from "lucide-react";
+import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
 import { useDailySpawn } from "@/lib/use-daily-spawn";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
