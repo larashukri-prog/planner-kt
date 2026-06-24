@@ -94,12 +94,12 @@ export function useTasks() {
 
   const setWorkspace = (w: OwnerId) => setWorkspaceState(w);
 
-  const addTask = (title: string) => {
+  const addTask = (title: string, subtaskTexts?: string[]) => {
     const t: Task = {
       id: uid(),
       title: title.trim(),
       status: "inbox",
-      subtasks: [],
+      subtasks: subtaskTexts?.map((text) => ({ id: uid(), text: text.trim(), isCompleted: false })) ?? [],
       category: workspace === "family" ? "family" : "champlain",
       ownerId: workspace,
       createdAt: Date.now(),
