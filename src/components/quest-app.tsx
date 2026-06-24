@@ -521,6 +521,7 @@ function ZoneColumn({
               onAddSubtask={onAddSubtask}
               onToggleSubtask={onToggleSubtask}
               onRemoveSubtask={onRemoveSubtask}
+              onUpdate={onUpdate}
               setDragId={setDragId}
             />
           ))}
