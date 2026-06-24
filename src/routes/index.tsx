@@ -5,9 +5,9 @@ import { useAuth } from "@/lib/use-auth";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Planner-KT — dopamine-friendly task planner" },
+      { title: "Planner-KT\u00a0" },
       { name: "description", content: "A frictionless, dopamine-friendly task planner for ADHD brains. Capture, prioritize, and ship." },
-      { property: "og:title", content: "Planner-KT — dopamine-friendly task planner" },
+      { property: "og:title", content: "Planner-KT\u00a0" },
       { property: "og:description", content: "Capture quests instantly. Sort into Now / Later / Future. Build a trophy room of wins." },
     ],
   }),
