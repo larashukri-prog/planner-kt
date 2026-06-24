@@ -17,6 +17,8 @@ export interface Task {
   createdAt: number;
   completedAt: number | null;
   recurringKey?: string;
+  dueDate?: number | null;
+  escalatedAt?: number | null;
 }
 
 export const uid = () =>
