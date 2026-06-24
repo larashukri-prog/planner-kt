@@ -121,7 +121,7 @@ function Header({
           </div>
         </div>
         <div>
-          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">Planner-KT — Executive Functioning for ADHD Brains</h1>
+          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">Planner-KT — dopamine-friendly task planner</h1>
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
             {activeCount} active · {doneCount} cleared
           </p>
