@@ -108,6 +108,26 @@ export function useTasks() {
     setTasks((prev) => [t, ...prev]);
   };
 
+  const addRecurringTask = (input: {
+    title: string;
+    subtasks: string[];
+    status: TaskStatus;
+    recurringKey: string;
+  }) => {
+    const t: Task = {
+      id: uid(),
+      title: input.title,
+      status: input.status,
+      subtasks: input.subtasks.map((text) => ({ id: uid(), text, isCompleted: false })),
+      category: "champlain",
+      ownerId: "solo",
+      createdAt: Date.now(),
+      completedAt: null,
+      recurringKey: input.recurringKey,
+    };
+    setTasks((prev) => [t, ...prev]);
+  };
+
   const updateTask = (id: string, patch: Partial<Task>) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
 
