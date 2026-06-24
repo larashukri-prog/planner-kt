@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
-  Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, Users, User,
+  Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
   ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
@@ -33,16 +33,14 @@ export default function QuestApp() {
     <div className="min-h-screen w-full text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
         <Header
-          workspace={t.workspace}
-          onWorkspace={t.setWorkspace}
           view={view}
           onView={setView}
           activeCount={activeCount}
           doneCount={completed.length}
         />
 
-        <TemplateChips onCreate={t.addTask} workspace={t.workspace} />
-        <QuickAddBar onAdd={t.addTask} workspace={t.workspace} />
+        <TemplateChips onCreate={t.addTask} />
+        <QuickAddBar onAdd={t.addTask} />
 
         <AnimatePresence mode="wait">
           {view === "board" ? (
@@ -98,10 +96,8 @@ export default function QuestApp() {
 /* ----------------------------- Header ----------------------------- */
 
 function Header({
-  workspace, onWorkspace, view, onView, activeCount, doneCount,
+  view, onView, activeCount, doneCount,
 }: {
-  workspace: OwnerId;
-  onWorkspace: (w: OwnerId) => void;
   view: View;
   onView: (v: View) => void;
   activeCount: number;
@@ -125,7 +121,6 @@ function Header({
 
       <div className="flex flex-wrap items-center gap-2">
         <ViewToggle view={view} onView={onView} />
-        <WorkspaceToggle workspace={workspace} onWorkspace={onWorkspace} />
         <ThemeToggle />
       </div>
     </header>
@@ -208,43 +203,10 @@ function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void })
   );
 }
 
-function WorkspaceToggle({ workspace, onWorkspace }: { workspace: OwnerId; onWorkspace: (w: OwnerId) => void }) {
-  const items: { id: OwnerId; label: string; icon: typeof User }[] = [
-    { id: "solo",   label: "My Quests",  icon: User },
-    { id: "family", label: "Family Hub", icon: Users },
-  ];
-  return (
-    <div className="relative flex rounded-xl border border-border bg-card/60 p-1 backdrop-blur">
-      {items.map((it) => {
-        const active = workspace === it.id;
-        const Icon = it.icon;
-        return (
-          <button
-            key={it.id}
-            onClick={() => onWorkspace(it.id)}
-            className="relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
-            style={{ color: active ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)" }}
-          >
-            {active && (
-              <motion.span
-                layoutId="ws-pill"
-                className="absolute inset-0 -z-10 rounded-lg"
-                style={{ background: "var(--color-neon-3)" }}
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-            <Icon className="h-3.5 w-3.5" />
-            {it.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 /* --------------------------- QuickAddBar --------------------------- */
 
-function QuickAddBar({ onAdd, workspace }: { onAdd: (title: string) => void; workspace: OwnerId }) {
+function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
   const [value, setValue] = useState("");
   const ref = useRef<HTMLInputElement>(null);
   const [pulse, setPulse] = useState(false);
@@ -286,11 +248,7 @@ function QuickAddBar({ onAdd, workspace }: { onAdd: (title: string) => void; wor
         ref={ref}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder={
-          workspace === "family"
-            ? "Drop it in the Family Hub — groceries, plans, anything…"
-            : "Brain dump a quest. Press Enter. No tags. No deadlines."
-        }
+        placeholder="Brain dump a quest. Press Enter. No tags. No deadlines."
         className="flex-1 bg-transparent text-base font-medium outline-none placeholder:font-normal placeholder:text-muted-foreground md:text-lg"
       />
       <kbd className="hidden rounded-md border border-border bg-secondary/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground md:inline">
@@ -320,7 +278,7 @@ const QUEST_TEMPLATES = [
   { icon: "🗺️", label: "Explore", title: "Explore Burlington", subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"], tint: "oklch(0.7 0.18 290)" },
 ];
 
-function TemplateChips({ onCreate, workspace }: { onCreate: (title: string, subtasks: string[]) => void; workspace: OwnerId }) {
+function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: string[]) => void }) {
   const [clickedId, setClickedId] = useState<string | null>(null);
 
   const handleClick = (tpl: (typeof QUEST_TEMPLATES)[number]) => {
