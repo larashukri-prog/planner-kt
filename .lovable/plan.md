@@ -1,9 +1,13 @@
-## Fix date picker defaulting to 1902
+## Smooth date entry — stop committing/closing mid-type
 
-The native `<input type="date">` currently has no `defaultValue` when a task has no due date, so the browser's picker opens on its empty epoch (jan 1902 in some browsers' scroll wheels). Two small changes in `src/components/quest-app.tsx` inside the TaskCard date input:
+The native `<input type="date">` fires `onChange` every time a segment (MM, DD, YYYY) becomes individually valid. Right now `onChange` both writes to state AND closes the picker, so the field unmounts as soon as the user types the first digit of a 2-digit day. That's the "type 2, lose focus, have to reopen to add 5" bug.
 
-1. **Default to today** when the task has no `dueDate` — set `defaultValue` to `dateInputValue(Date.now())` instead of `""`. Picker opens on the current month/year (2026) immediately.
+### Fix in `src/components/quest-app.tsx` (TaskCard date input only)
 
-2. **Add `min={dateInputValue(Date.now())}`** so users can't accidentally pick a past date and the wheel/scroll starts at today.
+1. **Track the value in local state** (`pendingDate`) seeded from `task.dueDate`. Bind the input as a controlled component (`value`, not `defaultValue`).
+2. **`onChange` only updates local state** — it does NOT call `onUpdate` and does NOT close the picker. The user can freely tab/type through MM → DD → YYYY without losing focus.
+3. **Commit on `onBlur` and on `Enter`**: call `onUpdate(...)` with the parsed value and close the picker. If the field is empty on blur, clear `dueDate`.
+4. **Escape cancels**: closes the picker without committing.
+5. Keep `min={today}` and the today default so the picker still opens on 2026.
 
-No schema, no logic, no styling changes. One element edited.
+No schema, logic, or styling changes outside this one input. Result: type 1/2/5/2/0/2/6 straight through, tab out (or press Enter) → due date saved.

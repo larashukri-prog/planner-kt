@@ -579,6 +579,7 @@ function TaskCard({
   const [subInput, setSubInput] = useState("");
   const [completing, setCompleting] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [pendingDate, setPendingDate] = useState<string>("");
   const total = task.subtasks.length;
   const done = task.subtasks.filter((s) => s.isCompleted).length;
   const pct = total === 0 ? 0 : (done / total) * 100;
@@ -733,7 +734,10 @@ function TaskCard({
                   <>
                     <button
                       type="button"
-                      onClick={() => setShowDatePicker(true)}
+                      onClick={() => {
+                        setPendingDate(task.dueDate ? dateInputValue(task.dueDate) : dateInputValue(Date.now()));
+                        setShowDatePicker(true);
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
                     >
                       <Calendar className="h-3.5 w-3.5" />
@@ -748,27 +752,39 @@ function TaskCard({
                       <X className="h-3 w-3" />
                     </button>
                   </>
-                ) : showDatePicker || task.dueDate ? (
+                ) : showDatePicker ? (
                   <input
                     type="date"
                     autoFocus
-                    defaultValue={task.dueDate ? dateInputValue(task.dueDate) : dateInputValue(Date.now())}
+                    value={pendingDate}
                     min={dateInputValue(Date.now())}
-                    onChange={(e) => {
-                      const ms = parseDateInput(e.target.value);
+                    onChange={(e) => setPendingDate(e.target.value)}
+                    onBlur={() => {
+                      const ms = parseDateInput(pendingDate);
                       onUpdate(task.id, {
                         dueDate: ms ? toLocalMidnight(ms) : null,
                         escalatedAt: null,
                       });
                       setShowDatePicker(false);
                     }}
-                    onBlur={() => setShowDatePicker(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        (e.target as HTMLInputElement).blur();
+                      } else if (e.key === "Escape") {
+                        e.preventDefault();
+                        setShowDatePicker(false);
+                      }
+                    }}
                     className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-foreground outline-none"
                   />
                 ) : (
                   <button
                     type="button"
-                    onClick={() => setShowDatePicker(true)}
+                    onClick={() => {
+                      setPendingDate(dateInputValue(Date.now()));
+                      setShowDatePicker(true);
+                    }}
                     className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <Calendar className="h-3.5 w-3.5" />
