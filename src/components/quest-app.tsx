@@ -5,6 +5,7 @@ import {
   ChevronDown, X, Flame, Layers, Hourglass,
 } from "lucide-react";
 import { useTasks } from "@/lib/use-tasks";
+import { useDailySpawn } from "@/lib/use-daily-spawn";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 
 type View = "board" | "done";
