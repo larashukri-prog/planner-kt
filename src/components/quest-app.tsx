@@ -579,6 +579,7 @@ function TaskCard({
   const [subInput, setSubInput] = useState("");
   const [completing, setCompleting] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [pendingDate, setPendingDate] = useState<string>("");
   const total = task.subtasks.length;
   const done = task.subtasks.filter((s) => s.isCompleted).length;
   const pct = total === 0 ? 0 : (done / total) * 100;
