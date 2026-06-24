@@ -16,6 +16,7 @@ export interface Task {
   ownerId: OwnerId;
   createdAt: number;
   completedAt: number | null;
+  recurringKey?: string;
 }
 
 export const uid = () =>

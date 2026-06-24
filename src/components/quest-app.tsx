@@ -5,6 +5,7 @@ import {
   ChevronDown, X, Flame, Layers, Hourglass,
 } from "lucide-react";
 import { useTasks } from "@/lib/use-tasks";
+import { useDailySpawn } from "@/lib/use-daily-spawn";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 
 type View = "board" | "done";
@@ -17,6 +18,7 @@ const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; su
 
 export default function QuestApp() {
   const t = useTasks();
+  useDailySpawn({ tasks: t.tasks, addRecurringTask: t.addRecurringTask, updateTask: t.updateTask });
   const [view, setView] = useState<View>("board");
   const [dragId, setDragId] = useState<string | null>(null);
 
