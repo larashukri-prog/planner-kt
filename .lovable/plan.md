@@ -1,8 +1,15 @@
-**Diagnosis:** In `src/components/quest-app.tsx` `ZoneColumn` (lines 504–513), the empty-state placeholder (`"Drop a quest here"`) is rendered inside the same `<AnimatePresence>` as the mapped `TaskCard`s, but it has no `key` prop. `AnimatePresence` requires every direct child to have a stable, unique `key` to track mount/unmount. Without one, when the column transitions from 0 items → 1 item, AnimatePresence can fail to remove the placeholder cleanly — the new `TaskCard` mounts but appears hidden / behind the placeholder / not laid out, producing the "I clicked Now but it didn't show" glitch.
+**Diagnosis:** The `TaskCard`'s outer `motion.div` (lines 609–641) combines several Framer Motion features that conflict when a card is added to a zone column from another container (inbox → now via 1-click chip + Now button):
 
-**Fix:** In `ZoneColumn`'s body (around lines 504–520):
+- `layout` prop tries to animate from a previous bounding box. The card has no prior box in the destination `<LayoutGroup>` (it was in `InboxStrip`'s separate LayoutGroup), so layout measurement can resolve to 0×0 / off-screen.
+- `initial={{ opacity: 0, y: 8, scale: 0.98 }}` plus a spring `transition` runs simultaneously with the broken layout animation.
+- The parent `<AnimatePresence initial={false}>` in `ZoneColumn` suppresses entry animations on first AP mount; if the column was empty when AP mounted, the new child's `initial` may be skipped inconsistently.
 
-1. Move the empty-state placeholder OUT of the `<AnimatePresence>` — render it as a plain conditional (`{items.length === 0 && <div>…</div>}`) above or below the AnimatePresence block. The placeholder doesn't need enter/exit animation; the cards do.
-2. Keep `<AnimatePresence initial={false}>` wrapping only the `items.map((task) => <TaskCard … key={task.id} />)` list.
+Result: the card mounts in the Now column but renders as an invisible / zero-sized / off-position box → "blank" column.
 
-That's the only change. No schema, no state, no other components touched. After this, clicking "Now" on an inbox task (or any move that lands the first card in a previously-empty zone) will render the card reliably.
+**Fix (permanent, applies to all 1-click quests and any future task added to a zone):**
+
+1. In `ZoneColumn`'s `<AnimatePresence>` (around line 510 after the previous edit), remove `initial={false}` so newly-added children always run their declared `initial` → `animate` transition cleanly.
+2. In `TaskCard`'s outer `motion.div` (line 609–611), remove the `layout` prop. Layout animation across containers is the source of the zero-box glitch and isn't needed — cards already animate via `initial`/`animate`/`exit`.
+3. Keep everything else (drag, exit, completing animation, escalation class) unchanged.
+
+That's two small edits. No schema changes, no state changes, no styling changes. After this, every 1-click quest (and any inbox → zone move) will appear immediately and reliably in the destination column.
