@@ -261,6 +261,70 @@ function QuickAddBar({ onAdd, workspace }: { onAdd: (title: string) => void; wor
   );
 }
 
+/* -------------------------- Template Chips -------------------------- */
+
+const QUEST_TEMPLATES = [
+  { icon: "🛡️", label: "Morning Armor", title: "Morning Routine", subtasks: ["Shower", "Brush Teeth", "Wash Face", "Skincare"], tint: "oklch(0.72 0.18 85)" },
+  { icon: "🧺", label: "Laundry Loop", title: "Laundry", subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put in basket", "Put away"], tint: "oklch(0.7 0.16 230)" },
+  { icon: "🛒", label: "Restock Fuel", title: "Grocery Run", subtasks: ["Check fridge & pantry", "Make list", "Go to store", "Unload and put away"], tint: "oklch(0.72 0.18 140)" },
+  { icon: "🧹", label: "15-Min Reset", title: "Room Reset", subtasks: ["Pick up floor", "Clear surfaces", "Make bed", "Empty trash", "Quick vacuum"], tint: "oklch(0.7 0.16 25)" },
+  { icon: "⚔️", label: "Deep Dive", title: "Academic Deep Dive", subtasks: ["Gather materials", "Set timer (90 min)", "No phone zone", "Review notes", "Reward break"], tint: "oklch(0.82 0.2 180)" },
+  { icon: "🗺️", label: "Explore", title: "Explore Burlington", subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"], tint: "oklch(0.7 0.18 290)" },
+];
+
+function TemplateChips({ onCreate, workspace }: { onCreate: (title: string, subtasks: string[]) => void; workspace: OwnerId }) {
+  const [clickedId, setClickedId] = useState<string | null>(null);
+
+  const handleClick = (tpl: (typeof QUEST_TEMPLATES)[number]) => {
+    onCreate(tpl.title, tpl.subtasks);
+    setClickedId(tpl.label);
+    setTimeout(() => setClickedId((cur) => (cur === tpl.label ? null : cur)), 600);
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        1-Click Quests
+      </p>
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-quest">
+        {QUEST_TEMPLATES.map((tpl) => {
+          const isClicked = clickedId === tpl.label;
+          return (
+            <motion.button
+              key={tpl.label}
+              whileHover={{ scale: 1.05, y: -1 }}
+              whileTap={{ scale: 0.88 }}
+              animate={isClicked ? { scale: [1, 1.12, 1], y: [0, -3, 0] } : {}}
+              transition={{ type: "spring", stiffness: 400, damping: 18 }}
+              onClick={() => handleClick(tpl)}
+              className="group relative flex shrink-0 items-center gap-2 rounded-full border border-border bg-card/70 px-3.5 py-2 text-sm font-medium backdrop-blur-sm transition-colors hover:border-[var(--color-neon)]/40 hover:bg-card"
+              style={{ boxShadow: isClicked ? `0 0 0 1px ${tpl.tint}, 0 6px 20px -8px ${tpl.tint}` : "none" }}
+            >
+              <span
+                className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs transition-transform duration-200 group-hover:scale-110"
+                style={{ background: `color-mix(in oklab, ${tpl.tint} 18%, transparent)` }}
+              >
+                {tpl.icon}
+              </span>
+              <span className="whitespace-nowrap">{tpl.label}</span>
+              {isClicked && (
+                <motion.span
+                  initial={{ opacity: 0, x: -4 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="font-mono text-[10px] font-semibold uppercase tracking-wider"
+                  style={{ color: tpl.tint }}
+                >
+                  Created!
+                </motion.span>
+              )}
+            </motion.button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ----------------------------- Inbox ----------------------------- */
 
 function InboxStrip({
