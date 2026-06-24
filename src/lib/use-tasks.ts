@@ -175,7 +175,7 @@ export function useTasks() {
   const optimisticAdd = (t: Task) => {
     setTasks((prev) => [t, ...prev]);
     if (!userId) return;
-    void (supabase.from("tasks") as any).insert(taskToInsert(t, userId)).then(({ error }) => {
+    void (supabase.from("tasks") as any).insert(taskToInsert(t, userId)).then(({ error }: { error: unknown }) => {
       if (error) {
         console.error("[tasks] insert failed", error);
         setTasks((prev) => prev.filter((x) => x.id !== t.id));
@@ -221,7 +221,7 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, ...patch } : t)));
     if (!userId) return;
-    void (supabase.from("tasks") as any).update(patchToUpdate(patch)).eq("id", id).then(({ error }) => {
+    void (supabase.from("tasks") as any).update(patchToUpdate(patch)).eq("id", id).then(({ error }: { error: unknown }) => {
       if (error) {
         console.error("[tasks] update failed", error);
         if (prev) setTasks((cur) => cur.map((t) => (t.id === id ? prev : t)));
@@ -238,7 +238,7 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.filter((t) => t.id !== id));
     if (!userId) return;
-    void supabase.from("tasks").delete().eq("id", id).then(({ error }) => {
+    void supabase.from("tasks").delete().eq("id", id).then(({ error }: { error: unknown }) => {
       if (error) {
         console.error("[tasks] delete failed", error);
         if (prev) setTasks((cur) => [prev, ...cur]);
