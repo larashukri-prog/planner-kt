@@ -37,6 +37,7 @@ export default function QuestApp() {
           doneCount={completed.length}
         />
 
+        <TemplateChips onCreate={t.addTask} workspace={t.workspace} />
         <QuickAddBar onAdd={t.addTask} workspace={t.workspace} />
 
         <AnimatePresence mode="wait">
