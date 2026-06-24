@@ -1,15 +1,41 @@
-**Diagnosis:** The `TaskCard`'s outer `motion.div` (lines 609–641) combines several Framer Motion features that conflict when a card is added to a zone column from another container (inbox → now via 1-click chip + Now button):
+## Goal
 
-- `layout` prop tries to animate from a previous bounding box. The card has no prior box in the destination `<LayoutGroup>` (it was in `InboxStrip`'s separate LayoutGroup), so layout measurement can resolve to 0×0 / off-screen.
-- `initial={{ opacity: 0, y: 8, scale: 0.98 }}` plus a spring `transition` runs simultaneously with the broken layout animation.
-- The parent `<AnimatePresence initial={false}>` in `ZoneColumn` suppresses entry animations on first AP mount; if the column was empty when AP mounted, the new child's `initial` may be skipped inconsistently.
+Wire `posthog-js` into the app to track Executive Functioning engagement, fire-and-forget, with safe fallback when env vars are missing.
 
-Result: the card mounts in the Now column but renders as an invisible / zero-sized / off-position box → "blank" column.
+## Steps
 
-**Fix (permanent, applies to all 1-click quests and any future task added to a zone):**
+1. **Install dependency**
+   - `bun add posthog-js`
 
-1. In `ZoneColumn`'s `<AnimatePresence>` (around line 510 after the previous edit), remove `initial={false}` so newly-added children always run their declared `initial` → `animate` transition cleanly.
-2. In `TaskCard`'s outer `motion.div` (line 609–611), remove the `layout` prop. Layout animation across containers is the source of the zero-box glitch and isn't needed — cards already animate via `initial`/`animate`/`exit`.
-3. Keep everything else (drag, exit, completing animation, escalation class) unchanged.
+2. **Initialize PostHog (root)**
+   - In `src/routes/__root.tsx`, inside `RootComponent`, add a `useEffect` that runs once on the client and calls `posthog.init(...)` only if `import.meta.env.VITE_PUBLIC_POSTHOG_KEY` is set.
+   - Host defaults to `https://us.i.posthog.com` via `VITE_PUBLIC_POSTHOG_HOST`.
+   - Guard against SSR (`typeof window !== "undefined"`) and double-init (`posthog.__loaded`).
+   - If the key is missing, log a single dev-only notice and continue — no crash.
 
-That's two small edits. No schema changes, no state changes, no styling changes. After this, every 1-click quest (and any inbox → zone move) will appear immediately and reliably in the destination column.
+3. **Create `useAnalytics` hook** at `src/lib/use-analytics.ts`
+   - Exports a `track(event, props?)` function that wraps `posthog.capture` in a `try/catch` and a `queueMicrotask` so it never blocks the caller.
+   - No-ops cleanly when PostHog isn't initialized.
+   - Also exports `trackOncePerSession(event, props?)` using `sessionStorage` so "app_opened" fires once per browser session.
+
+4. **Wire the 4 events** in `src/components/quest-app.tsx`
+   - **`app_opened`** — in `QuestApp` (the app's top-level component; there is no separate `Dashboard`), call `trackOncePerSession('app_opened')` from a mount `useEffect`.
+   - **`manual_task_created`** — in `QuickAddBar.submit`, call `track('manual_task_created')` right after `onAdd(value)`.
+   - **`template_quest_used`** — in `TemplateChips.handleClick`, call `track('template_quest_used', { quest_name: tpl.label })`.
+   - **`task_completed`** — in `TaskCard.handleComplete`, call `track('task_completed', { has_subtasks: task.subtasks.length > 0, time_in_zone_ms: Date.now() - task.createdAt })` before the existing `setTimeout` so it never delays the completion animation. (Using `time_in_zone_ms` as a number is easier to chart in PostHog than a formatted string; happy to switch to a string if you prefer.)
+
+5. **Document env vars**
+   - No `.env` committed; the user adds `VITE_PUBLIC_POSTHOG_KEY` (and optional `VITE_PUBLIC_POSTHOG_HOST`) locally / in deployment. App runs normally without them.
+
+## Files touched
+
+- `package.json` (via bun add)
+- `src/routes/__root.tsx` — init effect
+- `src/lib/use-analytics.ts` — new utility
+- `src/components/quest-app.tsx` — 4 capture call sites
+
+## Out of scope
+
+- User identification (`posthog.identify`) — no auth in this app yet.
+- Autocapture / pageview tracking config beyond defaults.
+- Server-side events.
