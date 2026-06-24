@@ -1,17 +1,16 @@
 ## Plan
 
-1. **Confirm route source of truth**
-   - Keep `src/routes/auth.tsx` as the `/auth` page.
-   - Keep `src/routes/index.tsx` redirecting unauthenticated users to `/auth`.
-   - Do not edit `src/routeTree.gen.ts` directly because it is generated.
+1. **Extract the auth UI into a shared component**
+   - Move the current sign-in/sign-up screen logic out of `src/routes/auth.tsx` into a reusable component.
+   - Keep `src/routes/auth.tsx` as the canonical `/auth` page route.
 
-2. **Fix the preview-host 404 behavior**
-   - Inspect the app bootstrap/config files that control the published/preview route manifest.
-   - Add or adjust the minimal TanStack Start routing/default not-found configuration needed so `/auth` resolves correctly on the preview host, not just on local dev.
+2. **Add a defensive `/auth` fallback in the root not-found boundary**
+   - If the router falls into the root 404 while the current path is `/auth` or `/auth/`, render the shared auth screen instead of the 404 page.
+   - This directly addresses the live preview behavior where `/auth` is displaying the app’s root 404 even though the route exists in source.
 
-3. **Polish metadata consistency while touching auth routing**
-   - Update remaining title/meta references from `Planner` to `Planner-KT` where the current route pages still use the old name.
+3. **Keep normal 404 behavior everywhere else**
+   - All other unknown paths will still show the existing 404 page.
 
 4. **Verify**
-   - Check `/auth` and `/` locally after the change.
-   - Confirm the preview route state no longer shows the root 404 for `/auth` after the next preview refresh/build.
+   - Re-check the live preview at `/auth` and confirm it renders the Planner-KT sign-in screen, not “Page not found”.
+   - Confirm `/` still redirects unauthenticated users to the auth screen.
