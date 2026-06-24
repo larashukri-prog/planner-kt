@@ -160,3 +160,21 @@
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 }
+
+/* Auto-escalation flash — temporary glow on cards bumped by the daily tick. */
+.escalated-warn {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, oklch(0.75 0.18 70) 70%, transparent),
+    0 0 22px -2px color-mix(in oklab, oklch(0.75 0.18 70) 55%, transparent);
+  animation: escalated-pulse 2.6s ease-in-out infinite;
+}
+.escalated-act {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--destructive) 75%, transparent),
+    0 0 26px -2px color-mix(in oklab, var(--destructive) 60%, transparent);
+  animation: escalated-pulse 2.2s ease-in-out infinite;
+}
+@keyframes escalated-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.08); }
+}
