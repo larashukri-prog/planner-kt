@@ -58,6 +58,11 @@ function localDateKey(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+function normalizeTitle(s: string): string {
+  // strip leading non-letter chars (emoji + whitespace) and lowercase
+  return s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
+}
+
 type Params = {
   tasks: Task[];
   addRecurringTask: (input: {
@@ -67,10 +72,10 @@ type Params = {
     recurringKey: string;
   }) => void;
   updateTask: (id: string, patch: Partial<Task>) => void;
+  deleteTask: (id: string) => void;
 };
 
-export function useDailySpawn({ tasks, addRecurringTask, updateTask }: Params) {
-  // Keep latest tasks reference without re-binding the interval.
+export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask }: Params) {
   const tasksRef = useRef(tasks);
   useEffect(() => {
     tasksRef.current = tasks;
@@ -87,26 +92,41 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask }: Params) {
       } catch {
         return;
       }
-      if (lastKey === todayKey) return;
-
+      const dateChanged = lastKey !== todayKey;
       const current = tasksRef.current;
-      for (const entry of RECURRING_QUESTS) {
-        if (!entry.shouldSpawn(today)) continue;
 
-        const existing = current.find(
+      for (const entry of RECURRING_QUESTS) {
+        const activeSolo = current.filter(
+          (t) => t.status !== "completed" && t.ownerId === "solo",
+        );
+        const normEntry = normalizeTitle(entry.title);
+
+        // Gather all candidates: tagged with this recurringKey OR title-matching orphans.
+        const matches = activeSolo.filter(
           (t) =>
-            t.recurringKey === entry.key &&
-            t.status !== "completed" &&
-            t.ownerId === "solo",
+            t.recurringKey === entry.key ||
+            (!t.recurringKey && normalizeTitle(t.title) === normEntry),
         );
 
-        if (existing) {
-          // Refresh: reset subtasks, bump createdAt. Do NOT touch status.
-          updateTask(existing.id, {
-            subtasks: existing.subtasks.map((s) => ({ ...s, isCompleted: false })),
-            createdAt: Date.now(),
-          });
-        } else {
+        if (matches.length > 0) {
+          // Keep the oldest, drop the rest.
+          matches.sort((a, b) => a.createdAt - b.createdAt);
+          const keep = matches[0];
+          for (let i = 1; i < matches.length; i++) deleteTask(matches[i].id);
+
+          // Adopt orphan (no recurringKey) — always safe.
+          if (!keep.recurringKey) {
+            updateTask(keep.id, { recurringKey: entry.key, title: entry.title });
+          }
+
+          // Refresh subtasks only when the calendar day rolls over.
+          if (dateChanged && entry.shouldSpawn(today)) {
+            updateTask(keep.id, {
+              subtasks: keep.subtasks.map((s) => ({ ...s, isCompleted: false })),
+              createdAt: Date.now(),
+            });
+          }
+        } else if (dateChanged && entry.shouldSpawn(today)) {
           addRecurringTask({
             title: entry.title,
             subtasks: entry.subtasks,
@@ -116,18 +136,19 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask }: Params) {
         }
       }
 
-      try {
-        window.localStorage.setItem(TICK_KEY, todayKey);
-      } catch {
-        /* ignore */
+      if (dateChanged) {
+        try {
+          window.localStorage.setItem(TICK_KEY, todayKey);
+        } catch {
+          /* ignore */
+        }
       }
     };
 
     runTick();
     const id = window.setInterval(runTick, 60_000);
     return () => window.clearInterval(id);
-    // Intentionally empty deps — engine runs on mount + 60s interval,
-    // reads latest tasks via ref. Avoids re-running on every task edit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
+
