@@ -21,7 +21,7 @@ const RECURRING_QUESTS: Recurring[] = [
   {
     key: "morning-armor",
     title: "🛡️ Morning Routine",
-    subtasks: ["Shower", "Brush Teeth", "Wash Face & Skincare", "Hair"],
+    subtasks: ["Shower", "Brush Teeth", "Wash Face", "Skincare", "Hair"],
     zone: "now",
     shouldSpawn: () => true,
   },
