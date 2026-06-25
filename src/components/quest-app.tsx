@@ -721,7 +721,7 @@ function TaskCard({
             </div>
           )}
         </button>
-        {isWorkout && task.status === "now" && !completing && (
+        {isWorkout && task.status === "now" && !completing && (() => { const d = new Date().getDay(); return d === 2 || d === 4 || d === 6; })() && (
           <button
             type="button"
             onClick={handleRestDay}

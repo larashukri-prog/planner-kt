@@ -1,45 +1,43 @@
-# Workout Quest + Rest Day
+## Plan: Rest Day Button Day-Based Visibility
 
-## Phase 1 — Spawning Engine (`src/lib/use-daily-spawn.ts`)
+### Objective
+Modify the "Rest Day" button on the "Workout" task card so it only renders on designated recovery days (Tue/Thu/Sat) and is completely hidden on gym days (Mon/Wed/Fri/Sun).
 
-Add a new entry to `RECURRING_QUESTS`:
+### Changes
 
-- `key`: `"workout"`
-- `title`: `"💪 Workout"`
-- `zone`: `"now"`
-- `shouldSpawn`: `() => true` (daily)
-- `subtasks`:
-  1. Walk over to the IDX Fitness Center with a hype playlist
-  2. Warmup: Pushups (3 sets to failure)
-  3. Free Weights: Goblet Squats or Lunges (3x10)
-  4. Free Weights: Overhead Press or Dumbbell Rows (3x10)
-  5. Chug water & rack the weights
+**File: `src/components/quest-app.tsx`**
 
-The existing engine already enforces the Anti-Guilt Rule via `recurringKey` matching: if an uncompleted Workout exists it bumps `createdAt` and resets subtask checkmarks; otherwise it inserts a fresh row through Supabase (via `addRecurringTask` → `use-tasks.ts`). No new query path needed — the user-scoped lookup happens in the in-memory `tasks` array which mirrors Supabase under RLS (`auth.uid()`).
+Inside the `<TaskCard>` component, update the Rest Day button rendering condition.
 
-## Phase 2 — Rest Day UI (`src/components/quest-app.tsx`)
+- **Current condition (line ~724):**
+  ```tsx
+  {isWorkout && task.status === "now" && !completing && (
+  ```
 
-In `TaskCard`, when `task.recurringKey === "workout"` AND `task.status === "now"`:
+- **New condition:**
+  Add a client-side `Date` evaluation to determine if today is a rest day.
+  ```tsx
+  const todayDay = new Date().getDay();
+  const isRestDayToday = todayDay === 2 || todayDay === 4 || todayDay === 6;
+  ```
+  Then update the JSX guard to:
+  ```tsx
+  {isWorkout && task.status === "now" && !completing && isRestDayToday && (
+  ```
 
-- Render a small "Rest Day" pill button next to the complete checkbox.
-- Style: neutral slate/amber outline, muted text, Lucide `Coffee` icon, no neon glow — visually distinct from the "Complete" action.
-- On click:
-  1. Fire-and-forget `track('rest_day_logged')`.
-  2. Trigger the existing success-flash animation.
-  3. After ~320ms, call `updateTask` with `status: "completed"`, `completedAt: Date.now()`, and `title: "💪 Workout — [Rest Day]"` so it reads clearly on the Done Wall.
+### Schedule Reference
+| Day | `getDay()` | Type | Button Visible |
+|-----|------------|------|----------------|
+| Sunday | 0 | Gym | No |
+| Monday | 1 | Gym | No |
+| Tuesday | 2 | Rest | **Yes** |
+| Wednesday | 3 | Gym | No |
+| Thursday | 4 | Rest | **Yes** |
+| Friday | 5 | Gym | No |
+| Saturday | 6 | Rest | **Yes** |
 
-Using a title suffix instead of a new `is_rest_day` column avoids a Supabase migration; the `[Rest Day]` tag is the persisted flag. (If you'd rather have a real boolean column, say the word and I'll add a migration instead.)
-
-## Phase 3 — Analytics (`src/components/quest-app.tsx`)
-
-- `workout_completed`: fired in `CompleteCheckbox`'s claim handler when the completed task's `recurringKey === "workout"` and the title does not already contain `[Rest Day]`.
-- `rest_day_logged`: fired from the Rest Day button handler.
-
-Both go through the existing `track()` helper, which already queues via `queueMicrotask` so the UI never waits.
-
-## Files touched
-
-- `src/lib/use-daily-spawn.ts` — add Workout entry to `RECURRING_QUESTS`.
-- `src/components/quest-app.tsx` — Rest Day button in `TaskCard`, conditional `workout_completed` event in completion handler.
-
-No schema changes, no new dependencies (`Coffee` is already available via `lucide-react`).
+### Why This Approach
+- Uses standard `new Date().getDay()` evaluated client-side; the UI updates naturally when the day changes without requiring a page refresh (the 60-second spawn tick interval and React re-renders keep it current).
+- Leaves the existing `isWorkout`, `status === "now"`, and `!completing` guards untouched.
+- No backend or schema changes required.
+- PostHog tracking (`rest_day_logged`) remains bound to the click handler and only fires when the button is actually visible and clicked.
