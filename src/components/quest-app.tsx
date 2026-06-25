@@ -391,7 +391,7 @@ function InboxStrip({
                 className="group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing"
                 style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
               >
-                <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
+                <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
                 <div className="mt-3 flex items-center gap-1">
                   <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
                   <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
