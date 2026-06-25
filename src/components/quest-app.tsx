@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
-  Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
+  ArrowRight, Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
   ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar, Coffee,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
@@ -267,7 +267,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         className="grid h-9 w-9 shrink-0 place-items-center rounded-full"
         style={{ background: "color-mix(in oklab, var(--color-inbox) 22%, transparent)", color: "var(--color-inbox)" }}
       >
-        <Inbox className="h-4 w-4" />
+        <ArrowRight className="h-4 w-4" />
       </div>
       <input
         ref={ref}
