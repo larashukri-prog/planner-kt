@@ -615,6 +615,9 @@ function TaskCard({
     if (task.escalatedAt) onUpdate(task.id, { escalatedAt: null });
   };
 
+  const isWorkout = task.recurringKey === "workout";
+  const isRestDay = task.title.includes("[Rest Day]");
+
   const handleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (completing) return;
@@ -622,8 +625,25 @@ function TaskCard({
       has_subtasks: task.subtasks.length > 0,
       time_in_zone_ms: Date.now() - task.createdAt,
     });
+    if (isWorkout && !isRestDay) {
+      track("workout_completed");
+    }
     setCompleting(true);
     window.setTimeout(() => onMove(task.id, "completed"), 320);
+  };
+
+  const handleRestDay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (completing) return;
+    track("rest_day_logged");
+    setCompleting(true);
+    const restTitle = task.title.includes("[Rest Day]")
+      ? task.title
+      : `${task.title} — [Rest Day]`;
+    window.setTimeout(() => {
+      onUpdate(task.id, { title: restTitle });
+      onMove(task.id, "completed");
+    }, 320);
   };
 
   const dueLabel = task.dueDate ? formatDueLabel(task.dueDate) : null;
