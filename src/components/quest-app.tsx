@@ -981,7 +981,7 @@ function MicroStepList({
               }}
               className="flex-1 text-xs"
             >
-              {s.text}
+              {renderWithLinks(s.text)}
             </motion.span>
             <button
               onClick={() => onRemove(s.id)}
