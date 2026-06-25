@@ -21,7 +21,7 @@ const RECURRING_QUESTS: Recurring[] = [
   {
     key: "morning-armor",
     title: "🛡️ Morning Routine",
-    subtasks: ["Shower", "Brush Teeth", "Wash Face & Skincare", "Hair"],
+    subtasks: ["Shower", "Brush Teeth", "Wash Face", "Skincare", "Hair"],
     zone: "now",
     shouldSpawn: () => true,
   },
@@ -124,6 +124,21 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
 
           if (!keep.recurringKey) {
             updateTask(keep.id, { recurringKey: entry.key, title: entry.title });
+          }
+
+          // Remove obsolete combined subtasks superseded by template updates.
+          const OBSOLETE_SUBTASKS: Record<string, string[]> = {
+            "morning-armor": ["wash face & skincare"],
+          };
+          const obsolete = new Set(
+            (OBSOLETE_SUBTASKS[entry.key] ?? []).map((s) => s.toLowerCase()),
+          );
+          const prunedSubtasks = keep.subtasks.filter(
+            (s) => !obsolete.has(s.text.trim().toLowerCase()),
+          );
+          if (prunedSubtasks.length !== keep.subtasks.length) {
+            updateTask(keep.id, { subtasks: prunedSubtasks });
+            keep.subtasks = prunedSubtasks;
           }
 
           const existingTexts = new Set(
