@@ -1,43 +1,21 @@
-## Plan: Rest Day Button Day-Based Visibility
+## Goal
+Ensure "Morning Armor" (Morning Routine) always renders above "Workout" in the NOW column, regardless of which task was spawned/bumped most recently.
 
-### Objective
-Modify the "Rest Day" button on the "Workout" task card so it only renders on designated recovery days (Tue/Thu/Sat) and is completely hidden on gym days (Mon/Wed/Fri/Sun).
+## Change
+In `src/components/quest-app.tsx`, inside `ZoneBoard` where `items` are computed per zone (around line 447), apply a stable sort that gives recurring quests an explicit priority order, with everything else preserving original order.
 
-### Changes
+Priority order (top → bottom):
+1. `morning-armor`
+2. `workout`
+3. all other tasks (unchanged relative order)
 
-**File: `src/components/quest-app.tsx`**
+Implementation: replace
+```ts
+const items = tasks.filter((t) => t.status === z.id);
+```
+with a filter + `.sort()` using a small `priority(key)` helper that returns `0` for morning-armor, `1` for workout, `2` otherwise. Use a stable comparator (return 0 for ties so insertion order is preserved by Array.prototype.sort in modern engines).
 
-Inside the `<TaskCard>` component, update the Rest Day button rendering condition.
-
-- **Current condition (line ~724):**
-  ```tsx
-  {isWorkout && task.status === "now" && !completing && (
-  ```
-
-- **New condition:**
-  Add a client-side `Date` evaluation to determine if today is a rest day.
-  ```tsx
-  const todayDay = new Date().getDay();
-  const isRestDayToday = todayDay === 2 || todayDay === 4 || todayDay === 6;
-  ```
-  Then update the JSX guard to:
-  ```tsx
-  {isWorkout && task.status === "now" && !completing && isRestDayToday && (
-  ```
-
-### Schedule Reference
-| Day | `getDay()` | Type | Button Visible |
-|-----|------------|------|----------------|
-| Sunday | 0 | Gym | No |
-| Monday | 1 | Gym | No |
-| Tuesday | 2 | Rest | **Yes** |
-| Wednesday | 3 | Gym | No |
-| Thursday | 4 | Rest | **Yes** |
-| Friday | 5 | Gym | No |
-| Saturday | 6 | Rest | **Yes** |
-
-### Why This Approach
-- Uses standard `new Date().getDay()` evaluated client-side; the UI updates naturally when the day changes without requiring a page refresh (the 60-second spawn tick interval and React re-renders keep it current).
-- Leaves the existing `isWorkout`, `status === "now"`, and `!completing` guards untouched.
-- No backend or schema changes required.
-- PostHog tracking (`rest_day_logged`) remains bound to the click handler and only fires when the button is actually visible and clicked.
+## Scope
+- Frontend only, one file: `src/components/quest-app.tsx`.
+- No schema, spawn engine, or analytics changes.
+- Affects all zones uniformly, but only Morning Armor + Workout have explicit priorities, so behavior in Later/Future is unchanged in practice.

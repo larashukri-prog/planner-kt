@@ -444,7 +444,10 @@ function ZoneBoard({
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <LayoutGroup>
         {ZONES.map((z) => {
-          const items = tasks.filter((t) => t.status === z.id);
+          const priority = (k?: string) => (k === "morning-armor" ? 0 : k === "workout" ? 1 : 2);
+          const items = tasks
+            .filter((t) => t.status === z.id)
+            .sort((a, b) => priority(a.recurringKey) - priority(b.recurringKey));
           return (
             <ZoneColumn
               key={z.id}
