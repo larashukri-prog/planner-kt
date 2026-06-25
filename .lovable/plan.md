@@ -1,25 +1,10 @@
-## Goal
-Auto-detect http/https URLs in task titles and subtask text and render them as safe clickable links — purely a render-time change.
+Refactor the `QuickAddBar` component in `src/components/quest-app.tsx` so the input field and "Capture" button sit inside a single cohesive pill-shaped container, similar to the Daily XP pill's rounded-full, bordered, slightly inset look.
 
-## Files
-- New: `src/lib/linkify.tsx` — pure helper `renderWithLinks(text: string): ReactNode[]` that splits on a URL regex and returns text + `<a>` nodes.
-- Edit: `src/components/quest-app.tsx` — use the helper in three render sites:
-  - Inbox card title (line ~393): `<p>{task.title}</p>` → `{renderWithLinks(task.title)}`
-  - TaskCard title (line ~699): same swap
-  - SubtaskList item text (line ~983): `{s.text}` → `{renderWithLinks(s.text)}`
+### Changes
+1. **Input field framing**: Wrap the `<input>` in a `rounded-full` container with a visible border and subtle background (`bg-secondary/60` or similar) so it reads as a clear text-entry surface rather than invisible text on a card.
+2. **Capture button integration**: Keep the "Capture" button as a rounded pill inside the same horizontal container, maintaining the existing neon styling.
+3. **Overall layout**: The outer `quest-card` can remain, but the internal flex layout should feel like one continuous pill bar (icon → text field → button) rather than a card with loose elements.
+4. **Accessibility**: Ensure the `kbd /` shortcut indicator remains visible and the form still submits on Enter.
 
-No changes to types, state, persistence, Supabase, spawn engine, or analytics.
-
-## Helper details
-- Regex: `/(https?:\/\/[^\s<]+[^\s<.,:;!?')\]}])/gi` (trims common trailing punctuation).
-- Returns an array of strings and `<a>` elements, each `<a>` keyed by index.
-- `<a>` props:
-  - `href={url}`, `target="_blank"`, `rel="noopener noreferrer"`
-  - `onClick={(e) => e.stopPropagation()}` so clicking a link in the TaskCard header doesn't toggle expand
-  - ClassName: `inline-flex max-w-full items-center gap-0.5 align-bottom text-[var(--color-neon)] underline decoration-dotted underline-offset-2 hover:decoration-solid`
-  - Display text wrapped in a `<span class="truncate max-w-[18ch] md:max-w-[28ch] overflow-hidden align-bottom">` so long URLs ellipsis-truncate without breaking layout
-  - Trailing `<ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />` from `lucide-react`
-- Title strings already use `line-clamp-2`, so links inside titles inherit clamping; the truncating span ensures a single very long URL still fits.
-
-## Out of scope
-Data layer, validation, autolinking on save, markdown — none of these change.
+### Outcome
+The "Brain dump a quest. Press Enter. No tags. No deadlines." area looks like a clear, tappable/typable input surface — visually similar to the Daily XP progress pill — with the Capture button sitting at the right end of the same shape.
