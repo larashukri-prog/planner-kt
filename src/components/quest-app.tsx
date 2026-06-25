@@ -697,7 +697,7 @@ function TaskCard({
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
           className="min-w-0 flex-1 text-left"
         >
-          <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
+          <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
           {dueLabel && (
             <span
               className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
