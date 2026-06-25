@@ -11,6 +11,7 @@ import { track, trackOncePerSession } from "@/lib/use-analytics";
 import { signOut } from "@/lib/use-auth";
 import { LogOut } from "lucide-react";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
+import { renderWithLinks } from "@/lib/linkify";
 
 type View = "board" | "done";
 
@@ -390,7 +391,7 @@ function InboxStrip({
                 className="group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing"
                 style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
               >
-                <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
+                <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
                 <div className="mt-3 flex items-center gap-1">
                   <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
                   <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
@@ -696,7 +697,7 @@ function TaskCard({
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
           className="min-w-0 flex-1 text-left"
         >
-          <p className="line-clamp-2 text-sm font-medium leading-snug">{task.title}</p>
+          <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
           {dueLabel && (
             <span
               className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
@@ -980,7 +981,7 @@ function MicroStepList({
               }}
               className="flex-1 text-xs"
             >
-              {s.text}
+              {renderWithLinks(s.text)}
             </motion.span>
             <button
               onClick={() => onRemove(s.id)}
