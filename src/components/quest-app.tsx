@@ -721,6 +721,18 @@ function TaskCard({
             </div>
           )}
         </button>
+        {isWorkout && task.status === "now" && !completing && (
+          <button
+            type="button"
+            onClick={handleRestDay}
+            className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-600 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
+            aria-label="Log as rest day"
+            title="Rest Day"
+          >
+            <Coffee className="h-3 w-3" />
+            Rest
+          </button>
+        )}
         <motion.button
           type="button"
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
