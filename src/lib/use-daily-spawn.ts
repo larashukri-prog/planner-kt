@@ -78,13 +78,22 @@ type Params = {
 
 export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask }: Params) {
   const tasksRef = useRef(tasks);
+  const hasLoadedRef = useRef(false);
+  const tickFnRef = useRef<() => void>(() => {});
+
   useEffect(() => {
     tasksRef.current = tasks;
+    if (!hasLoadedRef.current && tasks.length > 0) {
+      hasLoadedRef.current = true;
+      tickFnRef.current();
+    }
   }, [tasks]);
 
   useEffect(() => {
     const runTick = () => {
       if (typeof window === "undefined") return;
+      if (!hasLoadedRef.current) return;
+
       const today = new Date();
       const todayKey = localDateKey(today);
       let lastKey: string | null = null;
@@ -102,7 +111,6 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
         );
         const normEntry = normalizeTitle(entry.title);
 
-        // Gather all candidates: tagged with this recurringKey OR title-matching orphans.
         const matches = activeSolo.filter(
           (t) =>
             t.recurringKey === entry.key ||
@@ -110,17 +118,14 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
         );
 
         if (matches.length > 0) {
-          // Keep the oldest, drop the rest.
           matches.sort((a, b) => a.createdAt - b.createdAt);
           const keep = matches[0];
           for (let i = 1; i < matches.length; i++) deleteTask(matches[i].id);
 
-          // Adopt orphan (no recurringKey) — always safe.
           if (!keep.recurringKey) {
             updateTask(keep.id, { recurringKey: entry.key, title: entry.title });
           }
 
-          // Backfill any template subtasks missing from the existing task.
           const existingTexts = new Set(
             keep.subtasks.map((s) => s.text.trim().toLowerCase()),
           );
@@ -136,14 +141,23 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
             });
           }
 
-          // Refresh subtasks only when the calendar day rolls over.
+          // Anti-Guilt refresh: on rollover days the entry is scheduled for, reset subtasks + bump timestamp.
           if (dateChanged && entry.shouldSpawn(today)) {
+            const refreshed = (missing.length > 0
+              ? [
+                  ...keep.subtasks,
+                  ...missing.map((text) => ({ id: uid(), text, isCompleted: false })),
+                ]
+              : keep.subtasks
+            ).map((s) => ({ ...s, isCompleted: false }));
             updateTask(keep.id, {
-              subtasks: keep.subtasks.map((s) => ({ ...s, isCompleted: false })),
+              subtasks: refreshed,
               createdAt: Date.now(),
             });
           }
-        } else if (dateChanged && entry.shouldSpawn(today)) {
+        } else if (entry.shouldSpawn(today)) {
+          // No active instance — spawn a fresh one whenever it's a scheduled day,
+          // regardless of dateChanged (covers "completed yesterday" + first-of-day load).
           addRecurringTask({
             title: entry.title,
             subtasks: entry.subtasks,
@@ -159,7 +173,7 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
         for (const task of current) {
           if (task.status === "completed") continue;
           if (task.dueDate == null) continue;
-          if (task.status === "now") continue; // never demote / re-touch
+          if (task.status === "now") continue;
           const daysUntil = Math.ceil((task.dueDate - todayMidnight) / 86400000);
           if ((task.status === "later" || task.status === "next") && daysUntil <= 2) {
             updateTask(task.id, { status: "now", escalatedAt: Date.now() });
@@ -178,9 +192,23 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
       }
     };
 
-    runTick();
+    tickFnRef.current = runTick;
+
+    // Grace period: if no tasks have loaded after 1500ms (e.g. brand-new account
+    // with zero rows), allow the tick to run so first-day spawns still happen.
+    const graceTimer = window.setTimeout(() => {
+      if (!hasLoadedRef.current) {
+        hasLoadedRef.current = true;
+        runTick();
+      }
+    }, 1500);
+
+    if (hasLoadedRef.current) runTick();
     const id = window.setInterval(runTick, 60_000);
-    return () => window.clearInterval(id);
+    return () => {
+      window.clearInterval(id);
+      window.clearTimeout(graceTimer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

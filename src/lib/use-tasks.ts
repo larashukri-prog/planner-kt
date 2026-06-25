@@ -63,6 +63,7 @@ function patchToUpdate(patch: Partial<Task>): Record<string, unknown> {
   if (patch.dueDate !== undefined) out.due_date = patch.dueDate ? new Date(patch.dueDate).toISOString() : null;
   if (patch.completedAt !== undefined)
     out.completed_at = patch.completedAt ? new Date(patch.completedAt).toISOString() : null;
+  if (patch.createdAt !== undefined) out.created_at = new Date(patch.createdAt).toISOString();
   return out;
 }
 
