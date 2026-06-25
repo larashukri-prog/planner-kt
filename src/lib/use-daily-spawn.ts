@@ -26,6 +26,19 @@ const RECURRING_QUESTS: Recurring[] = [
     shouldSpawn: () => true,
   },
   {
+    key: "workout",
+    title: "💪 Workout",
+    subtasks: [
+      "Walk over to the IDX Fitness Center with a hype playlist",
+      "Warmup: Pushups (3 sets to failure)",
+      "Free Weights: Goblet Squats or Lunges (3x10)",
+      "Free Weights: Overhead Press or Dumbbell Rows (3x10)",
+      "Chug water & rack the weights",
+    ],
+    zone: "now",
+    shouldSpawn: () => true,
+  },
+  {
     key: "laundry-loop",
     title: "🧺 Laundry Loop",
     subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put away"],

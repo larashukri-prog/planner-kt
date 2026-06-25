@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 import {
   Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
-  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar,
+  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar, Coffee,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
@@ -615,6 +615,9 @@ function TaskCard({
     if (task.escalatedAt) onUpdate(task.id, { escalatedAt: null });
   };
 
+  const isWorkout = task.recurringKey === "workout";
+  const isRestDay = task.title.includes("[Rest Day]");
+
   const handleComplete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (completing) return;
@@ -622,8 +625,25 @@ function TaskCard({
       has_subtasks: task.subtasks.length > 0,
       time_in_zone_ms: Date.now() - task.createdAt,
     });
+    if (isWorkout && !isRestDay) {
+      track("workout_completed");
+    }
     setCompleting(true);
     window.setTimeout(() => onMove(task.id, "completed"), 320);
+  };
+
+  const handleRestDay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (completing) return;
+    track("rest_day_logged");
+    setCompleting(true);
+    const restTitle = task.title.includes("[Rest Day]")
+      ? task.title
+      : `${task.title} — [Rest Day]`;
+    window.setTimeout(() => {
+      onUpdate(task.id, { title: restTitle });
+      onMove(task.id, "completed");
+    }, 320);
   };
 
   const dueLabel = task.dueDate ? formatDueLabel(task.dueDate) : null;
@@ -701,6 +721,18 @@ function TaskCard({
             </div>
           )}
         </button>
+        {isWorkout && task.status === "now" && !completing && (
+          <button
+            type="button"
+            onClick={handleRestDay}
+            className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-600 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
+            aria-label="Log as rest day"
+            title="Rest Day"
+          >
+            <Coffee className="h-3 w-3" />
+            Rest
+          </button>
+        )}
         <motion.button
           type="button"
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
