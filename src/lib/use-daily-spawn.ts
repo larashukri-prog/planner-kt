@@ -126,6 +126,21 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
             updateTask(keep.id, { recurringKey: entry.key, title: entry.title });
           }
 
+          // Remove obsolete combined subtasks superseded by template updates.
+          const OBSOLETE_SUBTASKS: Record<string, string[]> = {
+            "morning-armor": ["wash face & skincare"],
+          };
+          const obsolete = new Set(
+            (OBSOLETE_SUBTASKS[entry.key] ?? []).map((s) => s.toLowerCase()),
+          );
+          const prunedSubtasks = keep.subtasks.filter(
+            (s) => !obsolete.has(s.text.trim().toLowerCase()),
+          );
+          if (prunedSubtasks.length !== keep.subtasks.length) {
+            updateTask(keep.id, { subtasks: prunedSubtasks });
+            keep.subtasks = prunedSubtasks;
+          }
+
           const existingTexts = new Set(
             keep.subtasks.map((s) => s.text.trim().toLowerCase()),
           );
