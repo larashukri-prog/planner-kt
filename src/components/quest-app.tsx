@@ -258,12 +258,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       transition={{ duration: 0.35 }}
       className="relative flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-2 pr-1.5 shadow-md transition-all duration-200 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/50"
     >
-      <div
-        className="grid h-9 w-9 shrink-0 place-items-center rounded-full"
-        style={{ background: "color-mix(in oklab, var(--color-inbox) 22%, transparent)", color: "var(--color-inbox)" }}
-      >
-        <ArrowRight className="h-4 w-4" />
-      </div>
+      <Plus className="h-5 w-5 shrink-0 text-black dark:text-white" strokeWidth={2.5} />
       <input
         ref={ref}
         value={value}
