@@ -361,6 +361,7 @@ function InboxStrip({
 }) {
   if (items.length === 0) return null;
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+  const [sortingIds, setSortingIds] = useState<Map<string, 'left' | 'right'>>(new Map());
 
   const handleDelete = (id: string) => {
     if (deletingIds.has(id)) return;
@@ -368,6 +369,19 @@ function InboxStrip({
     setTimeout(() => {
       onDelete(id);
     }, 200);
+  };
+
+  const handleSort = (id: string, status: TaskStatus, direction: 'left' | 'right') => {
+    if (sortingIds.has(id) || deletingIds.has(id)) return;
+    setSortingIds((prev) => new Map(prev).set(id, direction));
+    setTimeout(() => {
+      onMove(id, status);
+      setSortingIds((prev) => {
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 250);
   };
 
   return (
@@ -386,12 +400,13 @@ function InboxStrip({
           <AnimatePresence initial={false}>
             {items.map((task) => {
               const isDeleting = deletingIds.has(task.id);
+              const sorting = sortingIds.get(task.id);
               return (
                 <motion.div
                   key={task.id}
                   layout
                   initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                  animate={{ opacity: isDeleting ? 0 : 1, scale: isDeleting ? 0.95 : 1, y: 0 }}
+                  animate={{ opacity: isDeleting ? 0 : sorting ? 0 : 1, scale: isDeleting ? 0.95 : sorting ? 0.95 : 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, x: -20 }}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   draggable
@@ -399,15 +414,17 @@ function InboxStrip({
                   onDragEnd={() => setDragId(null)}
                   className={cn(
                     "group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing transition-all duration-200 ease-out",
-                    isDeleting && "pointer-events-none opacity-0 scale-95 max-h-0 py-0 my-0 overflow-hidden"
+                    isDeleting && "pointer-events-none opacity-0 scale-95 max-h-0 py-0 my-0 overflow-hidden",
+                    sorting === 'left' && "!-translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out",
+                    sorting === 'right' && "!translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out"
                   )}
                   style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
                 >
                   <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
                   <div className="mt-3 flex items-center gap-1">
-                    <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
-                    <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
-                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" onClick={() => onMove(task.id, "later")} />
+                    <ZoneQuickButton label="Now"    tint="var(--color-zone-now)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
+                    <ZoneQuickButton label="Later"  tint="var(--color-zone-next)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
+                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
                     <button
                       onClick={() => handleDelete(task.id)}
                       aria-label="Delete"
@@ -426,7 +443,7 @@ function InboxStrip({
   );
 }
 
-function ZoneQuickButton({ label, tint, onClick }: { label: string; tint: string; onClick: () => void }) {
+function ZoneQuickButton({ label, tint, direction, onClick }: { label: string; tint: string; direction: 'left' | 'right'; onClick: () => void }) {
   return (
     <motion.button
       whileTap={{ scale: 0.92 }}
@@ -434,7 +451,7 @@ function ZoneQuickButton({ label, tint, onClick }: { label: string; tint: string
       className="rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       style={{ borderColor: `color-mix(in oklab, ${tint} 35%, var(--color-border))` }}
     >
-      <span style={{ color: tint }}>→</span> {label}
+      <span style={{ color: tint }}>{direction === 'left' ? '←' : '→'}</span> {label}
     </motion.button>
   );
 }
