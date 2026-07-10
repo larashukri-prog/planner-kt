@@ -502,7 +502,7 @@ function ZoneBoard({
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth -mx-4 px-4 pb-2 scrollbar-quest md:contents"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth -mx-4 px-4 pb-2 scrollbar-quest md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 md:mx-0"
       >
         <LayoutGroup>
           {ZONES.map((z) => {
@@ -513,7 +513,7 @@ function ZoneBoard({
             return (
               <div
                 key={z.id}
-                className="snap-center shrink-0 w-[85vw] md:w-auto md:shrink first:ml-1 last:mr-1 md:first:ml-0 md:last:mr-0"
+                className="snap-center shrink-0 w-[85vw] first:ml-1 last:mr-1 md:ml-0 md:mr-0 md:w-full md:min-w-0 md:snap-align-none"
               >
                 <ZoneColumn
                   zone={z}

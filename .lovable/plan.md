@@ -1,8 +1,17 @@
-Problem: The delete button on Inbox task cards is hidden by default (`opacity-0`) and only reveals on `group-hover`. On touch/mobile devices there is no hover state, so users cannot see or tap the delete control.
+Update the `ZoneBoard` component in `src/components/quest-app.tsx` so the three zone columns render in a single horizontal row on desktop instead of stacking vertically.
 
-Fix in `src/components/quest-app.tsx` inside the `<InboxStrip>` component:
-- Change the delete button visibility class from `opacity-0 group-hover:opacity-100` to `opacity-100 md:opacity-0 md:group-hover:opacity-100`.
-- This keeps the current hover-reveal behavior on desktop while making the delete icon permanently visible on mobile viewports.
-- Optionally add a touch-friendly hit area (`min-h-[28px] min-w-[28px]` / `p-2`) so it is easy to tap.
+What will change:
+- Replace the desktop `md:contents` behavior on the carousel scroller with a stable `md:grid md:grid-cols-3` (or `md:flex md:flex-row`) layout.
+- Keep the mobile experience exactly as-is: horizontal snap scrolling, `w-[85vw]` card peeking, and dot indicators.
+- Adjust the column wrapper divs so they fill the desktop row width (`md:w-full`) and stop acting as contents children of the vertical board container.
+- Leave `ZoneColumn`, `TaskCard`, drag-and-drop, animations, and the mobile carousel logic untouched.
 
-No state, data, or routing changes are required.
+What will NOT change:
+- Mobile carousel behavior, snap points, or dot indicators.
+- Any task data, sorting, spawning engine, analytics, auth, or theme code.
+- Styling tokens, colors, or the existing card design.
+
+Verification:
+- Build the project to confirm no TypeScript/Tailwind errors.
+- Visually inspect the desktop preview to confirm Now, Later, and Future are visible side-by-side above the fold.
+- Check the mobile preview to confirm the horizontal carousel still works.
