@@ -256,12 +256,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       onSubmit={submit}
       animate={pulse ? { scale: [1, 1.01, 1] } : {}}
       transition={{ duration: 0.35 }}
-      className="relative flex items-center gap-2 rounded-full border border-border bg-secondary/40 py-1.5 pl-2 pr-1.5 shadow-inner backdrop-blur transition-colors focus-within:border-[var(--color-inbox)]/60 focus-within:bg-secondary/60"
-      style={{
-        boxShadow: hasValue
-          ? `inset 0 1px 2px rgb(0 0 0 / 0.06), 0 0 0 1px color-mix(in oklab, var(--color-inbox) 35%, transparent)`
-          : undefined,
-      }}
+      className="relative flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-2 pr-1.5 shadow-md transition-all duration-200 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/50"
     >
       <div
         className="grid h-9 w-9 shrink-0 place-items-center rounded-full"
