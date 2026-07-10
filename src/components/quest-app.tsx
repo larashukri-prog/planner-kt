@@ -1238,7 +1238,7 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
     <motion.section
       animate={celebrate ? { scale: [1, 1.02, 1] } : { scale: 1 }}
       transition={{ duration: 0.45 }}
-      className="quest-card relative px-4 py-4 md:px-5"
+      className="relative bg-transparent px-4 py-4 md:px-5"
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
