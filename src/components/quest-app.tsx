@@ -12,6 +12,7 @@ import { signOut } from "@/lib/use-auth";
 import { LogOut } from "lucide-react";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 import { renderWithLinks } from "@/lib/linkify";
+import { cn } from "@/lib/utils";
 
 type View = "board" | "done";
 
@@ -359,6 +360,16 @@ function InboxStrip({
   setDragId: (s: string | null) => void;
 }) {
   if (items.length === 0) return null;
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+
+  const handleDelete = (id: string) => {
+    if (deletingIds.has(id)) return;
+    setDeletingIds((prev) => new Set(prev).add(id));
+    setTimeout(() => {
+      onDelete(id);
+    }, 200);
+  };
+
   return (
     <section className="quest-card px-4 py-4 md:px-5">
       <div className="mb-3 flex items-center justify-between">
@@ -373,35 +384,41 @@ function InboxStrip({
       <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-quest">
         <LayoutGroup>
           <AnimatePresence initial={false}>
-            {items.map((task) => (
-              <motion.div
-                key={task.id}
-                layout
-                initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, x: -20 }}
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                draggable
-                onDragStart={() => setDragId(task.id)}
-                onDragEnd={() => setDragId(null)}
-                className="group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing"
-                style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
-              >
-                <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
-                <div className="mt-3 flex items-center gap-1">
-                  <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
-                  <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
-                  <ZoneQuickButton label="Future" tint="var(--color-zone-later)" onClick={() => onMove(task.id, "later")} />
-                  <button
-                    onClick={() => onDelete(task.id)}
-                    aria-label="Delete"
-                    className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+            {items.map((task) => {
+              const isDeleting = deletingIds.has(task.id);
+              return (
+                <motion.div
+                  key={task.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95, y: -8 }}
+                  animate={{ opacity: isDeleting ? 0 : 1, scale: isDeleting ? 0.95 : 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, x: -20 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  draggable
+                  onDragStart={() => setDragId(task.id)}
+                  onDragEnd={() => setDragId(null)}
+                  className={cn(
+                    "group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing transition-all duration-200 ease-out",
+                    isDeleting && "pointer-events-none opacity-0 scale-95 max-h-0 py-0 my-0 overflow-hidden"
+                  )}
+                  style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
+                >
+                  <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
+                  <div className="mt-3 flex items-center gap-1">
+                    <ZoneQuickButton label="Now"   tint="var(--color-zone-now)"   onClick={() => onMove(task.id, "now")} />
+                    <ZoneQuickButton label="Later" tint="var(--color-zone-next)"  onClick={() => onMove(task.id, "next")} />
+                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" onClick={() => onMove(task.id, "later")} />
+                    <button
+                      onClick={() => handleDelete(task.id)}
+                      aria-label="Delete"
+                      className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </LayoutGroup>
       </div>
