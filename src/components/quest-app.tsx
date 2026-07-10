@@ -12,6 +12,7 @@ import { signOut } from "@/lib/use-auth";
 import { LogOut } from "lucide-react";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 import { renderWithLinks } from "@/lib/linkify";
+import { cn } from "@/lib/utils";
 
 type View = "board" | "done";
 
