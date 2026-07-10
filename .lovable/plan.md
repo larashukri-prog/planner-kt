@@ -1,19 +1,8 @@
-## Problem
-The keyboard shortcut hint in the Brain Dump capsule currently renders the literal text `\n`, which looks like a stray letter "n" with a backslash. The user wants it simple and clear.
+Problem: The delete button on Inbox task cards is hidden by default (`opacity-0`) and only reveals on `group-hover`. On touch/mobile devices there is no hover state, so users cannot see or tap the delete control.
 
-## Proposed Change
-In `src/components/quest-app.tsx`, update the `<kbd>` element at line ~269 to display a clean **return arrow** (`↵`) instead of `\n`. This is a single-character, universally understood "Enter/Return" symbol that avoids any confusion with the letter "n".
+Fix in `src/components/quest-app.tsx` inside the `<InboxStrip>` component:
+- Change the delete button visibility class from `opacity-0 group-hover:opacity-100` to `opacity-100 md:opacity-0 md:group-hover:opacity-100`.
+- This keeps the current hover-reveal behavior on desktop while making the delete icon permanently visible on mobile viewports.
+- Optionally add a touch-friendly hit area (`min-h-[28px] min-w-[28px]` / `p-2`) so it is easy to tap.
 
-```text
-Before: <kbd>\n</kbd>
-After:  <kbd>↵</kbd>
-```
-
-## Alternative
-If you prefer no shortcut hint at all, I can remove the `<kbd>` element entirely and keep the capsule cleaner.
-
-## Scope
-- One-line text change in `src/components/quest-app.tsx`.
-- No logic, state, or backend changes.
-
-Which direction would you like: the return arrow (`↵`) or remove the hint completely?
+No state, data, or routing changes are required.

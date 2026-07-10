@@ -395,7 +395,7 @@ function InboxStrip({
                   <button
                     onClick={() => onDelete(task.id)}
                     aria-label="Delete"
-                    className="ml-auto rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+                    className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
