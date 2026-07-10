@@ -447,34 +447,90 @@ function ZoneBoard({
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const handleScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const center = el.scrollLeft + el.clientWidth / 2;
+    const children = Array.from(el.children) as HTMLElement[];
+    let bestIdx = 0;
+    let bestDist = Infinity;
+    children.forEach((c, i) => {
+      const mid = c.offsetLeft + c.offsetWidth / 2;
+      const d = Math.abs(mid - center);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    });
+    setActiveIdx(bestIdx);
+  };
+
+  const scrollToIndex = (i: number) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const child = el.children[i] as HTMLElement | undefined;
+    if (!child) return;
+    el.scrollTo({ left: child.offsetLeft - (el.clientWidth - child.offsetWidth) / 2, behavior: "smooth" });
+  };
+
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <LayoutGroup>
-        {ZONES.map((z) => {
-          const priority = (k?: string) => (k === "morning-armor" ? 0 : k === "workout" ? 1 : 2);
-          const items = tasks
-            .filter((t) => t.status === z.id)
-            .sort((a, b) => priority(a.recurringKey) - priority(b.recurringKey));
-          return (
-            <ZoneColumn
-              key={z.id}
-              zone={z}
-              items={items}
-              onMove={onMove}
-              onDelete={onDelete}
-              onAddSubtask={onAddSubtask}
-              onToggleSubtask={onToggleSubtask}
-              onRemoveSubtask={onRemoveSubtask}
-              onUpdate={onUpdate}
-              dragId={dragId}
-              setDragId={setDragId}
-            />
-          );
-        })}
-      </LayoutGroup>
+    <div>
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth -mx-4 px-4 pb-2 scrollbar-quest md:contents"
+      >
+        <LayoutGroup>
+          {ZONES.map((z) => {
+            const priority = (k?: string) => (k === "morning-armor" ? 0 : k === "workout" ? 1 : 2);
+            const items = tasks
+              .filter((t) => t.status === z.id)
+              .sort((a, b) => priority(a.recurringKey) - priority(b.recurringKey));
+            return (
+              <div
+                key={z.id}
+                className="snap-center shrink-0 w-[85vw] md:w-auto md:shrink first:ml-1 last:mr-1 md:first:ml-0 md:last:mr-0"
+              >
+                <ZoneColumn
+                  zone={z}
+                  items={items}
+                  onMove={onMove}
+                  onDelete={onDelete}
+                  onAddSubtask={onAddSubtask}
+                  onToggleSubtask={onToggleSubtask}
+                  onRemoveSubtask={onRemoveSubtask}
+                  onUpdate={onUpdate}
+                  dragId={dragId}
+                  setDragId={setDragId}
+                />
+              </div>
+            );
+          })}
+        </LayoutGroup>
+      </div>
+
+      <div className="mt-3 flex justify-center gap-2 md:hidden">
+        {ZONES.map((z, i) => (
+          <button
+            key={z.id}
+            type="button"
+            aria-label={`Show ${z.label}`}
+            onClick={() => scrollToIndex(i)}
+            className="h-1.5 rounded-full transition-all duration-300"
+            style={{
+              width: i === activeIdx ? 22 : 6,
+              background: i === activeIdx
+                ? z.tint
+                : "color-mix(in oklab, var(--color-foreground) 25%, transparent)",
+              opacity: i === activeIdx ? 1 : 0.55,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
+
 
 function ZoneColumn({
   zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
