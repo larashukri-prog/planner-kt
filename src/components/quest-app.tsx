@@ -267,7 +267,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground placeholder:opacity-60 md:text-lg"
       />
       <kbd className="hidden rounded-md border border-border bg-card/70 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground md:inline">
-        \n
+        ↵
       </kbd>
       <button
         type="submit"
