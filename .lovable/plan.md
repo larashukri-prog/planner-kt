@@ -1,11 +1,13 @@
-Refactor the `QuickAddBar` component in `src/components/quest-app.tsx` to make it the page's primary focal point, modeled after a clean Google search bar.
+Make the Daily XP section background blend into the page instead of standing out as a card.
 
-Changes:
-- Remove `shadow-inner` and the inline inset `boxShadow` style.
-- Replace `bg-secondary/40` with a solid, prominent surface background (`bg-card`) so it reads as crisp white in light mode and the raised card color in dark mode.
-- Add an outward drop shadow (`shadow-md` base, elevating to `shadow-lg` on focus) to lift the capsule off the page.
-- Keep `rounded-full` for the continuous capsule shape.
-- Add a premium focus/active state: `focus-within:ring-2 focus-within:ring-primary/50 focus-within:shadow-lg transition-all duration-200`.
-- Preserve the existing `ArrowRight` icon and "Capture" button layout, plus the `/` keyboard shortcut and pulse animation.
+Change:
+- In `src/components/quest-app.tsx`, update the `DailyXPBar` container (the `<motion.section>` at line 1238).
+- Replace the `quest-card` class with a transparent/background-matched treatment so it visually recedes.
+- Keep the progress bar fill, labels, and 100% celebration animation intact.
 
-No other components, state, or backend logic will change.
+Technical detail:
+- Use `bg-transparent` or `bg-background/0` on the section, remove the border and shadow, and keep `px-4 py-4 md:px-5` for spacing.
+- Ensure the progress track remains visible by keeping its `bg-secondary/40` and `border`.
+- Verify both light and dark modes look consistent since the section will now inherit the page gradient background.
+
+No other UI or logic changes.
