@@ -276,7 +276,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         style={{ boxShadow: hasValue ? "var(--shadow-neon)" : "none" }}
       >
         <Plus className="h-3.5 w-3.5" strokeWidth={3} />
-        Capture
+        Add
       </button>
     </motion.form>
   );
