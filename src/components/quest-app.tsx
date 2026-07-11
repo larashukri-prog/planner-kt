@@ -273,10 +273,9 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       <button
         type="submit"
         disabled={!hasValue}
-        className="flex shrink-0 items-center gap-1.5 rounded-full bg-[var(--color-neon)] px-4 py-2 text-xs font-semibold text-[var(--color-neon-foreground)] transition-all hover:brightness-110 disabled:opacity-40"
+        className="flex shrink-0 items-center rounded-full bg-[var(--color-neon)] px-4 py-2 text-xs font-semibold text-[var(--color-neon-foreground)] transition-all hover:brightness-110 disabled:opacity-40"
         style={{ boxShadow: hasValue ? "var(--shadow-neon)" : "none" }}
       >
-        <Plus className="h-3.5 w-3.5" strokeWidth={3} />
         Add
       </button>
     </motion.form>
