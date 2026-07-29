@@ -326,6 +326,68 @@ function DesignSystemPage() {
               </div>
             </div>
 
+            <div>
+              <SubHeading>The 4px base grid</SubHeading>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                Every padding, gap, row height, and icon size in Planner-KT resolves to a multiple
+                of <strong className="text-foreground">4px</strong>. That single constraint is what
+                lets a comfortable board view and a compact, high-density data view sit in the same
+                product without optical drift — only the multiplier changes, never the rhythm.
+              </p>
+
+              <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                <div className="quest-card p-4">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                    Grid ruler · 4px increments
+                  </p>
+                  <div
+                    className="mt-3 flex flex-col gap-2 rounded-md p-2"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(to right, color-mix(in oklab, var(--border) 90%, transparent) 0 1px, transparent 1px 4px)",
+                    }}
+                  >
+                    {GRID_STEPS.map((s) => (
+                      <div key={s} className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 font-mono text-[10px] text-muted-foreground">
+                          p-{s} · {s * 4}px
+                        </span>
+                        <div
+                          className="h-2.5 rounded-[2px] bg-primary/70"
+                          style={{ width: `${s * 4}px` }}
+                          aria-hidden="true"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Tailwind&apos;s numeric scale is already 4px-based (
+                    <code className="font-mono text-foreground">1 = 4px</code>), so the grid is
+                    enforced by the utility names themselves — there is no arbitrary
+                    <code className="ml-1 font-mono text-foreground">p-[13px]</code> to review.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <DensitySample
+                    label="Standard density"
+                    meta="py-3 · gap-3 · 44px row — touch-target compliant"
+                    rowClass="gap-3 py-3"
+                    titleClass="text-sm"
+                  />
+                  <DensitySample
+                    label="High data density"
+                    meta="py-1 · gap-2 · 28px row — table and audit views"
+                    rowClass="gap-2 py-1"
+                    titleClass="text-xs"
+                    compact
+                  />
+                </div>
+              </div>
+            </div>
+
+
+
             <CodeBlock
               label="src/styles.css"
               code={`:root {
