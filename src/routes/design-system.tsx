@@ -23,7 +23,9 @@ import {
   StatefulComponentDemo,
   TactileButtonsDemo,
   ToastDemo,
+  XPBarDemo,
 } from "@/components/design-system/demos";
+
 
 import { useTheme } from "@/lib/use-theme";
 import { cn } from "@/lib/utils";
@@ -62,8 +64,11 @@ const MOTION_TOKENS = [
   { token: "spring 420 / 32", value: "stiffness / damping", use: "Toasts and framer-motion overlays." },
   { token: "active:scale-95", value: "scale(0.95)", use: "Universal press feedback on buttons." },
   { token: "animate-fade-in", value: "300ms fade + 10px rise", use: "Content appearing after a skeleton." },
+  { token: "spring 120 / 20", value: "stiffness / damping", use: "Progress width and layout position." },
+  { token: "shimmer", value: "2.4s linear ∞", use: "Indeterminate sheen sweeping a progress fill." },
   { token: "motion-reduce:*", value: "transition-none", use: "Honors prefers-reduced-motion everywhere." },
 ];
+
 
 
 
@@ -678,7 +683,41 @@ import { Checkbox } from "@/components/ui/checkbox";
             </div>
 
             <Example
+              title="Daily XP strip — gradient progress + celebration"
+              className="items-start"
+              a11y='The track is a role="progressbar" with aria-valuenow/min/max and a text percentage, so progress is never conveyed by color or width alone. Sparkles and shimmer are aria-hidden decoration and are suppressed under prefers-reduced-motion.'
+              api="The fill is composed from the two brand tokens (--neon → --neon-2), so it re-themes automatically in light and dark. The same spring config drives every width and position animation in the product."
+              code={`const spring = { type: "spring", stiffness: 120, damping: 20 };
+const fill = {
+  background:
+    "linear-gradient(90deg, var(--color-neon) 0%, var(--color-neon-2) 100%)",
+};
+
+<div role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}
+     className="relative h-9 overflow-hidden rounded-full border border-border bg-secondary/40">
+  {/* glow underlay */}
+  <motion.div animate={{ width: \`\${percent}%\` }} transition={spring}
+    className="absolute inset-y-0 left-0 rounded-full opacity-60 blur-md" style={fill} />
+
+  {/* gradient fill + shimmer */}
+  <motion.div animate={{ width: \`\${percent}%\` }} transition={spring}
+    className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+    style={{ ...fill, boxShadow: "var(--shadow-neon)" }}>
+    <motion.div className="absolute inset-y-0 w-1/3"
+      animate={{ x: ["-100%", "350%"] }}
+      transition={{ duration: 2.4, ease: "linear", repeat: Infinity }} />
+  </motion.div>
+</div>
+
+{/* celebration at 100% */}
+<motion.section animate={celebrate ? { scale: [1, 1.02, 1] } : { scale: 1 }} />`}
+            >
+              <XPBarDemo />
+            </Example>
+
+            <Example
               title="Tactile button — hover lift, press scale, success flash"
+
               a11y="Focus ring is never removed, the success state is announced through aria-pressed and a text change (not color alone), and every transition is disabled under motion-reduce."
               api="Pure Tailwind transition utilities — no JS animation library, so the same classes drop onto any element, including the real Quest card's complete action."
               code={`<button
