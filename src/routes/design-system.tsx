@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Moon, Sun, Swords } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowUpDown, Check, Moon, Sun, Swords } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
