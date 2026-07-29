@@ -521,20 +521,43 @@ import { Checkbox } from "@/components/ui/checkbox";
             </Example>
           </Section>
 
-          {/* 3. Patterns */}
+          {/* 3. Enterprise patterns */}
           <Section
             id="patterns"
             eyebrow="03 — Patterns"
-            title="UI Patterns"
-            description="Atoms composed into the recurring layouts that make up the app surface. These are static replicas of production patterns, safe to read and copy."
+            title="Enterprise UI Patterns"
+            description="The same atoms composed into production-scale surfaces: a data-dense task grid, an accessible settings form, and the lighter board-level patterns. Density changes by moving along the 4px grid — never by forking a component."
           >
+            <div className="flex flex-col gap-3">
+              <SubHeading>Data-dense task grid</SubHeading>
+              <p className="max-w-2xl text-xs text-muted-foreground">
+                Composes Checkbox, Badge, and Button inside a semantic{" "}
+                <code className="font-mono text-foreground">&lt;table&gt;</code>: scoped column
+                headers, an <code className="font-mono text-foreground">sr-only</code> caption,
+                sortable headers exposing <code className="font-mono text-foreground">aria-sort</code>
+                , and a density toggle that only swaps 4px multiples.
+              </p>
+              <DataGridDemo />
+            </div>
+
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex flex-col gap-3">
-                <SubHeading>Quest card</SubHeading>
-                <QuestCardDemo />
+                <SubHeading>Accessible settings form</SubHeading>
+                <p className="text-xs text-muted-foreground">
+                  Grouped with fieldset/legend, help text wired through{" "}
+                  <code className="font-mono text-foreground">aria-describedby</code>, and an
+                  invalid field announced via{" "}
+                  <code className="font-mono text-foreground">aria-invalid</code> +{" "}
+                  <code className="font-mono text-foreground">role=&quot;alert&quot;</code>.
+                </p>
+                <SettingsFormDemo />
               </div>
               <div className="flex flex-col gap-3">
-                <SubHeading>Settings row</SubHeading>
+                <SubHeading>Quest card &amp; settings rows</SubHeading>
+                <p className="text-xs text-muted-foreground">
+                  The comfortable end of the density spectrum — same atoms, larger 4px multiples.
+                </p>
+                <QuestCardDemo />
                 <div className="quest-card divide-y divide-border">
                   <SettingsRowDemo
                     title="Auto-escalation"
@@ -545,10 +568,6 @@ import { Checkbox } from "@/components/ui/checkbox";
                     title="Daily spawn engine"
                     description="Recreate recurring quests each morning."
                     defaultChecked
-                  />
-                  <SettingsRowDemo
-                    title="Celebration effects"
-                    description="Sparkle burst when the XP bar hits 100%."
                   />
                 </div>
               </div>
@@ -578,17 +597,28 @@ import { Checkbox } from "@/components/ui/checkbox";
 
             <CodeBlock
               label="pattern"
-              code={`<article className="quest-card p-4">
-  <header className="flex items-start gap-3">
-    <CompleteCheckbox />
-    <h3 className="min-w-0 flex-1 truncate text-sm font-semibold">
-      {task.title}
-    </h3>
-    <Badge variant="secondary">{task.status}</Badge>
-  </header>
-</article>`}
+              code={`<table className="w-full text-left">
+  <caption className="sr-only">Quests, sortable by title and due date</caption>
+  <thead className="sticky top-0 bg-card">
+    <tr>
+      <th scope="col" aria-sort={sort === "title" ? "ascending" : "none"}>
+        <button type="button" onClick={() => setSort("title")}>Quest</button>
+      </th>
+      <th scope="col">Zone</th>
+    </tr>
+  </thead>
+  <tbody className="divide-y divide-border">
+    {rows.map((row) => (
+      <tr key={row.id} className={dense ? "py-1" : "py-3"}>
+        <th scope="row" className="font-normal">{row.title}</th>
+        <td><Badge variant="secondary">{row.zone}</Badge></td>
+      </tr>
+    ))}
+  </tbody>
+</table>`}
             />
           </Section>
+
 
           {/* 4. AI */}
           <Section
