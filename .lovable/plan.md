@@ -1,47 +1,61 @@
 ## Goal
 
-Upgrade the existing `/design-system` page with enterprise-grade structural rigor: a documented 4px grid, WCAG 2.1 AA notes on every atom, data-dense "Enterprise UI Patterns", and a stronger AI-contribution rationale. All work stays inside `src/routes/design-system.tsx` and `src/components/design-system/parts.tsx` — the live app is untouched apart from nothing at all.
+Add two new documented sections to `/design-system` — **Motion & Micro-interactions** and **Middle Layer Architecture** — each with live, interactive demos plus copyable code, matching the existing `Section` / `Example` / `CodeBlock` documentation primitives. Work stays in `src/routes/design-system.tsx` (plus small demo components in `src/components/design-system/`); the live app is untouched.
 
-## 1. Foundations & Tokens — 4px base grid
+## Navigation & numbering
 
-- New subsection "The 4px base grid" placed after the existing spacing scale.
-- Left: a visual ruler showing steps 1–16 (4px → 64px) with an overlaid 4px-repeating background so multiples align visibly; each step labeled with the Tailwind token (`p-2`), rem, and px value.
-- Right: a **density comparison** — the same task row rendered twice from the same atoms:
-  - Standard density: `py-3` / `gap-3` / 44px row height (touch target compliant).
-  - Compact density: `py-1` / `gap-2` / 28px row height for high-data-density tables.
-  Both annotated with the multiples used, showing the grid is the only thing that changes.
-- Short prose note: every padding, gap, height and icon size resolves to a multiple of 4, which is what keeps mixed-density views optically aligned.
+Insert both sections between "Enterprise UI Patterns" and "AI Contribution Model", and renumber eyebrows:
 
-## 2. Atomic Components — accessibility + API notes
+```text
+01 Foundations & Tokens
+02 Atomic Components
+03 Enterprise UI Patterns
+04 Motion & Micro-interactions   (new)
+05 Middle Layer Architecture     (new)
+06 AI Contribution Model
+```
 
-- Extend the `Example` component in `parts.tsx` with two optional props: `a11y` (string) and `api` (string).
-- Render them under the preview as a small two-line meta block: a shield/check icon + "WCAG 2.1 AA" line, and a puzzle icon + composable-API line.
-- Fill in per component:
-  - Button — 44px min target on default size, visible `focus-visible` ring, `asChild` polymorphism, cva variants.
-  - Input/Label — programmatic label association, `aria-invalid` support, `aria-describedby` for errors.
-  - Badge — non-color-dependent meaning (text label always present), `asChild` for links.
-  - Switch/Checkbox — Radix roles, keyboard operable, controlled/uncontrolled APIs.
-  - Card — semantic slot composition (Header/Title/Description/Content), heading-level agnostic.
-- Add one line in the section description stating all atoms target WCAG 2.1 AA (contrast, focus visibility, keyboard operability, target size).
+The `NAV` array gains two entries; sidebar scroll-spy and mobile chips pick them up automatically.
 
-## 3. Enterprise UI Patterns
+## Section 4 — Motion & Micro-interactions
 
-- Rename section title to "Enterprise UI Patterns" and the nav label accordingly (`NAV` entry + sidebar/mobile chips update automatically).
-- Replace/augment the pattern set with three composed demos:
-  1. **Data-Dense Task Grid** — a real `<table>` with sticky header, ~8 rows: select checkbox, quest title, zone badge, due date, owner, XP, status. Compact 4px-grid row rhythm, zebra-free divide-y rows, `scope="col"` headers, a `<caption class="sr-only">`, sortable-column buttons with `aria-sort`, and a density toggle (Comfortable/Compact) driven by the 4px scale to prove the same atoms scale.
-  2. **Accessible Settings Form** — a real `<form>` with `<fieldset>`/`<legend>` groups, labeled inputs, help text wired via `aria-describedby`, one field showing an inline error with `aria-invalid` + `role="alert"`, switches for toggles, and a footer action row. Non-submitting demo (`onSubmit` prevented).
-  3. Keep the **Daily XP progress strip** and Quest card as the lighter-density counterpart, so the section shows both ends of the density spectrum.
-- Each pattern gets a short note on which atoms it composes and which a11y affordances it carries, plus a copyable code snippet.
+Intro prose: motion is tokenized too — durations, easings and transforms come from a small shared vocabulary (`duration-200`, `ease-out`, `active:scale-95`, the `fade-in` / `scale-in` keyframes in `styles.css`), so animation ships as part of the system rather than as one-off CSS.
 
-## 4. AI-Native Contribution Model
+Three live `Example` blocks, each with its snippet:
 
-- Rewrite the prose to add: dependency-light utility classes (no bespoke CSS layer, no component-library fork) mean a small, auditable surface — fewer transitive dependencies to patch, less dead CSS, and no drift-prone one-off stylesheets, i.e. minimized technical debt.
-- Add that strict tokenized conventions make change *predictable*: a token edit propagates everywhere with a bounded blast radius, and any diff introducing a raw hex, inline style, or new dependency is mechanically detectable in review — the property enterprise teams need for secure, reviewable scaling.
-- Extend the contribution-rules list with: "Prefer composition over new dependencies", "Every interactive pattern ships with keyboard and screen-reader behavior verified", "All spacing/sizing resolves to a 4px multiple".
+1. **Tactile button** — hover lift + `active:scale-95` press, plus a "Complete quest" variant reproducing the app's emerald success flash (Tailwind transition utilities only, no JS). Note that the same transition tokens are reused by the real Quest card.
+2. **Skeleton loading state** — a quest-card skeleton (avatar block, two text bars, badge) using `animate-pulse` over `bg-muted`, with a "Reload" button that flips back to the loaded card for ~1.2s so the shimmer→content swap is visible. Documents that skeletons mirror the real layout's 4px-grid dimensions to avoid layout shift.
+3. **Toast notification** — a self-contained in-page toast using `framer-motion` `AnimatePresence` (slide-in from the right + fade, spring exit), triggered by a button and auto-dismissing. Kept local to the page (no global `<Toaster />` change), with a note that production uses `sonner` with the same motion values.
+
+Each gets an `a11y` note: reduced-motion respect (`motion-reduce:transition-none` / `prefers-reduced-motion`), toast announced via `role="status"` + `aria-live="polite"`, skeleton marked `aria-hidden` with an accompanying `aria-busy` region.
+
+Add a small **motion token table** (duration 150/200/320ms, easings, standard transforms) above the examples so the values are documented, not just demonstrated.
+
+## Section 5 — Middle Layer Architecture
+
+Intro prose: components never talk to the database directly. Every screen reads from a custom hook; the hook owns fetching, optimistic updates, realtime subscriptions and persistence — the "middle layer" between UI surface and data service.
+
+Contents:
+
+1. **Architecture diagram** — an accessible, CSS/flex-built layered diagram (no image, no new dependency) showing:
+
+```text
+UI components  ->  custom hooks (useTasks / useTheme / useAuth)
+               ->  services (Supabase client, localStorage, PostHog)
+               ->  Postgres + RLS
+```
+   Each layer is a labeled card listing its real responsibilities and the actual modules involved (`use-tasks.ts`, `use-theme.ts`, `use-auth.ts`, `@/integrations/supabase/client`). Arrows are decorative (`aria-hidden`), and the layer list is semantic markup so screen readers read it as an ordered list.
+
+2. **Live stateful component — persisted preference toggle.** A working demo backed by a small `useLocalStorageState` hook (written inline in the page's demo file, keyed under a `questlog.ds.*` namespace so it can't collide with app state): a switch plus a counter, showing state surviving reload. Displays the current stored JSON value live so the persistence is visible. Paired `CodeBlock` shows the hook implementation (lazy `useState` initializer, `useEffect` write, try/catch for private mode, SSR-safe `typeof window` guard) and the two-line component that consumes it.
+
+3. **Real-hook excerpt** — a trimmed `useTasks` snippet showing the optimistic-update pattern actually used in the app (local state updates first, server write follows, rollback on error) with a short annotation of why the UI stays instant. Read-only documentation; no behavior change.
+
+4. Short "rules of the middle layer" list: components stay presentational, hooks own side effects, server writes are optimistic with rollback, storage keys are namespaced, and no component imports the data client directly.
 
 ## Technical notes
 
-- No new packages; `lucide-react` icons only. No route, data, or business-logic changes.
-- All colors via existing semantic tokens; no hardcoded color utilities.
-- Heading order preserved (single `h1`, `h2` per section, `h3` for sub-blocks); density/sort toggles get accessible names; the data grid scrolls horizontally on mobile rather than overflowing.
-- Update the route `head()` description to mention accessibility and enterprise patterns.
+- No new packages; `framer-motion`, `lucide-react` and existing shadcn atoms only.
+- Demo components live in a new `src/components/design-system/demos.tsx` to keep the route file from growing unbounded; the route imports and composes them.
+- All colors via semantic tokens; no hardcoded color utilities. Spacing stays on the 4px grid per the existing foundations section.
+- Heading order preserved (single `h1`, `h2` per section via `Section`, `h3` for sub-blocks).
+- Update the route `head()` description to mention motion and data/state architecture.
