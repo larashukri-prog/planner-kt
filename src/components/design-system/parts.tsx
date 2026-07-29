@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Check, Copy } from "lucide-react";
+import { Blocks, Check, Copy, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------ Code block ------------------------------ */
