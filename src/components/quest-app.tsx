@@ -98,7 +98,15 @@ export default function QuestApp() {
 
         <footer className="pt-6 pb-2 text-center text-xs text-muted-foreground">
           <span className="font-mono">Planner v1</span> — built for optimal planning
+          <span className="mx-2 opacity-40">·</span>
+          <Link
+            to="/design-system"
+            className="underline underline-offset-4 transition-colors hover:text-neon"
+          >
+            Design System
+          </Link>
         </footer>
+
       </div>
     </div>
   );
