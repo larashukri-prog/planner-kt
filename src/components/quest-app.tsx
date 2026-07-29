@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
+
 import {
   ArrowRight, Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
   ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar, Coffee,
