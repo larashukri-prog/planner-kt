@@ -9,6 +9,159 @@ import { cn } from "@/lib/utils";
 
 /* ============================ Motion demos ============================ */
 
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const on = () => setReduced(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return reduced;
+}
+
+/** The product's signature motion: gradient progress + celebration at 100%. */
+export function XPBarDemo() {
+  const [percent, setPercent] = useState(25);
+  const [celebrate, setCelebrate] = useState(false);
+  const reduced = usePrefersReducedMotion();
+
+  const bump = () => {
+    setPercent((p) => {
+      const next = Math.min(100, p + 25);
+      if (p < 100 && next === 100) {
+        setCelebrate(true);
+        window.setTimeout(() => setCelebrate(false), 900);
+      }
+      return next;
+    });
+  };
+
+  const fillStyle = {
+    background: "linear-gradient(90deg, var(--color-neon) 0%, var(--color-neon-2) 100%)",
+  };
+
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-4">
+      <motion.section
+        animate={celebrate && !reduced ? { scale: [1, 1.02, 1] } : { scale: 1 }}
+        transition={{ duration: 0.45 }}
+        className="w-full"
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-neon">
+            <Sparkles className="size-3.5" aria-hidden="true" />
+            Daily XP
+          </span>
+          <span className="font-mono text-[11px] text-muted-foreground">{percent / 25}/4</span>
+        </div>
+
+        <div
+          role="progressbar"
+          aria-valuenow={percent}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Daily quest completion"
+          className="relative h-9 w-full overflow-hidden rounded-full border border-border bg-secondary/40 shadow-inner"
+        >
+          <motion.div
+            aria-hidden="true"
+            initial={false}
+            animate={{ width: `${percent}%` }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className="absolute inset-y-0 left-0 rounded-full opacity-60 blur-md"
+            style={fillStyle}
+          />
+          <motion.div
+            aria-hidden="true"
+            initial={false}
+            animate={{ width: `${percent}%` }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className="absolute inset-y-0 left-0 overflow-hidden rounded-full"
+            style={{ ...fillStyle, boxShadow: "var(--shadow-neon)" }}
+          >
+            {!reduced ? (
+              <motion.div
+                aria-hidden="true"
+                className="absolute inset-y-0 w-1/3"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, color-mix(in oklab, white 35%, transparent) 50%, transparent 100%)",
+                }}
+                animate={{ x: ["-100%", "350%"] }}
+                transition={{ duration: 2.4, ease: "linear", repeat: Infinity }}
+              />
+            ) : null}
+          </motion.div>
+
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <span
+              className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]"
+              style={{
+                color: "var(--color-neon-foreground)",
+                textShadow: "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+              }}
+            >
+              {celebrate ? "Campaign cleared!" : `Daily Completion: ${percent}% XP`}
+            </span>
+          </div>
+
+          <AnimatePresence>
+            {celebrate && !reduced
+              ? Array.from({ length: 6 }).map((_, i) => (
+                  <motion.span
+                    key={i}
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 0.4, y: 0 }}
+                    animate={{ opacity: [0, 1, 0], scale: [0.4, 1.2, 0.6], y: [-2, -18, -28] }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.7, delay: i * 0.04, ease: "easeOut" }}
+                    className="pointer-events-none absolute top-1/2 size-1.5 rounded-full bg-neon"
+                    style={{ left: `${12 + i * 14}%` }}
+                  />
+                ))
+              : null}
+          </AnimatePresence>
+        </div>
+      </motion.section>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={bump} disabled={percent === 100}>
+          +25% XP
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setPercent(0)}>
+          Reset
+        </Button>
+      </div>
+
+      <div className="rounded-md border border-border bg-muted/40 px-3 py-2.5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          Gradient tokens
+        </p>
+        <dl className="mt-2 flex flex-col gap-1 font-mono text-[11px]">
+          <div className="flex items-center gap-2">
+            <span className="size-3 shrink-0 rounded-sm bg-neon" aria-hidden="true" />
+            <dt className="text-foreground">--neon</dt>
+            <dd className="truncate text-muted-foreground">teal · fill start</dd>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="size-3 shrink-0 rounded-sm bg-neon-2" aria-hidden="true" />
+            <dt className="text-foreground">--neon-2</dt>
+            <dd className="truncate text-muted-foreground">magenta-pink · fill end</dd>
+          </div>
+        </dl>
+        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+          The same pair drives <code className="font-mono">--gradient-neon</code>, the app logo tile
+          and <code className="font-mono">--shadow-neon</code> — one token edit re-skins every
+          accent surface, in both themes.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
 /** Tactile press + success flash, expressed only with Tailwind transition utilities. */
 export function TactileButtonsDemo() {
   const [done, setDone] = useState(false);
