@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
-  "Living documentation for Planner-KT: design tokens, atomic components, composed UI patterns, and the AI-native contribution model.";
+  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, data-dense enterprise UI patterns, and the AI-native contribution model.";
 
 export const Route = createFileRoute("/design-system")({
   head: () => ({
