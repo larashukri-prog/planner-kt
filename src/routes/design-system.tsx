@@ -40,8 +40,11 @@ const NAV = [
   { id: "foundations", label: "Foundations & Tokens" },
   { id: "atoms", label: "Atomic Components" },
   { id: "patterns", label: "Enterprise UI Patterns" },
+  { id: "motion", label: "Motion & Micro-interactions" },
+  { id: "middle-layer", label: "Middle Layer Architecture" },
   { id: "ai", label: "AI Contribution Model" },
 ];
+
 
 const CORE_COLORS = [
   { name: "Background", token: "--background", className: "bg-background", border: true },
