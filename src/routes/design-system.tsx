@@ -54,6 +54,18 @@ const NAV = [
   { id: "ai", label: "AI Contribution Model" },
 ];
 
+const MOTION_TOKENS = [
+  { token: "duration-150", value: "150ms", use: "Color, border and background state changes." },
+  { token: "duration-200", value: "200ms", use: "Hover lift, press scale, list item collapse." },
+  { token: "duration-[320ms]", value: "320ms", use: "Quest-complete success flash and card exit." },
+  { token: "ease-out", value: "cubic-bezier(0, 0, 0.2, 1)", use: "Default easing for entrances." },
+  { token: "spring 420 / 32", value: "stiffness / damping", use: "Toasts and framer-motion overlays." },
+  { token: "active:scale-95", value: "scale(0.95)", use: "Universal press feedback on buttons." },
+  { token: "animate-fade-in", value: "300ms fade + 10px rise", use: "Content appearing after a skeleton." },
+  { token: "motion-reduce:*", value: "transition-none", use: "Honors prefers-reduced-motion everywhere." },
+];
+
+
 
 const CORE_COLORS = [
   { name: "Background", token: "--background", className: "bg-background", border: true },
