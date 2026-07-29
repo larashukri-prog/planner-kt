@@ -602,27 +602,6 @@ import { Checkbox } from "@/components/ui/checkbox";
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
-              <SubHeading>Daily XP progress strip</SubHeading>
-              <div className="quest-card p-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                    Daily XP
-                  </span>
-                  <span className="font-mono text-xs text-neon">68%</span>
-                </div>
-                <div
-                  className="h-3 w-full overflow-hidden rounded-full bg-muted"
-                  role="progressbar"
-                  aria-valuenow={68}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label="Daily XP progress example"
-                >
-                  <div className="h-full w-[68%] rounded-full bg-neon" />
-                </div>
-              </div>
-            </div>
 
             <CodeBlock
               label="pattern"
