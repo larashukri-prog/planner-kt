@@ -17,12 +17,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CodeBlock, Example, Section, SubHeading, Swatch } from "@/components/design-system/parts";
+import {
+  ArchitectureDiagram,
+  SkeletonDemo,
+  StatefulComponentDemo,
+  TactileButtonsDemo,
+  ToastDemo,
+} from "@/components/design-system/demos";
+
 import { useTheme } from "@/lib/use-theme";
 import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
-  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, data-dense enterprise UI patterns, and the AI-native contribution model.";
+  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, enterprise UI patterns, standardized motion, and the hook-based middle layer between UI and data.";
+
 
 export const Route = createFileRoute("/design-system")({
   head: () => ({
