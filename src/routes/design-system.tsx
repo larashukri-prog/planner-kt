@@ -39,7 +39,7 @@ export const Route = createFileRoute("/design-system")({
 const NAV = [
   { id: "foundations", label: "Foundations & Tokens" },
   { id: "atoms", label: "Atomic Components" },
-  { id: "patterns", label: "UI Patterns" },
+  { id: "patterns", label: "Enterprise UI Patterns" },
   { id: "ai", label: "AI Contribution Model" },
 ];
 
@@ -79,6 +79,10 @@ const TYPE_SCALE = [
 ];
 
 const SPACING = [1, 2, 3, 4, 6, 8, 12];
+
+/** 4px base grid steps — token, rem and px, used across every spacing decision. */
+const GRID_STEPS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16];
+
 const RADII = [
   { name: "sm", cls: "rounded-sm" },
   { name: "md", cls: "rounded-md" },
@@ -86,6 +90,12 @@ const RADII = [
   { name: "xl", cls: "rounded-xl" },
   { name: "2xl", cls: "rounded-2xl" },
   { name: "full", cls: "rounded-full" },
+];
+
+const GRID_ROWS = [
+  { title: "Morning Armor", zone: "Now", due: "Today", xp: 40 },
+  { title: "Workout", zone: "Now", due: "Today", xp: 60 },
+  { title: "Restock Fuel", zone: "Later", due: "Fri", xp: 20 },
 ];
 
 function useScrollSpy(ids: string[]) {
