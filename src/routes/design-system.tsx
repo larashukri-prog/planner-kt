@@ -409,7 +409,7 @@ function DesignSystemPage() {
             id="atoms"
             eyebrow="02 — Atoms"
             title="Atomic Components"
-            description="Every atom is a shadcn/ui primitive whose variants are declared with class-variance-authority. Import from @/components/ui and compose — never restyle with ad-hoc colors."
+            description="Every atom is a shadcn/ui primitive whose variants are declared with class-variance-authority. All atoms are built targeting WCAG 2.1 AA — token-guaranteed contrast in both themes, visible focus-visible rings, full keyboard operability, and adequate target sizes — and expose composable APIs (asChild polymorphism, controlled/uncontrolled state, slot-based composition) for flexible integration."
           >
             <Example
               title="Button"
@@ -423,6 +423,8 @@ function DesignSystemPage() {
 <Button variant="link">Link</Button>
 <Button size="sm">Small</Button>
 <Button disabled>Disabled</Button>`}
+              a11y="WCAG 2.1 AA: foreground/background pairs are token-locked above 4.5:1 in both themes, focus-visible ring meets 3:1 non-text contrast, disabled state is conveyed by cursor and aria-disabled rather than color alone, and default size clears the 44×44 target guidance."
+              api="Composable API: asChild renders any element (Link, a, label) while keeping variant styling; variants and sizes come from a single cva() block, so new intents are added centrally instead of at the call site."
             >
               <Button>Add quest</Button>
               <Button variant="secondary">Secondary</Button>
@@ -444,6 +446,8 @@ import { Label } from "@/components/ui/label";
 <Input id="quest" placeholder="Brain dump a quest…" />
 <Input disabled placeholder="Disabled" />`}
               className="flex-col !items-stretch"
+              a11y="WCAG 2.1 AA: every field is programmatically associated with a visible Label via htmlFor/id, supports aria-invalid plus aria-describedby for error and help text, and placeholder text never substitutes for a label."
+              api="Composable API: forwards all native input props and ref, so it drops into react-hook-form or any controlled setup unchanged; sizing and state styling stay token-driven."
             >
               <div className="flex w-full flex-col gap-1.5">
                 <Label htmlFor="ds-quest">Quest title</Label>
@@ -460,6 +464,8 @@ import { Label } from "@/components/ui/label";
 <Badge variant="secondary">Later</Badge>
 <Badge variant="outline">Future</Badge>
 <Badge variant="destructive">Overdue</Badge>`}
+              a11y="WCAG 2.1 AA: status is always carried by the text label, never by hue alone, so the meaning survives color-blindness and monochrome print; every variant pairs a token foreground with its token background."
+              api="Composable API: asChild turns a badge into a link or button without duplicating styles; variants extend through the same cva() contract as Button."
             >
               <Badge>Now</Badge>
               <Badge variant="secondary">Later</Badge>
@@ -474,6 +480,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 <Switch id="recurring" defaultChecked />
 <Checkbox id="subtask" />`}
+              a11y="WCAG 2.1 AA: Radix primitives supply role=switch / role=checkbox with aria-checked, Space and Enter activation, and a focus-visible ring; both are always paired with a Label so the hit area includes the text."
+              api="Composable API: controlled (checked + onCheckedChange) or uncontrolled (defaultChecked) — the same component serves optimistic UI and plain forms."
             >
               <div className="flex items-center gap-2">
                 <Switch id="ds-switch" defaultChecked />
@@ -498,6 +506,8 @@ import { Checkbox } from "@/components/ui/checkbox";
   <CardContent>3 of 5 subtasks complete</CardContent>
 </Card>`}
               className="!block"
+              a11y="WCAG 2.1 AA: CardTitle is heading-level agnostic, so it can render the correct h2/h3 for its position and keep document outline order intact; surface/foreground pairing is token-guaranteed in both themes."
+              api="Composable API: slot components (Header, Title, Description, Content, Footer) compose freely — omit what you don't need, and layout stays on the 4px grid."
             >
               <Card className="w-full">
                 <CardHeader>
