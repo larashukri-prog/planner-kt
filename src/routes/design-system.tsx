@@ -775,3 +775,301 @@ function SettingsRowDemo({
     </div>
   );
 }
+
+/* --------------------------- Density & density-scale --------------------------- */
+
+function DensitySample({
+  label,
+  meta,
+  rowClass,
+  titleClass,
+  compact,
+}: {
+  label: string;
+  meta: string;
+  rowClass: string;
+  titleClass: string;
+  compact?: boolean;
+}) {
+  return (
+    <div className="quest-card overflow-hidden">
+      <div className="flex items-baseline justify-between gap-2 border-b border-border/70 px-4 py-2">
+        <p className="text-xs font-semibold">{label}</p>
+        <p className="font-mono text-[10px] text-muted-foreground">{meta}</p>
+      </div>
+      <ul className="divide-y divide-border">
+        {GRID_ROWS.map((r) => (
+          <li
+            key={r.title}
+            className={cn(
+              "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center px-4",
+              rowClass,
+            )}
+          >
+            <span
+              className={cn(
+                "rounded-full border border-neon/60",
+                compact ? "size-3" : "size-4",
+              )}
+              aria-hidden="true"
+            />
+            <span className={cn("min-w-0 truncate", titleClass)}>{r.title}</span>
+            <span className="font-mono text-[10px] text-muted-foreground">{r.xp} XP</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ------------------------------ Data-dense grid ------------------------------ */
+
+type GridRow = {
+  id: string;
+  title: string;
+  zone: "Now" | "Later" | "Future";
+  due: string;
+  owner: string;
+  xp: number;
+  status: "In progress" | "Blocked" | "Queued" | "Done";
+};
+
+const DATA_ROWS: GridRow[] = [
+  { id: "q-101", title: "Morning Armor", zone: "Now", due: "Today", owner: "KT", xp: 40, status: "In progress" },
+  { id: "q-102", title: "Workout", zone: "Now", due: "Today", owner: "KT", xp: 60, status: "Queued" },
+  { id: "q-103", title: "Academic Deep Dive — level design doc", zone: "Now", due: "Tomorrow", owner: "KT", xp: 120, status: "In progress" },
+  { id: "q-104", title: "Restock Fuel", zone: "Later", due: "Fri", owner: "KT", xp: 20, status: "Queued" },
+  { id: "q-105", title: "Laundry Loop", zone: "Later", due: "Fri", owner: "KT", xp: 30, status: "Blocked" },
+  { id: "q-106", title: "15-Min Room Reset", zone: "Later", due: "Sat", owner: "KT", xp: 15, status: "Queued" },
+  { id: "q-107", title: "Explore Burlington", zone: "Future", due: "Next week", owner: "KT", xp: 50, status: "Queued" },
+  { id: "q-108", title: "Portfolio pass — capstone build", zone: "Future", due: "Aug 12", owner: "KT", xp: 200, status: "Queued" },
+];
+
+type SortKey = "title" | "due" | "xp";
+
+function DataGridDemo() {
+  const [dense, setDense] = useState(true);
+  const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({
+    key: "xp",
+    dir: "desc",
+  });
+  const [selected, setSelected] = useState<string[]>(["q-101"]);
+
+  const rows = [...DATA_ROWS].sort((a, b) => {
+    const dir = sort.dir === "asc" ? 1 : -1;
+    if (sort.key === "xp") return (a.xp - b.xp) * dir;
+    return String(a[sort.key]).localeCompare(String(b[sort.key])) * dir;
+  });
+
+  const toggleSort = (key: SortKey) =>
+    setSort((s) => ({ key, dir: s.key === key && s.dir === "asc" ? "desc" : "asc" }));
+
+  const ariaSort = (key: SortKey): "ascending" | "descending" | "none" =>
+    sort.key !== key ? "none" : sort.dir === "asc" ? "ascending" : "descending";
+
+  const cell = dense ? "px-3 py-1" : "px-4 py-3";
+  const head = dense ? "px-3 py-2" : "px-4 py-3";
+
+  const SortButton = ({ label, k }: { label: string; k: SortKey }) => (
+    <button
+      type="button"
+      onClick={() => toggleSort(k)}
+      className="inline-flex items-center gap-1 rounded-sm text-left transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    >
+      {label}
+      <ArrowUpDown className="size-3 opacity-60" aria-hidden="true" />
+    </button>
+  );
+
+  return (
+    <div className="quest-card overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-2.5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          {selected.length} of {DATA_ROWS.length} selected
+        </p>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="ds-density" className="text-xs text-muted-foreground">
+            Compact density
+          </Label>
+          <Switch
+            id="ds-density"
+            checked={dense}
+            onCheckedChange={(v) => setDense(v === true)}
+            aria-label="Toggle compact row density"
+          />
+        </div>
+      </div>
+
+      <div className="max-h-[22rem] overflow-auto scrollbar-quest">
+        <table className="w-full min-w-[46rem] border-collapse text-left">
+          <caption className="sr-only">
+            Quest backlog — sortable by quest, due date, and XP. Rows can be selected.
+          </caption>
+          <thead className="sticky top-0 z-10 bg-card">
+            <tr className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              <th scope="col" className={cn(head, "w-10")}>
+                <span className="sr-only">Select</span>
+              </th>
+              <th scope="col" aria-sort={ariaSort("title")} className={head}>
+                <SortButton label="Quest" k="title" />
+              </th>
+              <th scope="col" className={head}>
+                Zone
+              </th>
+              <th scope="col" aria-sort={ariaSort("due")} className={head}>
+                <SortButton label="Due" k="due" />
+              </th>
+              <th scope="col" className={head}>
+                Owner
+              </th>
+              <th scope="col" aria-sort={ariaSort("xp")} className={cn(head, "text-right")}>
+                <SortButton label="XP" k="xp" />
+              </th>
+              <th scope="col" className={head}>
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((r) => {
+              const checked = selected.includes(r.id);
+              return (
+                <tr
+                  key={r.id}
+                  className={cn("transition-colors hover:bg-accent/40", checked && "bg-accent/30")}
+                >
+                  <td className={cell}>
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(v) =>
+                        setSelected((s) =>
+                          v === true ? [...s, r.id] : s.filter((x) => x !== r.id),
+                        )
+                      }
+                      aria-label={`Select ${r.title}`}
+                    />
+                  </td>
+                  <th
+                    scope="row"
+                    className={cn(cell, "max-w-[18rem] truncate font-medium", dense ? "text-xs" : "text-sm")}
+                  >
+                    {r.title}
+                  </th>
+                  <td className={cell}>
+                    <Badge variant={r.zone === "Now" ? "default" : "secondary"}>{r.zone}</Badge>
+                  </td>
+                  <td className={cn(cell, "text-xs text-muted-foreground")}>{r.due}</td>
+                  <td className={cn(cell, "text-xs text-muted-foreground")}>{r.owner}</td>
+                  <td className={cn(cell, "text-right font-mono text-xs")}>{r.xp}</td>
+                  <td className={cn(cell, "text-xs")}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "size-1.5 rounded-full",
+                          r.status === "Blocked"
+                            ? "bg-destructive"
+                            : r.status === "In progress"
+                              ? "bg-neon"
+                              : "bg-muted-foreground",
+                        )}
+                        aria-hidden="true"
+                      />
+                      {r.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- Accessible settings form --------------------------- */
+
+function SettingsFormDemo() {
+  const [email, setEmail] = useState("kt@planner");
+  const invalid = !email.includes(".");
+
+  return (
+    <form
+      className="quest-card flex flex-col gap-5 p-4"
+      onSubmit={(e) => e.preventDefault()}
+      aria-labelledby="ds-form-heading"
+    >
+      <p id="ds-form-heading" className="sr-only">
+        Example workspace settings form
+      </p>
+
+      <fieldset className="flex flex-col gap-3 border-0 p-0">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Workspace
+        </legend>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="ds-ws-name">Workspace name</Label>
+          <Input id="ds-ws-name" defaultValue="Planner-KT" aria-describedby="ds-ws-name-help" />
+          <p id="ds-ws-name-help" className="text-xs text-muted-foreground">
+            Shown in the header and on shared quest links.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="ds-ws-email">Digest email</Label>
+          <Input
+            id="ds-ws-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={invalid}
+            aria-describedby={invalid ? "ds-ws-email-error" : "ds-ws-email-help"}
+          />
+          {invalid ? (
+            <p
+              id="ds-ws-email-error"
+              role="alert"
+              className="flex items-center gap-1.5 text-xs text-destructive"
+            >
+              <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+              Enter a valid email address — errors are announced, not just colored.
+            </p>
+          ) : (
+            <p id="ds-ws-email-help" className="text-xs text-muted-foreground">
+              Where the daily XP digest is delivered.
+            </p>
+          )}
+        </div>
+      </fieldset>
+
+      <Separator />
+
+      <fieldset className="flex flex-col gap-0 border-0 p-0">
+        <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Automation
+        </legend>
+        <div className="divide-y divide-border rounded-md border border-border">
+          <SettingsRowDemo
+            title="Auto-escalation"
+            description="Promote quests as their due date approaches."
+            defaultChecked
+          />
+          <SettingsRowDemo
+            title="Weekly summary"
+            description="Email a rollup of completed quests each Sunday."
+          />
+        </div>
+      </fieldset>
+
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" size="sm">
+          Cancel
+        </Button>
+        <Button type="submit" size="sm">
+          Save settings
+        </Button>
+      </div>
+    </form>
+  );
+}
