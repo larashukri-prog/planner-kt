@@ -1,61 +1,46 @@
 ## Goal
 
-Add two new documented sections to `/design-system` — **Motion & Micro-interactions** and **Middle Layer Architecture** — each with live, interactive demos plus copyable code, matching the existing `Section` / `Example` / `CodeBlock` documentation primitives. Work stays in `src/routes/design-system.tsx` (plus small demo components in `src/components/design-system/`); the live app is untouched.
+Yes — the Daily XP progress strip is the app's most characteristic motion, and it's currently missing from the Motion section. Add it as a documented, live, interactive example that also explains the teal → pink (`--neon` → `--neon-2`) gradient.
 
-## Navigation & numbering
+## 1. New Motion example: "Daily XP strip — gradient progress + celebration"
 
-Insert both sections between "Enterprise UI Patterns" and "AI Contribution Model", and renumber eyebrows:
+Added as the **first** example in Section 04 (it's the signature interaction), before the tactile button.
 
-```text
-01 Foundations & Tokens
-02 Atomic Components
-03 Enterprise UI Patterns
-04 Motion & Micro-interactions   (new)
-05 Middle Layer Architecture     (new)
-06 AI Contribution Model
-```
+A self-contained `XPBarDemo` in `src/components/design-system/demos.tsx` reproducing the real bar from `quest-app.tsx`, at documentation scale:
 
-The `NAV` array gains two entries; sidebar scroll-spy and mobile chips pick them up automatically.
+- Full-width 36px (`h-9`) rounded track on `bg-secondary/40` with an inset shadow.
+- **Gradient fill** — `linear-gradient(90deg, var(--color-neon) 0%, var(--color-neon-2) 100%)`, teal to magenta-pink, plus the blurred glow underlay at 60% opacity behind it.
+- **Spring width animation** — framer-motion `animate={{ width }}` with `stiffness: 120, damping: 20`, exactly the app's values.
+- **Looping shimmer** — a translucent white band sweeping the fill on a 2.4s linear repeat.
+- **Celebration at 100%** — scale pulse (`[1, 1.02, 1]`) plus the six sparkles rising out of the bar via `AnimatePresence`.
+- Demo controls: "+25% XP" / "Reset" buttons so the reviewer can drive it to 100% and watch the celebration fire, plus the live percentage label centered in the bar like the real one.
 
-## Section 4 — Motion & Micro-interactions
+### Documentation attached to the example
 
-Intro prose: motion is tokenized too — durations, easings and transforms come from a small shared vocabulary (`duration-200`, `ease-out`, `active:scale-95`, the `fade-in` / `scale-in` keyframes in `styles.css`), so animation ships as part of the system rather than as one-off CSS.
+- `a11y` note: the bar is a `role="progressbar"` with `aria-valuenow` / `aria-valuemin` / `aria-valuemax` and a text label, so progress is never conveyed by color or width alone; the celebration is decorative and `aria-hidden`; the infinite shimmer is suppressed under `prefers-reduced-motion`.
+- `api` note: the gradient is composed from the two brand tokens, so it re-themes automatically in light and dark; the same spring config is reused by every width/position animation in the product.
+- Code snippet showing the layered structure — glow underlay, gradient fill, shimmer child, centered label — with the real spring and gradient values.
 
-Three live `Example` blocks, each with its snippet:
+## 2. Gradient documentation in the example
 
-1. **Tactile button** — hover lift + `active:scale-95` press, plus a "Complete quest" variant reproducing the app's emerald success flash (Tailwind transition utilities only, no JS). Note that the same transition tokens are reused by the real Quest card.
-2. **Skeleton loading state** — a quest-card skeleton (avatar block, two text bars, badge) using `animate-pulse` over `bg-muted`, with a "Reload" button that flips back to the loaded card for ~1.2s so the shimmer→content swap is visible. Documents that skeletons mirror the real layout's 4px-grid dimensions to avoid layout shift.
-3. **Toast notification** — a self-contained in-page toast using `framer-motion` `AnimatePresence` (slide-in from the right + fade, spring exit), triggered by a button and auto-dismissing. Kept local to the page (no global `<Toaster />` change), with a note that production uses `sonner` with the same motion values.
-
-Each gets an `a11y` note: reduced-motion respect (`motion-reduce:transition-none` / `prefers-reduced-motion`), toast announced via `role="status"` + `aria-live="polite"`, skeleton marked `aria-hidden` with an accompanying `aria-busy` region.
-
-Add a small **motion token table** (duration 150/200/320ms, easings, standard transforms) above the examples so the values are documented, not just demonstrated.
-
-## Section 5 — Middle Layer Architecture
-
-Intro prose: components never talk to the database directly. Every screen reads from a custom hook; the hook owns fetching, optimistic updates, realtime subscriptions and persistence — the "middle layer" between UI surface and data service.
-
-Contents:
-
-1. **Architecture diagram** — an accessible, CSS/flex-built layered diagram (no image, no new dependency) showing:
+A short caption under the demo naming the token pair:
 
 ```text
-UI components  ->  custom hooks (useTasks / useTheme / useAuth)
-               ->  services (Supabase client, localStorage, PostHog)
-               ->  Postgres + RLS
+--neon    oklch(0.72 0.19 175)  teal      → fill start
+--neon-2  oklch(0.72 0.24 320)  magenta   → fill end
+--gradient-neon = linear-gradient(135deg, neon → neon-2)
 ```
-   Each layer is a labeled card listing its real responsibilities and the actual modules involved (`use-tasks.ts`, `use-theme.ts`, `use-auth.ts`, `@/integrations/supabase/client`). Arrows are decorative (`aria-hidden`), and the layer list is semantic markup so screen readers read it as an ordered list.
 
-2. **Live stateful component — persisted preference toggle.** A working demo backed by a small `useLocalStorageState` hook (written inline in the page's demo file, keyed under a `questlog.ds.*` namespace so it can't collide with app state): a switch plus a counter, showing state surviving reload. Displays the current stored JSON value live so the persistence is visible. Paired `CodeBlock` shows the hook implementation (lazy `useState` initializer, `useEffect` write, try/catch for private mode, SSR-safe `typeof window` guard) and the two-line component that consumes it.
+It notes that the same pair drives the app logo tile and the `--shadow-neon` glow, so one token edit re-skins every accent surface — tying the motion section back to Foundations.
 
-3. **Real-hook excerpt** — a trimmed `useTasks` snippet showing the optimistic-update pattern actually used in the app (local state updates first, server write follows, rollback on error) with a short annotation of why the UI stays instant. Read-only documentation; no behavior change.
+## 3. Motion token table additions
 
-4. Short "rules of the middle layer" list: components stay presentational, hooks own side effects, server writes are optimistic with rollback, storage keys are namespaced, and no component imports the data client directly.
+Two rows appended so the XP values are documented, not just demonstrated:
+- `spring 120 / 20` — progress width and layout position animations.
+- `shimmer 2.4s linear ∞` — indeterminate progress sheen.
 
 ## Technical notes
 
-- No new packages; `framer-motion`, `lucide-react` and existing shadcn atoms only.
-- Demo components live in a new `src/components/design-system/demos.tsx` to keep the route file from growing unbounded; the route imports and composes them.
-- All colors via semantic tokens; no hardcoded color utilities. Spacing stays on the 4px grid per the existing foundations section.
-- Heading order preserved (single `h1`, `h2` per section via `Section`, `h3` for sub-blocks).
-- Update the route `head()` description to mention motion and data/state architecture.
+- Demo lives in `src/components/design-system/demos.tsx`; only the route's motion section gains one `<Example>`. No change to the live app's `DailyXPBar`.
+- Uses existing `framer-motion`; gradients reference CSS variables, no hardcoded hex.
+- Reduced-motion: shimmer and sparkles are gated on a `prefers-reduced-motion` media query check so the bar still fills but stops looping.
