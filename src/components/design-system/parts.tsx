@@ -84,16 +84,28 @@ export function Example({
   code,
   children,
   className,
+  a11y,
+  api,
 }: {
   title: string;
   code: string;
   children: ReactNode;
   className?: string;
+  /** Accessibility contract note — rendered as a WCAG 2.1 AA meta line. */
+  a11y?: string;
+  /** Composable API note — how the primitive is meant to be extended. */
+  api?: string;
 }) {
   return (
     <div className="quest-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-border/70 px-4 py-2.5">
         <h3 className="text-sm font-semibold">{title}</h3>
+        {a11y ? (
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            <ShieldCheck className="size-3 text-neon" aria-hidden="true" />
+            WCAG 2.1 AA
+          </span>
+        ) : null}
       </div>
       <div className="grid gap-4 p-4 lg:grid-cols-2">
         <div className={cn("flex min-w-0 flex-wrap items-center gap-3", className)}>{children}</div>
@@ -101,6 +113,28 @@ export function Example({
           <CodeBlock code={code} />
         </div>
       </div>
+      {(a11y || api) && (
+        <dl className="flex flex-col gap-2 border-t border-border/70 px-4 py-3 text-xs text-muted-foreground">
+          {a11y ? (
+            <div className="flex gap-2">
+              <dt className="shrink-0">
+                <ShieldCheck className="mt-0.5 size-3.5 text-neon" aria-hidden="true" />
+                <span className="sr-only">Accessibility</span>
+              </dt>
+              <dd className="min-w-0">{a11y}</dd>
+            </div>
+          ) : null}
+          {api ? (
+            <div className="flex gap-2">
+              <dt className="shrink-0">
+                <Blocks className="mt-0.5 size-3.5 text-neon" aria-hidden="true" />
+                <span className="sr-only">Composable API</span>
+              </dt>
+              <dd className="min-w-0">{api}</dd>
+            </div>
+          ) : null}
+        </dl>
+      )}
     </div>
   );
 }
