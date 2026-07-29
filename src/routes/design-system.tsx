@@ -625,7 +625,7 @@ import { Checkbox } from "@/components/ui/checkbox";
             id="ai"
             eyebrow="04 — Process"
             title="AI-Native Contribution Model"
-            description="The design system is written to be machine-legible first."
+            description="The design system is written to be machine-legible first — and the same properties that make it AI-friendly are what make it safe to scale in an enterprise."
           >
             <div className="quest-card flex flex-col gap-4 p-5 text-sm leading-relaxed text-muted-foreground">
               <p>
@@ -648,9 +648,25 @@ import { Checkbox } from "@/components/ui/checkbox";
                 contribution velocity goes up.
               </p>
               <p>
-                Reviews get cheaper too: a diff that introduces a raw hex value, an inline style, or
-                a new shadow is immediately and mechanically wrong, whether a human or a model wrote
-                it.
+                The payoff is not only visual consistency — it is{" "}
+                <strong className="text-foreground">minimized technical debt</strong>. Leaning on
+                dependency-light utility classes rather than a wrapped, forked, or heavily themed
+                component library keeps the dependency graph small and auditable: fewer transitive
+                packages to patch when a CVE lands, no stylesheet graveyard of dead selectors, and
+                no bespoke abstraction layer that has to be migrated every time upstream ships a
+                major version. Deleting a feature deletes its styling with it.
+              </p>
+              <p>
+                Strict tokenized conventions also make change{" "}
+                <strong className="text-foreground">predictable</strong>. A token edit propagates
+                everywhere at once with a bounded, inspectable blast radius, so rebrands, contrast
+                fixes, and density changes are single-commit operations instead of multi-sprint
+                audits. Accessibility guarantees ride along with the tokens rather than being
+                re-litigated per screen. And because every legitimate change looks like a token or a
+                utility class, any diff that introduces a raw hex value, an inline style, a new
+                shadow, or an unvetted dependency is mechanically detectable in review — whether a
+                human or a model wrote it. That reviewability is what lets an enterprise team scale
+                contributors, and agents, without scaling risk.
               </p>
 
               <Separator />
@@ -661,9 +677,11 @@ import { Checkbox } from "@/components/ui/checkbox";
                   {[
                     "Use semantic tokens only (bg-primary, text-muted-foreground). Never text-white, bg-black, or bg-[#hex].",
                     "New colors are added to src/styles.css for both :root and .dark before being used.",
+                    "All spacing, sizing, and icon dimensions resolve to a 4px multiple — no arbitrary values.",
                     "Component variants belong in a cva() block, not in conditional className strings at the call site.",
-                    "Compose from @/components/ui primitives before writing a new one.",
+                    "Compose from @/components/ui primitives before writing a new one; prefer composition over adding a dependency.",
                     "Every interactive element needs a visible focus-visible ring and an accessible name.",
+                    "Every interactive pattern ships with its keyboard and screen-reader behavior verified, not assumed.",
                     "Layout uses grid/flex with min-w-0 and shrink-0 so rows survive mobile widths.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
