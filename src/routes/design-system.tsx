@@ -631,11 +631,212 @@ import { Checkbox } from "@/components/ui/checkbox";
             />
           </Section>
 
+          {/* 4. Motion */}
+          <Section
+            id="motion"
+            eyebrow="04 — Motion"
+            title="Motion & Micro-interactions"
+            description="Animation is tokenized like everything else. Durations, easings and transforms come from one small vocabulary, so interface motion ships as a living part of the system instead of as one-off CSS."
+          >
+            <div className="quest-card overflow-hidden">
+              <div className="border-b border-border/70 px-4 py-2.5">
+                <h3 className="text-sm font-semibold">Motion tokens</h3>
+              </div>
+              <div className="overflow-x-auto scrollbar-quest">
+                <table className="w-full min-w-[520px] text-left text-xs">
+                  <caption className="sr-only">Standard motion values used across Planner-KT</caption>
+                  <thead className="border-b border-border/70 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <tr>
+                      <th scope="col" className="px-4 py-2 font-medium">Token</th>
+                      <th scope="col" className="px-4 py-2 font-medium">Value</th>
+                      <th scope="col" className="px-4 py-2 font-medium">Used for</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {MOTION_TOKENS.map((m) => (
+                      <tr key={m.token}>
+                        <td className="px-4 py-2 font-mono text-[11px] text-foreground">{m.token}</td>
+                        <td className="px-4 py-2 font-mono text-[11px] text-muted-foreground">{m.value}</td>
+                        <td className="px-4 py-2 text-muted-foreground">{m.use}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-          {/* 4. AI */}
+            <Example
+              title="Tactile button — hover lift, press scale, success flash"
+              a11y="Focus ring is never removed, the success state is announced through aria-pressed and a text change (not color alone), and every transition is disabled under motion-reduce."
+              api="Pure Tailwind transition utilities — no JS animation library, so the same classes drop onto any element, including the real Quest card's complete action."
+              code={`<button
+  className="h-11 rounded-md bg-primary px-4 text-primary-foreground
+             shadow-sm transition-all duration-200 ease-out
+             hover:-translate-y-0.5 hover:shadow-md
+             active:translate-y-0 active:scale-95
+             focus-visible:ring-2 focus-visible:ring-ring
+             motion-reduce:transition-none"
+>
+  Hover / press me
+</button>`}
+            >
+              <TactileButtonsDemo />
+            </Example>
+
+            <Example
+              title="Skeleton loading state"
+              a11y='The skeleton is aria-hidden inside an aria-busy, aria-live="polite" region, so assistive tech announces the loaded content rather than reading placeholder boxes.'
+              api="Skeleton blocks reuse the real card's 4px-grid dimensions (size-8 avatar, h-4 / h-3 text bars), so the swap to content causes zero layout shift."
+              code={`{loading ? (
+  <div className="quest-card flex gap-3 p-4" aria-hidden>
+    <div className="size-8 animate-pulse rounded-full bg-muted" />
+    <div className="flex flex-1 flex-col gap-2">
+      <div className="h-4 w-3/5 animate-pulse rounded bg-muted" />
+      <div className="h-3 w-4/5 animate-pulse rounded bg-muted" />
+    </div>
+  </div>
+) : (
+  <QuestCard {...quest} className="animate-fade-in" />
+)}`}
+            >
+              <SkeletonDemo />
+            </Example>
+
+            <Example
+              title="Toast notification — spring slide-in"
+              a11y='The toast is a role="status" live region, so it is announced without stealing focus, and it auto-dismisses on a timer rather than requiring a click.'
+              api="framer-motion AnimatePresence handles mount and unmount with one spring config. Production toasts use sonner with the same offsets and damping."
+              code={`<AnimatePresence>
+  {open && (
+    <motion.div
+      role="status"
+      aria-live="polite"
+      initial={{ opacity: 0, x: 32, scale: 0.96 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 32, scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      className="rounded-md border border-border bg-card px-3 py-2.5 shadow-lg"
+    >
+      Quest completed — +25 XP
+    </motion.div>
+  )}
+</AnimatePresence>`}
+            >
+              <ToastDemo />
+            </Example>
+          </Section>
+
+          {/* 5. Middle layer */}
+          <Section
+            id="middle-layer"
+            eyebrow="05 — Architecture"
+            title="Middle Layer Architecture"
+            description="No component talks to the database. Every screen reads from a custom hook, and the hook owns fetching, optimistic writes, realtime subscriptions and persistence — the middle layer between the UI surface and the data services."
+          >
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="flex min-w-0 flex-col gap-3">
+                <SubHeading>Data flow</SubHeading>
+                <ArchitectureDiagram />
+              </div>
+              <div className="flex min-w-0 flex-col gap-3">
+                <SubHeading>Rules of the middle layer</SubHeading>
+                <ul className="quest-card flex flex-col gap-2.5 p-4 text-sm text-muted-foreground">
+                  {[
+                    "Components stay presentational — they receive state and emit intent, nothing else.",
+                    "Hooks own every side effect: network, storage, timers, subscriptions.",
+                    "Server writes are optimistic and roll back on error, so the UI never waits on a round trip.",
+                    "Storage keys are namespaced (questlog.*) and versioned so migrations are explicit.",
+                    "No component imports the data client directly; swapping a service touches one hook.",
+                  ].map((rule) => (
+                    <li key={rule} className="flex gap-2.5">
+                      <Check className="mt-0.5 size-4 shrink-0 text-neon" aria-hidden="true" />
+                      <span>{rule}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <Example
+              title="Live stateful component — persisted preferences"
+              className="items-start"
+              a11y="Both controls have programmatic labels and accessible names; the counter buttons are icon-free text targets at the 44px comfortable size."
+              api="One generic hook serves both the switch and the counter. The component holds no effects — swap the hook for a server-backed one and the JSX is unchanged."
+              code={`function useLocalStorageState<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(() => {
+    if (typeof window === "undefined") return initial; // SSR-safe
+    try {
+      const raw = window.localStorage.getItem(key);
+      return raw ? (JSON.parse(raw) as T) : initial;
+    } catch {
+      return initial;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* private mode — state still works in memory */
+    }
+  }, [key, value]);
+
+  return [value, setValue] as const;
+}
+
+// the component stays declarative
+const [prefs, setPrefs] = useLocalStorageState("questlog.ds.demo.v1", {
+  compact: false,
+  xp: 0,
+});
+
+<Switch
+  checked={prefs.compact}
+  onCheckedChange={(compact) => setPrefs((p) => ({ ...p, compact }))}
+/>`}
+            >
+              <StatefulComponentDemo />
+            </Example>
+
+            <div className="quest-card flex flex-col gap-3 p-4">
+              <h3 className="text-sm font-semibold">The same pattern against the server</h3>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                <code className="font-mono text-foreground">useTasks</code> is the production
+                middle layer. It writes to local state first so the board reacts within a frame,
+                fires the network call in the background, and restores the previous row if the
+                write fails — the component that rendered the checkbox knows none of this.
+              </p>
+              <CodeBlock
+                label="src/lib/use-tasks.ts"
+                code={`const updateTask = (id: string, patch: Partial<Task>) => {
+  const prev = tasksRef.current.find((t) => t.id === id);
+
+  // 1. optimistic — UI updates immediately
+  setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+
+  // 2. persist in the background
+  supabase.from("tasks").update(patchToUpdate(patch)).eq("id", id)
+    .then(({ error }) => {
+      // 3. roll back on failure
+      if (error && prev) {
+        setTasks((cur) => cur.map((t) => (t.id === id ? prev : t)));
+      }
+    });
+};
+
+// realtime keeps every open tab in sync, still inside the hook
+supabase.channel(\`tasks-\${userId}\`)
+  .on("postgres_changes", { event: "*", table: "tasks" }, applyRemoteChange)
+  .subscribe();`}
+              />
+            </div>
+          </Section>
+
+          {/* 6. AI */}
           <Section
             id="ai"
-            eyebrow="04 — Process"
+            eyebrow="06 — Process"
+
             title="AI-Native Contribution Model"
             description="The design system is written to be machine-legible first — and the same properties that make it AI-friendly are what make it safe to scale in an enterprise."
           >
