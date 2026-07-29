@@ -23,7 +23,9 @@ import {
   StatefulComponentDemo,
   TactileButtonsDemo,
   ToastDemo,
+  XPBarDemo,
 } from "@/components/design-system/demos";
+
 
 import { useTheme } from "@/lib/use-theme";
 import { cn } from "@/lib/utils";
@@ -62,8 +64,11 @@ const MOTION_TOKENS = [
   { token: "spring 420 / 32", value: "stiffness / damping", use: "Toasts and framer-motion overlays." },
   { token: "active:scale-95", value: "scale(0.95)", use: "Universal press feedback on buttons." },
   { token: "animate-fade-in", value: "300ms fade + 10px rise", use: "Content appearing after a skeleton." },
+  { token: "spring 120 / 20", value: "stiffness / damping", use: "Progress width and layout position." },
+  { token: "shimmer", value: "2.4s linear ∞", use: "Indeterminate sheen sweeping a progress fill." },
   { token: "motion-reduce:*", value: "transition-none", use: "Honors prefers-reduced-motion everywhere." },
 ];
+
 
 
 
