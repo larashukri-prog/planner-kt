@@ -1,40 +1,47 @@
 ## Goal
 
-Add a public `/design-system` route: a premium docs-style page (Vercel/Stripe feel) documenting Planner-KT's tokenized UI system, linked from the app footer.
+Upgrade the existing `/design-system` page with enterprise-grade structural rigor: a documented 4px grid, WCAG 2.1 AA notes on every atom, data-dense "Enterprise UI Patterns", and a stronger AI-contribution rationale. All work stays inside `src/routes/design-system.tsx` and `src/components/design-system/parts.tsx` — the live app is untouched apart from nothing at all.
 
-## Route & layout
+## 1. Foundations & Tokens — 4px base grid
 
-- New file `src/routes/design-system.tsx` (`createFileRoute("/design-system")`) with its own `head()`: unique title, description, og:title/og:description.
-- Public page — no auth gate, no server functions, purely presentational.
-- Layout: sticky left sidebar (`md:` and up) with anchor links to the four sections + scroll-spy highlighting via IntersectionObserver; on mobile the sidebar collapses into a horizontal scrollable chip row pinned under the header.
-- Header bar: "Planner-KT / Design System" wordmark, theme toggle (reuse `useTheme`), and a back link to `/`.
-- All styling uses existing semantic tokens from `src/styles.css` (no hardcoded colors), Space Grotesk display + JetBrains Mono for code.
+- New subsection "The 4px base grid" placed after the existing spacing scale.
+- Left: a visual ruler showing steps 1–16 (4px → 64px) with an overlaid 4px-repeating background so multiples align visibly; each step labeled with the Tailwind token (`p-2`), rem, and px value.
+- Right: a **density comparison** — the same task row rendered twice from the same atoms:
+  - Standard density: `py-3` / `gap-3` / 44px row height (touch target compliant).
+  - Compact density: `py-1` / `gap-2` / 28px row height for high-data-density tables.
+  Both annotated with the multiples used, showing the grid is the only thing that changes.
+- Short prose note: every padding, gap, height and icon size resolves to a multiple of 4, which is what keeps mixed-density views optically aligned.
 
-## Sections
+## 2. Atomic Components — accessibility + API notes
 
-1. **Foundations & Tokens**
-   - Color swatch grid: background, foreground, card, primary, secondary, muted, accent, destructive, border, plus the app-specific neon / neon-2 / neon-3 and zone-now / zone-later / zone-future / inbox tokens. Each swatch shows the token name (`--primary`), the Tailwind class (`bg-primary`), and renders live so it re-themes in light/dark.
-   - Typography scale: display heading through small/mono, each row labeled with its utility classes.
-   - Spacing scale and border-radius tokens (`--radius` derived sm/md/lg/xl/2xl) rendered as visual blocks.
-   - Elevation: `shadow-card`, `shadow-neon`, `quest-card` utility samples.
+- Extend the `Example` component in `parts.tsx` with two optional props: `a11y` (string) and `api` (string).
+- Render them under the preview as a small two-line meta block: a shield/check icon + "WCAG 2.1 AA" line, and a puzzle icon + composable-API line.
+- Fill in per component:
+  - Button — 44px min target on default size, visible `focus-visible` ring, `asChild` polymorphism, cva variants.
+  - Input/Label — programmatic label association, `aria-invalid` support, `aria-describedby` for errors.
+  - Badge — non-color-dependent meaning (text label always present), `asChild` for links.
+  - Switch/Checkbox — Radix roles, keyboard operable, controlled/uncontrolled APIs.
+  - Card — semantic slot composition (Header/Title/Description/Content), heading-level agnostic.
+- Add one line in the section description stating all atoms target WCAG 2.1 AA (contrast, focus visibility, keyboard operability, target size).
 
-2. **Atomic Components**
-   - Live interactive examples: Button (all variants + sizes + disabled/loading), Input, Badge variants, Card, Switch, plus Checkbox and Separator for completeness.
-   - Each example sits in a two-column "preview / code" block: rendered component on top (or left on wide screens) and a syntax-styled `<pre>` code snippet with a copy-to-clipboard button showing the import + usage.
+## 3. Enterprise UI Patterns
 
-3. **UI Patterns**
-   - Three composed, non-interactive replicas built from the same atoms: a Quest/Task Card (checkbox, title, badges, subtask list), a Settings Row (label + description + Switch), and the XP progress strip.
-   - Note: these are self-contained demo replicas inside the design-system route — the real `quest-app.tsx` components stay untouched so live app behavior can't regress.
+- Rename section title to "Enterprise UI Patterns" and the nav label accordingly (`NAV` entry + sidebar/mobile chips update automatically).
+- Replace/augment the pattern set with three composed demos:
+  1. **Data-Dense Task Grid** — a real `<table>` with sticky header, ~8 rows: select checkbox, quest title, zone badge, due date, owner, XP, status. Compact 4px-grid row rhythm, zebra-free divide-y rows, `scope="col"` headers, a `<caption class="sr-only">`, sortable-column buttons with `aria-sort`, and a density toggle (Comfortable/Compact) driven by the 4px scale to prove the same atoms scale.
+  2. **Accessible Settings Form** — a real `<form>` with `<fieldset>`/`<legend>` groups, labeled inputs, help text wired via `aria-describedby`, one field showing an inline error with `aria-invalid` + `role="alert"`, switches for toggles, and a footer action row. Non-submitting demo (`onSubmit` prevented).
+  3. Keep the **Daily XP progress strip** and Quest card as the lighter-density counterpart, so the section shows both ends of the density spectrum.
+- Each pattern gets a short note on which atoms it composes and which a11y affordances it carries, plus a copyable code snippet.
 
-4. **AI-Native Contribution Model**
-   - Prose section explaining the token + Tailwind utility + shadcn convention contract, and why it lets AI agents (Cursor, Lovable) generate strictly-themed components with zero design drift. Include a short "rules for contributors/agents" list (semantic tokens only, no raw hex, variants via cva, etc.).
+## 4. AI-Native Contribution Model
 
-## Footer link
-
-- In `src/components/quest-app.tsx` footer (line ~99), add a `<Link to="/design-system">Design System</Link>` next to the existing "Planner v1 — built for optimal planning" text, styled as a muted hover-to-neon link.
+- Rewrite the prose to add: dependency-light utility classes (no bespoke CSS layer, no component-library fork) mean a small, auditable surface — fewer transitive dependencies to patch, less dead CSS, and no drift-prone one-off stylesheets, i.e. minimized technical debt.
+- Add that strict tokenized conventions make change *predictable*: a token edit propagates everywhere with a bounded blast radius, and any diff introducing a raw hex, inline style, or new dependency is mechanically detectable in review — the property enterprise teams need for secure, reviewable scaling.
+- Extend the contribution-rules list with: "Prefer composition over new dependencies", "Every interactive pattern ships with keyboard and screen-reader behavior verified", "All spacing/sizing resolves to a 4px multiple".
 
 ## Technical notes
 
-- New reusable-but-local helpers inside a `src/components/design-system/` folder (`SwatchGrid`, `CodeBlock`, `ComponentSection`) to keep the route file readable.
-- Accessibility: single `<h1>`, sequential `<h2>`/`<h3>`, `<nav aria-label="Design system sections">`, skip-to-content link, visible focus rings, `aria-live` confirmation on copy.
-- Responsive: sidebar hidden below `md`, content max-width ~1100px, code blocks scroll horizontally instead of overflowing.
+- No new packages; `lucide-react` icons only. No route, data, or business-logic changes.
+- All colors via existing semantic tokens; no hardcoded color utilities.
+- Heading order preserved (single `h1`, `h2` per section, `h3` for sub-blocks); density/sort toggles get accessible names; the data grid scrolls horizontally on mobile rather than overflowing.
+- Update the route `head()` description to mention accessibility and enterprise patterns.

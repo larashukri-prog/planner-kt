@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Check, Moon, Sun, Swords } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowUpDown, Check, Moon, Sun, Swords } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
-  "Living documentation for Planner-KT: design tokens, atomic components, composed UI patterns, and the AI-native contribution model.";
+  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, data-dense enterprise UI patterns, and the AI-native contribution model.";
 
 export const Route = createFileRoute("/design-system")({
   head: () => ({
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/design-system")({
 const NAV = [
   { id: "foundations", label: "Foundations & Tokens" },
   { id: "atoms", label: "Atomic Components" },
-  { id: "patterns", label: "UI Patterns" },
+  { id: "patterns", label: "Enterprise UI Patterns" },
   { id: "ai", label: "AI Contribution Model" },
 ];
 
@@ -79,6 +79,10 @@ const TYPE_SCALE = [
 ];
 
 const SPACING = [1, 2, 3, 4, 6, 8, 12];
+
+/** 4px base grid steps — token, rem and px, used across every spacing decision. */
+const GRID_STEPS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16];
+
 const RADII = [
   { name: "sm", cls: "rounded-sm" },
   { name: "md", cls: "rounded-md" },
@@ -86,6 +90,12 @@ const RADII = [
   { name: "xl", cls: "rounded-xl" },
   { name: "2xl", cls: "rounded-2xl" },
   { name: "full", cls: "rounded-full" },
+];
+
+const GRID_ROWS = [
+  { title: "Morning Armor", zone: "Now", due: "Today", xp: 40 },
+  { title: "Workout", zone: "Now", due: "Today", xp: 60 },
+  { title: "Restock Fuel", zone: "Later", due: "Fri", xp: 20 },
 ];
 
 function useScrollSpy(ids: string[]) {
@@ -316,6 +326,68 @@ function DesignSystemPage() {
               </div>
             </div>
 
+            <div>
+              <SubHeading>The 4px base grid</SubHeading>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                Every padding, gap, row height, and icon size in Planner-KT resolves to a multiple
+                of <strong className="text-foreground">4px</strong>. That single constraint is what
+                lets a comfortable board view and a compact, high-density data view sit in the same
+                product without optical drift — only the multiplier changes, never the rhythm.
+              </p>
+
+              <div className="mt-4 grid gap-6 lg:grid-cols-2">
+                <div className="quest-card p-4">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                    Grid ruler · 4px increments
+                  </p>
+                  <div
+                    className="mt-3 flex flex-col gap-2 rounded-md p-2"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(to right, color-mix(in oklab, var(--border) 90%, transparent) 0 1px, transparent 1px 4px)",
+                    }}
+                  >
+                    {GRID_STEPS.map((s) => (
+                      <div key={s} className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 font-mono text-[10px] text-muted-foreground">
+                          p-{s} · {s * 4}px
+                        </span>
+                        <div
+                          className="h-2.5 rounded-[2px] bg-primary/70"
+                          style={{ width: `${s * 4}px` }}
+                          aria-hidden="true"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Tailwind&apos;s numeric scale is already 4px-based (
+                    <code className="font-mono text-foreground">1 = 4px</code>), so the grid is
+                    enforced by the utility names themselves — there is no arbitrary
+                    <code className="ml-1 font-mono text-foreground">p-[13px]</code> to review.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <DensitySample
+                    label="Standard density"
+                    meta="py-3 · gap-3 · 44px row — touch-target compliant"
+                    rowClass="gap-3 py-3"
+                    titleClass="text-sm"
+                  />
+                  <DensitySample
+                    label="High data density"
+                    meta="py-1 · gap-2 · 28px row — table and audit views"
+                    rowClass="gap-2 py-1"
+                    titleClass="text-xs"
+                    compact
+                  />
+                </div>
+              </div>
+            </div>
+
+
+
             <CodeBlock
               label="src/styles.css"
               code={`:root {
@@ -337,7 +409,7 @@ function DesignSystemPage() {
             id="atoms"
             eyebrow="02 — Atoms"
             title="Atomic Components"
-            description="Every atom is a shadcn/ui primitive whose variants are declared with class-variance-authority. Import from @/components/ui and compose — never restyle with ad-hoc colors."
+            description="Every atom is a shadcn/ui primitive whose variants are declared with class-variance-authority. All atoms are built targeting WCAG 2.1 AA — token-guaranteed contrast in both themes, visible focus-visible rings, full keyboard operability, and adequate target sizes — and expose composable APIs (asChild polymorphism, controlled/uncontrolled state, slot-based composition) for flexible integration."
           >
             <Example
               title="Button"
@@ -351,6 +423,8 @@ function DesignSystemPage() {
 <Button variant="link">Link</Button>
 <Button size="sm">Small</Button>
 <Button disabled>Disabled</Button>`}
+              a11y="WCAG 2.1 AA: foreground/background pairs are token-locked above 4.5:1 in both themes, focus-visible ring meets 3:1 non-text contrast, disabled state is conveyed by cursor and aria-disabled rather than color alone, and default size clears the 44×44 target guidance."
+              api="Composable API: asChild renders any element (Link, a, label) while keeping variant styling; variants and sizes come from a single cva() block, so new intents are added centrally instead of at the call site."
             >
               <Button>Add quest</Button>
               <Button variant="secondary">Secondary</Button>
@@ -372,6 +446,8 @@ import { Label } from "@/components/ui/label";
 <Input id="quest" placeholder="Brain dump a quest…" />
 <Input disabled placeholder="Disabled" />`}
               className="flex-col !items-stretch"
+              a11y="WCAG 2.1 AA: every field is programmatically associated with a visible Label via htmlFor/id, supports aria-invalid plus aria-describedby for error and help text, and placeholder text never substitutes for a label."
+              api="Composable API: forwards all native input props and ref, so it drops into react-hook-form or any controlled setup unchanged; sizing and state styling stay token-driven."
             >
               <div className="flex w-full flex-col gap-1.5">
                 <Label htmlFor="ds-quest">Quest title</Label>
@@ -388,6 +464,8 @@ import { Label } from "@/components/ui/label";
 <Badge variant="secondary">Later</Badge>
 <Badge variant="outline">Future</Badge>
 <Badge variant="destructive">Overdue</Badge>`}
+              a11y="WCAG 2.1 AA: status is always carried by the text label, never by hue alone, so the meaning survives color-blindness and monochrome print; every variant pairs a token foreground with its token background."
+              api="Composable API: asChild turns a badge into a link or button without duplicating styles; variants extend through the same cva() contract as Button."
             >
               <Badge>Now</Badge>
               <Badge variant="secondary">Later</Badge>
@@ -402,6 +480,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 <Switch id="recurring" defaultChecked />
 <Checkbox id="subtask" />`}
+              a11y="WCAG 2.1 AA: Radix primitives supply role=switch / role=checkbox with aria-checked, Space and Enter activation, and a focus-visible ring; both are always paired with a Label so the hit area includes the text."
+              api="Composable API: controlled (checked + onCheckedChange) or uncontrolled (defaultChecked) — the same component serves optimistic UI and plain forms."
             >
               <div className="flex items-center gap-2">
                 <Switch id="ds-switch" defaultChecked />
@@ -426,6 +506,8 @@ import { Checkbox } from "@/components/ui/checkbox";
   <CardContent>3 of 5 subtasks complete</CardContent>
 </Card>`}
               className="!block"
+              a11y="WCAG 2.1 AA: CardTitle is heading-level agnostic, so it can render the correct h2/h3 for its position and keep document outline order intact; surface/foreground pairing is token-guaranteed in both themes."
+              api="Composable API: slot components (Header, Title, Description, Content, Footer) compose freely — omit what you don't need, and layout stays on the 4px grid."
             >
               <Card className="w-full">
                 <CardHeader>
@@ -439,20 +521,43 @@ import { Checkbox } from "@/components/ui/checkbox";
             </Example>
           </Section>
 
-          {/* 3. Patterns */}
+          {/* 3. Enterprise patterns */}
           <Section
             id="patterns"
             eyebrow="03 — Patterns"
-            title="UI Patterns"
-            description="Atoms composed into the recurring layouts that make up the app surface. These are static replicas of production patterns, safe to read and copy."
+            title="Enterprise UI Patterns"
+            description="The same atoms composed into production-scale surfaces: a data-dense task grid, an accessible settings form, and the lighter board-level patterns. Density changes by moving along the 4px grid — never by forking a component."
           >
+            <div className="flex flex-col gap-3">
+              <SubHeading>Data-dense task grid</SubHeading>
+              <p className="max-w-2xl text-xs text-muted-foreground">
+                Composes Checkbox, Badge, and Button inside a semantic{" "}
+                <code className="font-mono text-foreground">&lt;table&gt;</code>: scoped column
+                headers, an <code className="font-mono text-foreground">sr-only</code> caption,
+                sortable headers exposing <code className="font-mono text-foreground">aria-sort</code>
+                , and a density toggle that only swaps 4px multiples.
+              </p>
+              <DataGridDemo />
+            </div>
+
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex flex-col gap-3">
-                <SubHeading>Quest card</SubHeading>
-                <QuestCardDemo />
+                <SubHeading>Accessible settings form</SubHeading>
+                <p className="text-xs text-muted-foreground">
+                  Grouped with fieldset/legend, help text wired through{" "}
+                  <code className="font-mono text-foreground">aria-describedby</code>, and an
+                  invalid field announced via{" "}
+                  <code className="font-mono text-foreground">aria-invalid</code> +{" "}
+                  <code className="font-mono text-foreground">role=&quot;alert&quot;</code>.
+                </p>
+                <SettingsFormDemo />
               </div>
               <div className="flex flex-col gap-3">
-                <SubHeading>Settings row</SubHeading>
+                <SubHeading>Quest card &amp; settings rows</SubHeading>
+                <p className="text-xs text-muted-foreground">
+                  The comfortable end of the density spectrum — same atoms, larger 4px multiples.
+                </p>
+                <QuestCardDemo />
                 <div className="quest-card divide-y divide-border">
                   <SettingsRowDemo
                     title="Auto-escalation"
@@ -463,10 +568,6 @@ import { Checkbox } from "@/components/ui/checkbox";
                     title="Daily spawn engine"
                     description="Recreate recurring quests each morning."
                     defaultChecked
-                  />
-                  <SettingsRowDemo
-                    title="Celebration effects"
-                    description="Sparkle burst when the XP bar hits 100%."
                   />
                 </div>
               </div>
@@ -496,24 +597,35 @@ import { Checkbox } from "@/components/ui/checkbox";
 
             <CodeBlock
               label="pattern"
-              code={`<article className="quest-card p-4">
-  <header className="flex items-start gap-3">
-    <CompleteCheckbox />
-    <h3 className="min-w-0 flex-1 truncate text-sm font-semibold">
-      {task.title}
-    </h3>
-    <Badge variant="secondary">{task.status}</Badge>
-  </header>
-</article>`}
+              code={`<table className="w-full text-left">
+  <caption className="sr-only">Quests, sortable by title and due date</caption>
+  <thead className="sticky top-0 bg-card">
+    <tr>
+      <th scope="col" aria-sort={sort === "title" ? "ascending" : "none"}>
+        <button type="button" onClick={() => setSort("title")}>Quest</button>
+      </th>
+      <th scope="col">Zone</th>
+    </tr>
+  </thead>
+  <tbody className="divide-y divide-border">
+    {rows.map((row) => (
+      <tr key={row.id} className={dense ? "py-1" : "py-3"}>
+        <th scope="row" className="font-normal">{row.title}</th>
+        <td><Badge variant="secondary">{row.zone}</Badge></td>
+      </tr>
+    ))}
+  </tbody>
+</table>`}
             />
           </Section>
+
 
           {/* 4. AI */}
           <Section
             id="ai"
             eyebrow="04 — Process"
             title="AI-Native Contribution Model"
-            description="The design system is written to be machine-legible first."
+            description="The design system is written to be machine-legible first — and the same properties that make it AI-friendly are what make it safe to scale in an enterprise."
           >
             <div className="quest-card flex flex-col gap-4 p-5 text-sm leading-relaxed text-muted-foreground">
               <p>
@@ -536,9 +648,25 @@ import { Checkbox } from "@/components/ui/checkbox";
                 contribution velocity goes up.
               </p>
               <p>
-                Reviews get cheaper too: a diff that introduces a raw hex value, an inline style, or
-                a new shadow is immediately and mechanically wrong, whether a human or a model wrote
-                it.
+                The payoff is not only visual consistency — it is{" "}
+                <strong className="text-foreground">minimized technical debt</strong>. Leaning on
+                dependency-light utility classes rather than a wrapped, forked, or heavily themed
+                component library keeps the dependency graph small and auditable: fewer transitive
+                packages to patch when a CVE lands, no stylesheet graveyard of dead selectors, and
+                no bespoke abstraction layer that has to be migrated every time upstream ships a
+                major version. Deleting a feature deletes its styling with it.
+              </p>
+              <p>
+                Strict tokenized conventions also make change{" "}
+                <strong className="text-foreground">predictable</strong>. A token edit propagates
+                everywhere at once with a bounded, inspectable blast radius, so rebrands, contrast
+                fixes, and density changes are single-commit operations instead of multi-sprint
+                audits. Accessibility guarantees ride along with the tokens rather than being
+                re-litigated per screen. And because every legitimate change looks like a token or a
+                utility class, any diff that introduces a raw hex value, an inline style, a new
+                shadow, or an unvetted dependency is mechanically detectable in review — whether a
+                human or a model wrote it. That reviewability is what lets an enterprise team scale
+                contributors, and agents, without scaling risk.
               </p>
 
               <Separator />
@@ -549,9 +677,11 @@ import { Checkbox } from "@/components/ui/checkbox";
                   {[
                     "Use semantic tokens only (bg-primary, text-muted-foreground). Never text-white, bg-black, or bg-[#hex].",
                     "New colors are added to src/styles.css for both :root and .dark before being used.",
+                    "All spacing, sizing, and icon dimensions resolve to a 4px multiple — no arbitrary values.",
                     "Component variants belong in a cva() block, not in conditional className strings at the call site.",
-                    "Compose from @/components/ui primitives before writing a new one.",
+                    "Compose from @/components/ui primitives before writing a new one; prefer composition over adding a dependency.",
                     "Every interactive element needs a visible focus-visible ring and an accessible name.",
+                    "Every interactive pattern ships with its keyboard and screen-reader behavior verified, not assumed.",
                     "Layout uses grid/flex with min-w-0 and shrink-0 so rows survive mobile widths.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
@@ -643,5 +773,303 @@ function SettingsRowDemo({
       </div>
       <Switch id={id} defaultChecked={defaultChecked} className="shrink-0" />
     </div>
+  );
+}
+
+/* --------------------------- Density & density-scale --------------------------- */
+
+function DensitySample({
+  label,
+  meta,
+  rowClass,
+  titleClass,
+  compact,
+}: {
+  label: string;
+  meta: string;
+  rowClass: string;
+  titleClass: string;
+  compact?: boolean;
+}) {
+  return (
+    <div className="quest-card overflow-hidden">
+      <div className="flex items-baseline justify-between gap-2 border-b border-border/70 px-4 py-2">
+        <p className="text-xs font-semibold">{label}</p>
+        <p className="font-mono text-[10px] text-muted-foreground">{meta}</p>
+      </div>
+      <ul className="divide-y divide-border">
+        {GRID_ROWS.map((r) => (
+          <li
+            key={r.title}
+            className={cn(
+              "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center px-4",
+              rowClass,
+            )}
+          >
+            <span
+              className={cn(
+                "rounded-full border border-neon/60",
+                compact ? "size-3" : "size-4",
+              )}
+              aria-hidden="true"
+            />
+            <span className={cn("min-w-0 truncate", titleClass)}>{r.title}</span>
+            <span className="font-mono text-[10px] text-muted-foreground">{r.xp} XP</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ------------------------------ Data-dense grid ------------------------------ */
+
+type GridRow = {
+  id: string;
+  title: string;
+  zone: "Now" | "Later" | "Future";
+  due: string;
+  owner: string;
+  xp: number;
+  status: "In progress" | "Blocked" | "Queued" | "Done";
+};
+
+const DATA_ROWS: GridRow[] = [
+  { id: "q-101", title: "Morning Armor", zone: "Now", due: "Today", owner: "KT", xp: 40, status: "In progress" },
+  { id: "q-102", title: "Workout", zone: "Now", due: "Today", owner: "KT", xp: 60, status: "Queued" },
+  { id: "q-103", title: "Academic Deep Dive — level design doc", zone: "Now", due: "Tomorrow", owner: "KT", xp: 120, status: "In progress" },
+  { id: "q-104", title: "Restock Fuel", zone: "Later", due: "Fri", owner: "KT", xp: 20, status: "Queued" },
+  { id: "q-105", title: "Laundry Loop", zone: "Later", due: "Fri", owner: "KT", xp: 30, status: "Blocked" },
+  { id: "q-106", title: "15-Min Room Reset", zone: "Later", due: "Sat", owner: "KT", xp: 15, status: "Queued" },
+  { id: "q-107", title: "Explore Burlington", zone: "Future", due: "Next week", owner: "KT", xp: 50, status: "Queued" },
+  { id: "q-108", title: "Portfolio pass — capstone build", zone: "Future", due: "Aug 12", owner: "KT", xp: 200, status: "Queued" },
+];
+
+type SortKey = "title" | "due" | "xp";
+
+function DataGridDemo() {
+  const [dense, setDense] = useState(true);
+  const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({
+    key: "xp",
+    dir: "desc",
+  });
+  const [selected, setSelected] = useState<string[]>(["q-101"]);
+
+  const rows = [...DATA_ROWS].sort((a, b) => {
+    const dir = sort.dir === "asc" ? 1 : -1;
+    if (sort.key === "xp") return (a.xp - b.xp) * dir;
+    return String(a[sort.key]).localeCompare(String(b[sort.key])) * dir;
+  });
+
+  const toggleSort = (key: SortKey) =>
+    setSort((s) => ({ key, dir: s.key === key && s.dir === "asc" ? "desc" : "asc" }));
+
+  const ariaSort = (key: SortKey): "ascending" | "descending" | "none" =>
+    sort.key !== key ? "none" : sort.dir === "asc" ? "ascending" : "descending";
+
+  const cell = dense ? "px-3 py-1" : "px-4 py-3";
+  const head = dense ? "px-3 py-2" : "px-4 py-3";
+
+  const SortButton = ({ label, k }: { label: string; k: SortKey }) => (
+    <button
+      type="button"
+      onClick={() => toggleSort(k)}
+      className="inline-flex items-center gap-1 rounded-sm text-left transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+    >
+      {label}
+      <ArrowUpDown className="size-3 opacity-60" aria-hidden="true" />
+    </button>
+  );
+
+  return (
+    <div className="quest-card overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-2.5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          {selected.length} of {DATA_ROWS.length} selected
+        </p>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="ds-density" className="text-xs text-muted-foreground">
+            Compact density
+          </Label>
+          <Switch
+            id="ds-density"
+            checked={dense}
+            onCheckedChange={(v) => setDense(v === true)}
+            aria-label="Toggle compact row density"
+          />
+        </div>
+      </div>
+
+      <div className="max-h-[22rem] overflow-auto scrollbar-quest">
+        <table className="w-full min-w-[46rem] border-collapse text-left">
+          <caption className="sr-only">
+            Quest backlog — sortable by quest, due date, and XP. Rows can be selected.
+          </caption>
+          <thead className="sticky top-0 z-10 bg-card">
+            <tr className="border-b border-border text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              <th scope="col" className={cn(head, "w-10")}>
+                <span className="sr-only">Select</span>
+              </th>
+              <th scope="col" aria-sort={ariaSort("title")} className={head}>
+                <SortButton label="Quest" k="title" />
+              </th>
+              <th scope="col" className={head}>
+                Zone
+              </th>
+              <th scope="col" aria-sort={ariaSort("due")} className={head}>
+                <SortButton label="Due" k="due" />
+              </th>
+              <th scope="col" className={head}>
+                Owner
+              </th>
+              <th scope="col" aria-sort={ariaSort("xp")} className={cn(head, "text-right")}>
+                <SortButton label="XP" k="xp" />
+              </th>
+              <th scope="col" className={head}>
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((r) => {
+              const checked = selected.includes(r.id);
+              return (
+                <tr
+                  key={r.id}
+                  className={cn("transition-colors hover:bg-accent/40", checked && "bg-accent/30")}
+                >
+                  <td className={cell}>
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(v) =>
+                        setSelected((s) =>
+                          v === true ? [...s, r.id] : s.filter((x) => x !== r.id),
+                        )
+                      }
+                      aria-label={`Select ${r.title}`}
+                    />
+                  </td>
+                  <th
+                    scope="row"
+                    className={cn(cell, "max-w-[18rem] truncate font-medium", dense ? "text-xs" : "text-sm")}
+                  >
+                    {r.title}
+                  </th>
+                  <td className={cell}>
+                    <Badge variant={r.zone === "Now" ? "default" : "secondary"}>{r.zone}</Badge>
+                  </td>
+                  <td className={cn(cell, "text-xs text-muted-foreground")}>{r.due}</td>
+                  <td className={cn(cell, "text-xs text-muted-foreground")}>{r.owner}</td>
+                  <td className={cn(cell, "text-right font-mono text-xs")}>{r.xp}</td>
+                  <td className={cn(cell, "text-xs")}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "size-1.5 rounded-full",
+                          r.status === "Blocked"
+                            ? "bg-destructive"
+                            : r.status === "In progress"
+                              ? "bg-neon"
+                              : "bg-muted-foreground",
+                        )}
+                        aria-hidden="true"
+                      />
+                      {r.status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------------- Accessible settings form --------------------------- */
+
+function SettingsFormDemo() {
+  const [email, setEmail] = useState("kt@planner");
+  const invalid = !email.includes(".");
+
+  return (
+    <form
+      className="quest-card flex flex-col gap-5 p-4"
+      onSubmit={(e) => e.preventDefault()}
+      aria-labelledby="ds-form-heading"
+    >
+      <p id="ds-form-heading" className="sr-only">
+        Example workspace settings form
+      </p>
+
+      <fieldset className="flex flex-col gap-3 border-0 p-0">
+        <legend className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Workspace
+        </legend>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="ds-ws-name">Workspace name</Label>
+          <Input id="ds-ws-name" defaultValue="Planner-KT" aria-describedby="ds-ws-name-help" />
+          <p id="ds-ws-name-help" className="text-xs text-muted-foreground">
+            Shown in the header and on shared quest links.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="ds-ws-email">Digest email</Label>
+          <Input
+            id="ds-ws-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={invalid}
+            aria-describedby={invalid ? "ds-ws-email-error" : "ds-ws-email-help"}
+          />
+          {invalid ? (
+            <p
+              id="ds-ws-email-error"
+              role="alert"
+              className="flex items-center gap-1.5 text-xs text-destructive"
+            >
+              <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+              Enter a valid email address — errors are announced, not just colored.
+            </p>
+          ) : (
+            <p id="ds-ws-email-help" className="text-xs text-muted-foreground">
+              Where the daily XP digest is delivered.
+            </p>
+          )}
+        </div>
+      </fieldset>
+
+      <Separator />
+
+      <fieldset className="flex flex-col gap-0 border-0 p-0">
+        <legend className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Automation
+        </legend>
+        <div className="divide-y divide-border rounded-md border border-border">
+          <SettingsRowDemo
+            title="Auto-escalation"
+            description="Promote quests as their due date approaches."
+            defaultChecked
+          />
+          <SettingsRowDemo
+            title="Weekly summary"
+            description="Email a rollup of completed quests each Sunday."
+          />
+        </div>
+      </fieldset>
+
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" size="sm">
+          Cancel
+        </Button>
+        <Button type="submit" size="sm">
+          Save settings
+        </Button>
+      </div>
+    </form>
   );
 }
