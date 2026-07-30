@@ -489,9 +489,9 @@ function InboxStrip({
   dragId: string | null;
   setDragId: (s: string | null) => void;
 }) {
-  if (items.length === 0) return null;
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
   const [sortingIds, setSortingIds] = useState<Map<string, "left" | "right">>(new Map());
+  if (items.length === 0) return null;
 
   const handleDelete = (id: string) => {
     if (deletingIds.has(id)) return;
