@@ -165,7 +165,9 @@
   ::selection { background: color-mix(in oklab, var(--neon) 40%, transparent); }
 }
 
-@utility text-neon {
+/* Type-safe neon: --color-neon-text clears 4.5:1 in both themes, while the
+   glow keeps the vivid --neon so the Quest Log look survives the contrast fix. */
+@utility neon-type {
   color: var(--color-neon-text);
   text-shadow: 0 0 18px color-mix(in oklab, var(--neon) 55%, transparent);
 }

@@ -360,8 +360,8 @@ function DesignSystemPage() {
                     <div className="glow-neon grid h-16 w-32 place-items-center rounded-lg text-xs">
                       glow-neon
                     </div>
-                    <div className="grid h-16 w-32 place-items-center rounded-lg border border-border text-xs text-neon">
-                      text-neon
+                    <div className="grid h-16 w-32 place-items-center rounded-lg border border-border text-xs text-neon-text">
+                      text-neon-text
                     </div>
                   </div>
                 </div>
@@ -840,7 +840,7 @@ const fill = {
                     "No component imports the data client directly; swapping a service touches one hook.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
-                      <Check className="mt-0.5 size-4 shrink-0 text-neon" aria-hidden="true" />
+                      <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
                       <span>{rule}</span>
                     </li>
                   ))}
@@ -989,7 +989,7 @@ supabase.channel(\`tasks-\${userId}\`)
                     "Layout uses grid/flex with min-w-0 and shrink-0 so rows survive mobile widths.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
-                      <Check className="mt-0.5 size-4 shrink-0 text-neon" aria-hidden="true" />
+                      <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
                       <span>{rule}</span>
                     </li>
                   ))}
@@ -1021,7 +1021,7 @@ function QuestCardDemo() {
           className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border-2 border-neon/70"
           aria-hidden="true"
         >
-          <Check className="size-3 text-neon" />
+          <Check className="size-3 text-neon-text" />
         </span>
         <div className="min-w-0">
           <h4 className="truncate text-sm font-semibold">🛡️ Morning Armor</h4>
