@@ -9,7 +9,9 @@ function readInitial(): Theme {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark") return stored;
-  } catch {}
+  } catch {
+    // storage unavailable (e.g., private mode)
+  }
   return "dark";
 }
 
@@ -23,7 +25,9 @@ export function useTheme() {
     root.classList.add(theme);
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
-    } catch {}
+    } catch {
+      // storage unavailable (e.g., private mode)
+    }
   }, [theme]);
 
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));

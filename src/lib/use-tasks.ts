@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./use-auth";
 import type { OwnerId, Subtask, Task, TaskStatus } from "./quest-types";
 import { uid } from "./quest-types";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
 const WORKSPACE_KEY = "questlog.workspace.v1";
 const LEGACY_TASKS_KEY = "questlog.tasks.v1";
@@ -95,7 +96,7 @@ async function importLegacyTasks(userId: string): Promise<Task[]> {
         userId,
       ),
     );
-    const { data, error } = await (supabase.from("tasks") as any).insert(rows).select("*");
+    const { data, error } = await supabase.from("tasks").insert(rows as TablesInsert<"tasks">[]).select("*");
     if (error) {
       console.error("[tasks] legacy import failed", error);
       return [];
@@ -175,7 +176,9 @@ export function useTasks() {
   useEffect(() => {
     try {
       window.localStorage.setItem(WORKSPACE_KEY, workspace);
-    } catch {}
+    } catch {
+      // storage unavailable (e.g., private mode)
+    }
   }, [workspace]);
 
   const setWorkspace = (w: OwnerId) => setWorkspaceState(w);
@@ -183,8 +186,9 @@ export function useTasks() {
   const optimisticAdd = (t: Task) => {
     setTasks((prev) => [t, ...prev]);
     if (!userId) return;
-    void (supabase.from("tasks") as any)
-      .insert(taskToInsert(t, userId))
+    void supabase
+      .from("tasks")
+      .insert(taskToInsert(t, userId) as TablesInsert<"tasks">)
       .then(({ error }: { error: unknown }) => {
         if (error) {
           console.error("[tasks] insert failed", error);
@@ -232,8 +236,9 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, ...patch } : t)));
     if (!userId) return;
-    void (supabase.from("tasks") as any)
-      .update(patchToUpdate(patch))
+    void supabase
+      .from("tasks")
+      .update(patchToUpdate(patch) as TablesUpdate<"tasks">)
       .eq("id", id)
       .then(({ error }: { error: unknown }) => {
         if (error) {
