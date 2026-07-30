@@ -579,7 +579,7 @@ function ZoneBoard({
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
