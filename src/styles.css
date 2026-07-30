@@ -231,7 +231,9 @@ summary:focus-visible,
 [role="menuitem"]:focus-visible,
 [role="option"]:focus-visible,
 [tabindex]:not([tabindex="-1"]):focus-visible {
-  outline: 2px solid var(--ring);
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--ring);
   outline-offset: 2px;
   border-radius: max(var(--radius-sm), 4px);
 }
