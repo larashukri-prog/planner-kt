@@ -1,18 +1,40 @@
-## Diagnosis (verified)
+## What I verified first
 
-The teal tokens are wired correctly, and the button markup uses them. Reading the live preview's computed styles on the Add pill returned `background: oklch(0.95 0.008 250)`, `color: oklch(0.48 0.02 260)`, `disabled: true`, with class `bg-muted text-muted-foreground`.
+Read-only checks against the current code (not assumptions):
 
-Cause: the button is only teal when `hasValue` is true. With the Brain Dump input empty it is disabled and falls back to the grey resting treatment, so the teal never appears until you type.
+- `lang="en"` is already on `<html>` in `src/routes/__root.tsx`.
+- Titles/descriptions exist on the root and on `/` (metadata is set per route via `head()`, there is no `index.html` in this stack).
+- The viewport meta is `width=device-width, initial-scale=1` — no `user-scalable=no`, no `maximum-scale`. Zoom is already allowed.
+- Main content is already wrapped in `<main>`; heading order runs h1 → h2 → h3 with no skips.
+- No `tabIndex` greater than 0 anywhere.
+- Every icon-only button I found already carries an `aria-label`; both text inputs carry `aria-label`s.
+- I measured the muted text token in OKLCH: **6.26:1** on light background, **6.75:1** on dark. It already passes AA, so swapping it for slate colors would be a downgrade in theming with no contrast gain — I don't plan to do that.
 
-## Change
+So the structural items in the request are largely already satisfied. The honest gap is that no *automated scanner* has actually been run — everything so far was manual review. That's what this plan fixes.
 
-In `QuickAddBar` (`src/components/quest-app.tsx`), make the teal fill the permanent look of the pill instead of a typed-only state:
+## Plan
 
-- Always apply `border-neon-btn bg-neon-btn text-neon-btn-text`, so the pill reads teal-with-black (light) / teal-with-white (dark) at rest.
-- Keep the button `disabled` when empty for correct semantics, but express that state with `cursor-not-allowed` plus a slightly muted `brightness-95` rather than swapping to grey — no opacity fade, so the label contrast stays identical (11.5:1 light, 5.86:1 dark).
-- Keep the neon glow shadow only when there is text, so typing still gives the pill its "armed" lift.
-- Leave `aria-label="Add task"` and the focus-visible outline untouched.
+1. **Run a real axe-core scan.** Drive the running app with headless Chromium and inject `axe-core` against every route (`/`, `/auth`, `/design-system`) in **both light and dark themes**, including expanded task cards and open panels so hidden controls are scanned too. Export the full violation list with severity, rule ID, and offending selector.
 
-## Verify
+2. **Triage and fix every violation found.** Expected candidates based on the code read, to be confirmed by the scan rather than pre-emptively "fixed":
+   - Placeholder-only contrast on the Brain Dump and micro-step inputs (placeholders inherit muted; needs measuring against the actual input fill, not the page background).
+   - Accent-tinted labels drawn with inline `style={{ color: var(--color-*-text) }}` on card and column headers.
+   - Low-opacity dashed borders and empty-state text (`border-border/60`) as non-text contrast.
+   - Any control in `/design-system` demos missing a label — that route has the most hand-rolled widgets.
+   Fixes stay in presentation code: semantic tokens in `src/styles.css` and class/attribute changes in `src/components/quest-app.tsx`, `src/routes/design-system.tsx`, `src/components/auth-screen.tsx`. No business-logic changes.
 
-Re-read the live computed background/color in both light and dark themes with the input empty and with text, confirming teal in all four states and AA-passing label contrast.
+3. **Focus rings.** The global `:focus-visible` outline in `src/styles.css` covers standard elements. I'll confirm by tabbing through each route in the scan run and screenshotting the ring on the Add pill, zone chips, checkboxes, and theme toggle — adding per-component `focus-visible:ring-2 focus-visible:ring-ring` only where the global rule is being overridden.
+
+4. **Re-scan until clean.** Repeat the axe run after fixes; the exit condition is zero violations at serious/critical level across all routes and both themes, with any remaining minor items listed explicitly rather than silently dropped.
+
+5. **Rebuild and republish.** Run the production build, confirm it succeeds, then publish so the live URL serves the fixed bundle.
+
+## Technical notes
+
+- Scanning uses Playwright + `axe-core` loaded from CDN into the page; results are written to a file and read back, not dumped to the terminal.
+- Contrast math is done in OKLCH → linear sRGB → WCAG relative luminance, so measurements match what the browser renders rather than eyeballed hex approximations.
+- Existing contrast-safe `-text` token pairs (per project memory) are the fix mechanism for any text failure; vivid tokens stay reserved for fills, borders, and glows.
+
+## What I will report back
+
+The scan output before and after, the exact list of violations fixed, and confirmation that the deployed build is the scanned one.

@@ -33,7 +33,12 @@ export function CodeBlock({ code, label, forExample }: { code: string; label?: s
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-x-auto px-3 py-3 text-[12px] leading-relaxed scrollbar-quest">
+      <pre
+        tabIndex={0}
+        role="region"
+        aria-label={forExample ? `${forExample} code sample` : "Code sample"}
+        className="overflow-x-auto px-3 py-3 text-[12px] leading-relaxed scrollbar-quest"
+      >
         <code className="font-mono text-foreground/85">{code}</code>
       </pre>
       <span aria-live="polite" className="sr-only">
