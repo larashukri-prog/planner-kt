@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Check, Database, Layers, RefreshCw, Server, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -308,11 +309,18 @@ export function ToastDemo() {
 
 const LAYERS = [
   {
+    icon: RefreshCw,
+    name: "Ambient triggers",
+    modules: "60s interval tick · local date rollover · auth session",
+    body: "Nothing here is a user action. The daily spawn engine wakes on a timer, compares today's local date key against the last run, and hands the result to the middle layer — the student never sets up their routine by hand.",
+  },
+  {
     icon: Layers,
     name: "UI surface",
     modules: "quest-app.tsx · design-system/*",
     body: "Presentational only. Renders props and state, emits intent through callbacks. Imports no data client.",
   },
+
   {
     icon: Server,
     name: "Middle layer — custom hooks",
@@ -444,6 +452,100 @@ export function StatefulComponentDemo() {
           {JSON.stringify(prefs)}
         </p>
       </div>
+    </div>
+  );
+}
+
+/* ===================== Recurring life prompt pattern ===================== */
+
+const LIFE_PROMPTS = [
+  {
+    id: "laundry",
+    title: "Laundry loop",
+    cue: "bg-life-laundry",
+    frequency: "Every Friday",
+    sensitivity: "Flexible",
+    steps: ["Gather clothes", "Start washer", "Move to dryer", "Put away"],
+  },
+  {
+    id: "food",
+    title: "Restock fuel",
+    cue: "bg-life-food",
+    frequency: "Tue + Sat",
+    sensitivity: "Today",
+    steps: ["Check fridge & pantry", "Walk to the store", "Grab essentials"],
+  },
+  {
+    id: "body",
+    title: "Workout",
+    cue: "bg-life-body",
+    frequency: "Daily",
+    sensitivity: "Rest day available",
+    steps: ["Warm up", "Free weights", "Water & rack the weights"],
+  },
+];
+
+/** Recurring college-life upkeep: what, how often, how time-sensitive. */
+export function RecurringLifePromptDemo() {
+  const [done, setDone] = useState<Record<string, boolean>>({});
+
+  return (
+    <div className="flex w-full min-w-0 flex-col gap-3">
+      {LIFE_PROMPTS.map((prompt) => (
+        <section
+          key={prompt.id}
+          aria-labelledby={`life-${prompt.id}-title`}
+          className="quest-card flex min-w-0 gap-3 overflow-hidden bg-life-surface p-4"
+        >
+          <span
+            aria-hidden="true"
+            className={cn("w-1 shrink-0 rounded-full", prompt.cue)}
+          />
+          <div className="flex min-w-0 flex-1 flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 id={`life-${prompt.id}-title`} className="text-sm font-semibold">
+                {prompt.title}
+              </h4>
+              <Badge variant="outline" className="border-life text-life-text">
+                <RefreshCw className="mr-1 size-3" aria-hidden="true" />
+                <span className="sr-only">Frequency: </span>
+                {prompt.frequency}
+              </Badge>
+              <Badge variant="secondary">
+                <span className="sr-only">Time sensitivity: </span>
+                {prompt.sensitivity}
+              </Badge>
+            </div>
+
+            <ul className="flex flex-col">
+              {prompt.steps.map((step) => {
+                const id = `${prompt.id}-${step}`;
+                const checked = Boolean(done[id]);
+                return (
+                  <li key={id} className="flex min-h-11 items-center gap-3 py-3">
+                    <Checkbox
+                      id={id}
+                      checked={checked}
+                      onCheckedChange={(v) =>
+                        setDone((d) => ({ ...d, [id]: v === true }))
+                      }
+                    />
+                    <Label
+                      htmlFor={id}
+                      className={cn(
+                        "cursor-pointer text-sm font-normal transition-colors duration-150",
+                        checked && "text-muted-foreground line-through",
+                      )}
+                    >
+                      {step}
+                    </Label>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

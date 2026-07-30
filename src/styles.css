@@ -48,6 +48,16 @@
   --color-zone-next-text: var(--zone-next-text);
   --color-zone-later-text: var(--zone-later-text);
   --color-inbox-text: var(--inbox-text);
+  /* Life maintenance — low-chroma cues for recurring college-life routines */
+  --color-life: var(--life);
+  --color-life-text: var(--life-text);
+  --color-life-surface: var(--life-surface);
+  --color-life-laundry: var(--life-laundry);
+  --color-life-laundry-text: var(--life-laundry-text);
+  --color-life-food: var(--life-food);
+  --color-life-food-text: var(--life-food-text);
+  --color-life-body: var(--life-body);
+  --color-life-body-text: var(--life-body-text);
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -100,6 +110,19 @@
   --zone-next-text: oklch(0.49 0.2 200);
   --zone-later-text: oklch(0.565 0.2 290);
   --inbox-text: oklch(0.545 0.18 90);
+
+  /* Life maintenance — recurring college-life routines (laundry, food, body).
+     Deliberately LOW chroma: routine upkeep must never compete with deadlines.
+     No red/alarm hues here; time sensitivity is carried by a Badge, not color. */
+  --life: oklch(0.72 0.06 250);
+  --life-surface: oklch(0.955 0.014 250);
+  --life-text: oklch(0.46 0.06 250);
+  --life-laundry: oklch(0.72 0.06 235);
+  --life-laundry-text: oklch(0.46 0.06 235);
+  --life-food: oklch(0.72 0.06 150);
+  --life-food-text: oklch(0.45 0.06 150);
+  --life-body: oklch(0.72 0.06 340);
+  --life-body-text: oklch(0.46 0.07 340);
 
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.97 0.015 260) 0%, oklch(0.95 0.01 250) 60%);
   --gradient-neon: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
@@ -155,6 +178,17 @@
   --zone-next-text: var(--zone-next);
   --zone-later-text: var(--zone-later);
   --inbox-text: var(--inbox);
+
+  /* Life maintenance — same calm, low-chroma family lifted for the dark surface. */
+  --life: oklch(0.78 0.05 250);
+  --life-surface: oklch(0.245 0.022 250);
+  --life-text: oklch(0.8 0.05 250);
+  --life-laundry: oklch(0.78 0.05 235);
+  --life-laundry-text: oklch(0.8 0.05 235);
+  --life-food: oklch(0.8 0.05 150);
+  --life-food-text: oklch(0.82 0.05 150);
+  --life-body: oklch(0.8 0.05 340);
+  --life-body-text: oklch(0.82 0.05 340);
 
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.22 0.05 280) 0%, oklch(0.14 0.02 270) 60%);
   --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),

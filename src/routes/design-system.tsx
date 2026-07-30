@@ -23,6 +23,7 @@ import {
   StatefulComponentDemo,
   TactileButtonsDemo,
   ToastDemo,
+  RecurringLifePromptDemo,
   XPBarDemo,
 } from "@/components/design-system/demos";
 
@@ -32,7 +33,7 @@ import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
-  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, enterprise UI patterns, standardized motion, and the hook-based middle layer between UI and data.";
+  "Living documentation for Planner-KT, an assistive-technology planner for cognitive accessibility: cognitive-load and density rules, OKLCH semantic tokens, low-anxiety life-maintenance cues, WCAG 2.1 AA components, the recurring life prompt pattern, and the hook-based Daily Spawn Engine.";
 
 
 export const Route = createFileRoute("/design-system")({
@@ -73,15 +74,15 @@ const MOTION_TOKENS = [
 
 
 const CORE_COLORS = [
-  { name: "Background", token: "--background", className: "bg-background", border: true },
-  { name: "Foreground", token: "--foreground", className: "bg-foreground" },
-  { name: "Card", token: "--card", className: "bg-card", border: true },
-  { name: "Primary", token: "--primary", className: "bg-primary" },
-  { name: "Secondary", token: "--secondary", className: "bg-secondary" },
-  { name: "Muted", token: "--muted", className: "bg-muted", border: true },
-  { name: "Accent", token: "--accent", className: "bg-accent" },
-  { name: "Destructive", token: "--destructive", className: "bg-destructive" },
-  { name: "Border", token: "--border", className: "bg-border" },
+  { name: "Background", token: "--background", utility: "bg-background", className: "bg-background", border: true, oklch: "oklch(0.985 0.003 250)", oklchDark: "oklch(0.16 0.02 270)" },
+  { name: "Foreground", token: "--foreground", utility: "text-foreground", className: "bg-foreground", oklch: "oklch(0.22 0.02 270)", oklchDark: "oklch(0.96 0.01 250)" },
+  { name: "Card", token: "--card", utility: "bg-card", className: "bg-card", border: true, oklch: "oklch(0.995 0.002 250)", oklchDark: "oklch(0.21 0.025 270)" },
+  { name: "Primary", token: "--primary", utility: "bg-primary", className: "bg-primary", oklch: "oklch(0.505 0.18 200)", oklchDark: "oklch(0.78 0.18 180)" },
+  { name: "Secondary", token: "--secondary", utility: "bg-secondary", className: "bg-secondary", oklch: "oklch(0.94 0.01 250)", oklchDark: "oklch(0.27 0.03 270)" },
+  { name: "Muted", token: "--muted", utility: "bg-muted", className: "bg-muted", border: true, oklch: "oklch(0.95 0.008 250)", oklchDark: "oklch(0.24 0.025 270)" },
+  { name: "Accent", token: "--accent", utility: "bg-accent", className: "bg-accent", oklch: "oklch(0.93 0.02 270)", oklchDark: "oklch(0.3 0.05 280)" },
+  { name: "Destructive", token: "--destructive", utility: "bg-destructive", className: "bg-destructive", oklch: "oklch(0.58 0.22 25)" },
+  { name: "Border", token: "--border", utility: "border-border", className: "bg-border", oklch: "oklch(0.9 0.01 260)", oklchDark: "oklch(0.3 0.03 270)" },
 ];
 
 /** Measured WCAG 2.1 ratios against --card. "Light, as fill" is the pre-fix value. */
@@ -95,17 +96,65 @@ const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }
   { token: "--inbox", fill: "2.0:1", text: "4.9:1", dark: "11.3:1" },
   { token: "--primary", fill: "3.9:1", text: "4.7:1", dark: "10.0:1" },
   { token: "--destructive", fill: "4.3:1", text: "5.4:1", dark: "6.2:1" },
+  { token: "--life", fill: "1.9:1", text: "7.0:1", dark: "9.5:1" },
+  { token: "--life-laundry", fill: "1.9:1", text: "6.9:1", dark: "9.6:1" },
+  { token: "--life-food", fill: "1.8:1", text: "7.1:1", dark: "10.4:1" },
+  { token: "--life-body", fill: "2.0:1", text: "7.3:1", dark: "10.0:1" },
 ];
 
 const BRAND_COLORS = [
-  { name: "Neon", token: "--neon", className: "bg-neon" },
-  { name: "Neon 2", token: "--neon-2", className: "bg-neon-2" },
-  { name: "Neon 3", token: "--neon-3", className: "bg-neon-3" },
-  { name: "Zone · Now", token: "--zone-now", className: "bg-zone-now" },
-  { name: "Zone · Later", token: "--zone-next", className: "bg-zone-next" },
-  { name: "Zone · Future", token: "--zone-later", className: "bg-zone-later" },
-  { name: "Inbox", token: "--inbox", className: "bg-inbox" },
+  { name: "Neon", token: "--neon", utility: "bg-neon", className: "bg-neon", oklch: "oklch(0.78 0.2 195)", oklchDark: "oklch(0.82 0.2 180)" },
+  { name: "Neon 2", token: "--neon-2", utility: "bg-neon-2", className: "bg-neon-2", oklch: "oklch(0.72 0.24 320)", oklchDark: "oklch(0.78 0.22 320)" },
+  { name: "Neon 3", token: "--neon-3", utility: "bg-neon-3", className: "bg-neon-3", oklch: "oklch(0.82 0.22 135)", oklchDark: "oklch(0.88 0.2 130)" },
+  { name: "Zone · Now", token: "--zone-now", utility: "bg-zone-now", className: "bg-zone-now", oklch: "oklch(0.68 0.22 30)", oklchDark: "oklch(0.72 0.22 30)" },
+  { name: "Zone · Later", token: "--zone-next", utility: "bg-zone-next", className: "bg-zone-next", oklch: "oklch(0.7 0.2 200)", oklchDark: "oklch(0.82 0.2 180)" },
+  { name: "Zone · Future", token: "--zone-later", utility: "bg-zone-later", className: "bg-zone-later", oklch: "oklch(0.65 0.2 290)", oklchDark: "oklch(0.7 0.18 290)" },
+  { name: "Inbox", token: "--inbox", utility: "bg-inbox", className: "bg-inbox", oklch: "oklch(0.78 0.18 90)", oklchDark: "oklch(0.85 0.18 95)" },
 ];
+
+/** Life maintenance — low-chroma cues for recurring college-life routines. */
+const LIFE_COLORS = [
+  { name: "Life · base", token: "--life", utility: "bg-life", className: "bg-life", oklch: "oklch(0.72 0.06 250)", oklchDark: "oklch(0.78 0.05 250)" },
+  { name: "Life · surface", token: "--life-surface", utility: "bg-life-surface", className: "bg-life-surface", border: true, oklch: "oklch(0.955 0.014 250)", oklchDark: "oklch(0.245 0.022 250)" },
+  { name: "Laundry", token: "--life-laundry", utility: "bg-life-laundry", className: "bg-life-laundry", oklch: "oklch(0.72 0.06 235)", oklchDark: "oklch(0.78 0.05 235)" },
+  { name: "Food & supplies", token: "--life-food", utility: "bg-life-food", className: "bg-life-food", oklch: "oklch(0.72 0.06 150)", oklchDark: "oklch(0.8 0.05 150)" },
+  { name: "Body & movement", token: "--life-body", utility: "bg-life-body", className: "bg-life-body", oklch: "oklch(0.72 0.06 340)", oklchDark: "oklch(0.8 0.05 340)" },
+];
+
+/** Recurring life templates owned by use-daily-spawn.ts. */
+const SPAWN_TEMPLATES = [
+  { key: "morning-armor", title: "🛡️ Morning Routine", cadence: "Daily", zone: "Now" },
+  { key: "workout", title: "💪 Workout", cadence: "Daily · rest day Tue/Thu/Sat", zone: "Now" },
+  { key: "laundry-loop", title: "🧺 Laundry Loop", cadence: "Fridays", zone: "Now" },
+  { key: "restock-fuel", title: "🛒 Restock Fuel", cadence: "Tuesdays + Saturdays", zone: "Now" },
+  { key: "explore-burlington", title: "🗺️ Explore Burlington", cadence: "Every other day", zone: "Later" },
+];
+
+const SPAWN_RULES = [
+  "Anti-Guilt Rule: if an uncompleted instance already exists, the engine refreshes it in place — resetting subtasks and bumping its timestamp — instead of stacking a duplicate on top of yesterday's unfinished work.",
+  "Rollover is keyed on the local calendar date, stored under the namespaced questlog.lastSpawnDate.v1, so a late night never skips or double-fires a day.",
+  "Template drift reconciles automatically: subtasks added to a template appear on the live quest, and retired subtasks are pruned from it.",
+  "Auto-escalation runs as a second pass of the same tick — later → next at 7 days out, later/next → now at 2 days out. It promotes only and never demotes.",
+  "The engine waits for real data before its first run, with a 1500ms grace period so a brand-new account still gets a day-one routine.",
+  "All of this lives in the hook. The board component renders whatever tasks it is handed and knows nothing about cadence, rollover or escalation.",
+];
+
+const DENSITY_RULES = [
+
+  {
+    label: "Comfortable — the strict default",
+    body: "Every daily view (board, inbox, quest cards, done wall) uses py-3 rows, gap-3 stacks and a 44×44px minimum touch target. Nothing on a daily screen may go tighter.",
+  },
+  {
+    label: "Compact — audit and backlog only",
+    body: "The data-dense grid exists for reviewing a backlog in bulk. It is never the default view, never the mobile view, and never the first thing a student sees after opening the app.",
+  },
+  {
+    label: "Density moves on the 4px grid",
+    body: "Switching density only swaps 4px multiples on the same component. Components are never forked into a 'dense' variant, so accessible names, focus order and contrast survive the switch.",
+  },
+];
+
 
 const TYPE_SCALE = [
   { label: "Display", cls: "text-4xl font-bold tracking-tight", sample: "Planner-KT" },
@@ -262,12 +311,17 @@ function DesignSystemPage() {
               Planner-KT Design System
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              A living, tokenized UI architecture. Every color, radius, and component variant is
+              Planner-KT is assistive technology for a neurodivergent college student, so{" "}
+              <strong className="font-semibold text-foreground">
+                reducing cognitive overwhelm is the primary design constraint
+              </strong>{" "}
+              — ahead of density, ahead of aesthetics. Every color, radius, and component variant is
               defined once in <code className="font-mono text-foreground">src/styles.css</code> and
-              consumed through semantic Tailwind utilities — so the app stays visually consistent in
-              both themes, no matter who (or what) writes the next component.
+              consumed through semantic Tailwind utilities, so a student never has to relearn a
+              surface and no contributor can quietly raise the reading cost of a screen.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
+              <Badge variant="secondary">Cognitive accessibility</Badge>
               <Badge variant="secondary">Tailwind v4</Badge>
               <Badge variant="secondary">shadcn/ui</Badge>
               <Badge variant="secondary">OKLCH tokens</Badge>
@@ -279,11 +333,37 @@ function DesignSystemPage() {
           <Section
             id="foundations"
             eyebrow="01 — Foundations"
-            title="Foundations & Tokens"
-            description="Semantic tokens are the single source of truth. Components never reference raw hex values; they reference roles like primary or muted, which resolve per theme."
+            title="Foundations, Cognitive Load & Color"
+            description="Semantic tokens are the single source of truth, and comfortable density is the default posture. Components never reference raw values; they reference roles like primary, muted or life, which resolve per theme."
           >
             <div>
+              <SubHeading>Density contract</SubHeading>
+              <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Overwhelm is the failure mode this product is designed against. Comfortable density
+                is not a preference here — it is the strict default for anything a student touches
+                daily, and high-density layouts are restricted to audit and backlog surfaces.
+              </p>
+              <ul className="quest-card mt-3 flex flex-col divide-y divide-border">
+                {DENSITY_RULES.map((rule) => (
+                  <li key={rule.label} className="flex gap-3 px-4 py-3">
+                    <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">{rule.label}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {rule.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
               <SubHeading>Core palette</SubHeading>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Components consume the utility class only. The OKLCH value is printed for reference
+                and must never be pasted into a component.
+              </p>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {CORE_COLORS.map((c) => (
                   <Swatch key={c.token} {...c} />
@@ -293,12 +373,36 @@ function DesignSystemPage() {
 
             <div>
               <SubHeading>Brand & zone accents</SubHeading>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Vivid tokens carry fills, borders and glows. When an accent colors type, use its
+                paired <code className="font-mono text-foreground">-text</code> alias.
+              </p>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {BRAND_COLORS.map((c) => (
                   <Swatch key={c.token} {...c} />
                 ))}
               </div>
             </div>
+
+            <div>
+              <SubHeading>Life maintenance</SubHeading>
+              <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Recurring college-life upkeep — laundry, food runs, workouts, morning routine — gets
+                its own deliberately low-chroma family so it is instantly separable from academic and
+                project quests without adding visual noise. Routine upkeep never out-shouts a
+                deadline, there are no red or alarm hues in this family, and time sensitivity is
+                carried by a Badge rather than by color alone. Every{" "}
+                <code className="font-mono text-foreground">-text</code> alias measures at least
+                6.7:1 on both <code className="font-mono text-foreground">--background</code> and{" "}
+                <code className="font-mono text-foreground">--card</code> in both themes.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {LIFE_COLORS.map((c) => (
+                  <Swatch key={c.token} {...c} />
+                ))}
+              </div>
+            </div>
+
 
             <div>
               <SubHeading>Typography scale</SubHeading>
@@ -617,15 +721,45 @@ import { Checkbox } from "@/components/ui/checkbox";
             id="patterns"
             eyebrow="03 — Patterns"
             title="Enterprise UI Patterns"
-            description="The same atoms composed into production-scale surfaces: a data-dense task grid, an accessible settings form, and the lighter board-level patterns. Density changes by moving along the 4px grid — never by forking a component."
+            description="The same atoms composed into production-scale surfaces: the recurring life prompt used across daily views, an accessible settings form, and an audit-only data-dense grid. Density changes by moving along the 4px grid — never by forking a component."
           >
+            <Example
+              title="Recurring life prompt"
+              className="items-start"
+              a11y="WCAG 2.1 AA: each card is a section labelled by its own heading, every step is a Checkbox with a real <Label> at a 44px target, and frequency plus time sensitivity are announced as text — color is never the only carrier of meaning. Contrast for the life -text aliases measures ≥ 6.7:1 in both themes."
+              api="Composable API: the cue rail, frequency Badge and sensitivity Badge are independent slots. Swap the badge pair to express a different cadence or urgency without touching the card, and the low-chroma life token keeps routine upkeep visually quieter than academic quests."
+              code={`<section aria-labelledby="laundry-title" className="quest-card bg-life-surface flex gap-3 p-4">
+  <span aria-hidden="true" className="w-1 shrink-0 rounded-full bg-life-laundry" />
+  <div className="flex min-w-0 flex-1 flex-col gap-3">
+    <div className="flex flex-wrap items-center gap-2">
+      <h4 id="laundry-title" className="text-sm font-semibold">Laundry loop</h4>
+      <Badge variant="outline" className="border-life text-life-text">Every Friday</Badge>
+      <Badge variant="secondary">Flexible</Badge>
+    </div>
+    <ul className="flex flex-col">
+      {steps.map((step) => (
+        <li key={step} className="flex min-h-11 items-center gap-3 py-3">
+          <Checkbox id={step} />
+          <Label htmlFor={step} className="text-sm font-normal">{step}</Label>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>`}
+            >
+              <RecurringLifePromptDemo />
+            </Example>
+
             <div className="flex flex-col gap-3">
-              <SubHeading>Data-dense task grid</SubHeading>
+              <SubHeading>Data-dense task grid — audit &amp; backlog only</SubHeading>
               <p className="max-w-2xl text-xs text-muted-foreground">
-                Composes Checkbox, Badge, and Button inside a semantic{" "}
+                Restricted surface: this is for reviewing a backlog in bulk, never a daily view. Per
+                the density contract, daily screens stay at comfortable density. Composes Checkbox,
+                Badge, and Button inside a semantic{" "}
                 <code className="font-mono text-foreground">&lt;table&gt;</code>: scoped column
                 headers, an <code className="font-mono text-foreground">sr-only</code> caption,
                 sortable headers exposing <code className="font-mono text-foreground">aria-sort</code>
+
                 , and a density toggle that only swaps 4px multiples.
               </p>
               <DataGridDemo />
@@ -824,7 +958,7 @@ const fill = {
             id="middle-layer"
             eyebrow="05 — Architecture"
             title="Middle Layer Architecture"
-            description="No component talks to the database. Every screen reads from a custom hook, and the hook owns fetching, optimistic writes, realtime subscriptions and persistence — the middle layer between the UI surface and the data services."
+            description="No component talks to the database. Every screen reads from a custom hook, and the hook owns fetching, optimistic writes, realtime subscriptions, timers and persistence — including the Daily Spawn Engine that builds the student's routine before they open the app."
           >
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex min-w-0 flex-col gap-3">
@@ -849,6 +983,96 @@ const fill = {
                 </ul>
               </div>
             </div>
+
+            <div className="flex flex-col gap-3">
+              <SubHeading>The Daily Spawn Engine</SubHeading>
+              <p className="max-w-3xl text-xs leading-relaxed text-muted-foreground">
+                <code className="font-mono text-foreground">src/lib/use-daily-spawn.ts</code> is the
+                clearest example of the middle layer doing assistive work. It owns the recurring
+                life prompts: a 60-second tick compares today's local date key against the last run
+                stored under <code className="font-mono text-foreground">questlog.lastSpawnDate.v1</code>
+                , then builds, persists and surfaces the day's routine. The student never sets up
+                their day manually, and working memory is never the thing keeping the routine alive.
+              </p>
+
+              <div className="quest-card overflow-x-auto scrollbar-quest">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    Recurring life templates owned by the daily spawn engine
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Template
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Cadence
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Target zone
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {SPAWN_TEMPLATES.map((t) => (
+                      <tr key={t.key}>
+                        <th scope="row" className="px-4 py-3 font-normal">
+                          {t.title}
+                          <span className="mt-0.5 block font-mono text-[10px] text-muted-foreground">
+                            {t.key}
+                          </span>
+                        </th>
+                        <td className="px-4 py-3 text-muted-foreground">{t.cadence}</td>
+                        <td className="px-4 py-3">
+                          <Badge variant="secondary">{t.zone}</Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <ul className="quest-card flex flex-col gap-2.5 p-4 text-sm text-muted-foreground">
+                {SPAWN_RULES.map((rule) => (
+                  <li key={rule} className="flex gap-2.5">
+                    <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <CodeBlock
+                forExample="daily spawn engine"
+                label="src/lib/use-daily-spawn.ts"
+                code={`const todayKey = localDateKey(new Date());              // local, not UTC
+const dateChanged = window.localStorage.getItem(TICK_KEY) !== todayKey;
+
+for (const entry of RECURRING_QUESTS) {
+  const matches = activeSolo.filter((t) => t.recurringKey === entry.key);
+
+  if (matches.length > 0) {
+    // Anti-Guilt Rule: refresh the existing instance in place, never duplicate.
+    const keep = matches[0];
+    reconcileSubtasks(keep, entry);                      // add missing, prune obsolete
+    if (dateChanged && entry.shouldSpawn(today)) {
+      updateTask(keep.id, {
+        subtasks: keep.subtasks.map((s) => ({ ...s, isCompleted: false })),
+        createdAt: Date.now(),                           // resurfaces, guilt-free
+      });
+    }
+  } else if (entry.shouldSpawn(today)) {
+    addRecurringTask({ ...entry, status: entry.zone });  // no active copy — spawn one
+  }
+}
+
+// Second pass of the same tick: auto-escalation. Promotes only, never demotes.
+if (dateChanged) escalateByDueDate(current, updateTask);
+
+if (dateChanged) window.localStorage.setItem(TICK_KEY, todayKey);`}
+              />
+            </div>
+
+
 
             <Example
               title="Live stateful component — persisted preferences"
