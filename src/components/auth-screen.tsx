@@ -100,7 +100,7 @@ export function AuthScreen() {
             </label>
 
             {err && (
-              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive-text">
                 {err}
               </p>
             )}

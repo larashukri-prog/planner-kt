@@ -1334,7 +1334,7 @@ function SettingsFormDemo() {
             <p
               id="ds-ws-email-error"
               role="alert"
-              className="flex items-center gap-1.5 text-xs text-destructive"
+              className="flex items-center gap-1.5 text-xs text-destructive-text"
             >
               <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
               Enter a valid email address — errors are announced, not just colored.

@@ -437,7 +437,7 @@ function InboxStrip({
                     <button
                       onClick={() => handleDelete(task.id)}
                       aria-label="Delete"
-                      className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                      className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive-text md:opacity-0 md:group-hover:opacity-100"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -797,7 +797,7 @@ function TaskCard({
             <span
               className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
                 dueLabel.overdue
-                  ? "border-destructive/50 bg-destructive/10 text-destructive"
+                  ? "border-destructive/50 bg-destructive/10 text-destructive-text"
                   : "border-border bg-muted text-muted-foreground"
               }`}
             >
@@ -897,7 +897,7 @@ function TaskCard({
                     <button
                       type="button"
                       onClick={() => onUpdate(task.id, { dueDate: null, escalatedAt: null })}
-                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
                       aria-label="Clear due date"
                     >
                       <X className="h-3 w-3" />
@@ -961,7 +961,7 @@ function TaskCard({
                 </div>
                 <button
                   onClick={() => onDelete(task.id)}
-                  className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                  className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
                   aria-label="Delete quest"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -1081,7 +1081,7 @@ function MicroStepList({
             <button
               onClick={() => onRemove(s.id)}
               aria-label="Remove step"
-              className="rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+              className="rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-destructive-text group-hover:opacity-100"
             >
               <X className="h-3 w-3" />
             </button>
@@ -1204,7 +1204,7 @@ function DoneWall({
                         <button
                           onClick={() => onDelete(t.id)}
                           aria-label="Delete"
-                          className="rounded p-1 text-muted-foreground hover:text-destructive"
+                          className="rounded p-1 text-muted-foreground hover:text-destructive-text"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
