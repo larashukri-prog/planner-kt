@@ -73,15 +73,15 @@ const MOTION_TOKENS = [
 
 
 const CORE_COLORS = [
-  { name: "Background", token: "--background", className: "bg-background", border: true },
-  { name: "Foreground", token: "--foreground", className: "bg-foreground" },
-  { name: "Card", token: "--card", className: "bg-card", border: true },
-  { name: "Primary", token: "--primary", className: "bg-primary" },
-  { name: "Secondary", token: "--secondary", className: "bg-secondary" },
-  { name: "Muted", token: "--muted", className: "bg-muted", border: true },
-  { name: "Accent", token: "--accent", className: "bg-accent" },
-  { name: "Destructive", token: "--destructive", className: "bg-destructive" },
-  { name: "Border", token: "--border", className: "bg-border" },
+  { name: "Background", token: "--background", utility: "bg-background", className: "bg-background", border: true, oklch: "oklch(0.985 0.003 250)", oklchDark: "oklch(0.16 0.02 270)" },
+  { name: "Foreground", token: "--foreground", utility: "text-foreground", className: "bg-foreground", oklch: "oklch(0.22 0.02 270)", oklchDark: "oklch(0.96 0.01 250)" },
+  { name: "Card", token: "--card", utility: "bg-card", className: "bg-card", border: true, oklch: "oklch(0.995 0.002 250)", oklchDark: "oklch(0.21 0.025 270)" },
+  { name: "Primary", token: "--primary", utility: "bg-primary", className: "bg-primary", oklch: "oklch(0.505 0.18 200)", oklchDark: "oklch(0.78 0.18 180)" },
+  { name: "Secondary", token: "--secondary", utility: "bg-secondary", className: "bg-secondary", oklch: "oklch(0.94 0.01 250)", oklchDark: "oklch(0.27 0.03 270)" },
+  { name: "Muted", token: "--muted", utility: "bg-muted", className: "bg-muted", border: true, oklch: "oklch(0.95 0.008 250)", oklchDark: "oklch(0.24 0.025 270)" },
+  { name: "Accent", token: "--accent", utility: "bg-accent", className: "bg-accent", oklch: "oklch(0.93 0.02 270)", oklchDark: "oklch(0.3 0.05 280)" },
+  { name: "Destructive", token: "--destructive", utility: "bg-destructive", className: "bg-destructive", oklch: "oklch(0.58 0.22 25)" },
+  { name: "Border", token: "--border", utility: "border-border", className: "bg-border", oklch: "oklch(0.9 0.01 260)", oklchDark: "oklch(0.3 0.03 270)" },
 ];
 
 /** Measured WCAG 2.1 ratios against --card. "Light, as fill" is the pre-fix value. */
@@ -95,17 +95,46 @@ const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }
   { token: "--inbox", fill: "2.0:1", text: "4.9:1", dark: "11.3:1" },
   { token: "--primary", fill: "3.9:1", text: "4.7:1", dark: "10.0:1" },
   { token: "--destructive", fill: "4.3:1", text: "5.4:1", dark: "6.2:1" },
+  { token: "--life", fill: "1.9:1", text: "7.0:1", dark: "9.5:1" },
+  { token: "--life-laundry", fill: "1.9:1", text: "6.9:1", dark: "9.6:1" },
+  { token: "--life-food", fill: "1.8:1", text: "7.1:1", dark: "10.4:1" },
+  { token: "--life-body", fill: "2.0:1", text: "7.3:1", dark: "10.0:1" },
 ];
 
 const BRAND_COLORS = [
-  { name: "Neon", token: "--neon", className: "bg-neon" },
-  { name: "Neon 2", token: "--neon-2", className: "bg-neon-2" },
-  { name: "Neon 3", token: "--neon-3", className: "bg-neon-3" },
-  { name: "Zone · Now", token: "--zone-now", className: "bg-zone-now" },
-  { name: "Zone · Later", token: "--zone-next", className: "bg-zone-next" },
-  { name: "Zone · Future", token: "--zone-later", className: "bg-zone-later" },
-  { name: "Inbox", token: "--inbox", className: "bg-inbox" },
+  { name: "Neon", token: "--neon", utility: "bg-neon", className: "bg-neon", oklch: "oklch(0.78 0.2 195)", oklchDark: "oklch(0.82 0.2 180)" },
+  { name: "Neon 2", token: "--neon-2", utility: "bg-neon-2", className: "bg-neon-2", oklch: "oklch(0.72 0.24 320)", oklchDark: "oklch(0.78 0.22 320)" },
+  { name: "Neon 3", token: "--neon-3", utility: "bg-neon-3", className: "bg-neon-3", oklch: "oklch(0.82 0.22 135)", oklchDark: "oklch(0.88 0.2 130)" },
+  { name: "Zone · Now", token: "--zone-now", utility: "bg-zone-now", className: "bg-zone-now", oklch: "oklch(0.68 0.22 30)", oklchDark: "oklch(0.72 0.22 30)" },
+  { name: "Zone · Later", token: "--zone-next", utility: "bg-zone-next", className: "bg-zone-next", oklch: "oklch(0.7 0.2 200)", oklchDark: "oklch(0.82 0.2 180)" },
+  { name: "Zone · Future", token: "--zone-later", utility: "bg-zone-later", className: "bg-zone-later", oklch: "oklch(0.65 0.2 290)", oklchDark: "oklch(0.7 0.18 290)" },
+  { name: "Inbox", token: "--inbox", utility: "bg-inbox", className: "bg-inbox", oklch: "oklch(0.78 0.18 90)", oklchDark: "oklch(0.85 0.18 95)" },
 ];
+
+/** Life maintenance — low-chroma cues for recurring college-life routines. */
+const LIFE_COLORS = [
+  { name: "Life · base", token: "--life", utility: "bg-life", className: "bg-life", oklch: "oklch(0.72 0.06 250)", oklchDark: "oklch(0.78 0.05 250)" },
+  { name: "Life · surface", token: "--life-surface", utility: "bg-life-surface", className: "bg-life-surface", border: true, oklch: "oklch(0.955 0.014 250)", oklchDark: "oklch(0.245 0.022 250)" },
+  { name: "Laundry", token: "--life-laundry", utility: "bg-life-laundry", className: "bg-life-laundry", oklch: "oklch(0.72 0.06 235)", oklchDark: "oklch(0.78 0.05 235)" },
+  { name: "Food & supplies", token: "--life-food", utility: "bg-life-food", className: "bg-life-food", oklch: "oklch(0.72 0.06 150)", oklchDark: "oklch(0.8 0.05 150)" },
+  { name: "Body & movement", token: "--life-body", utility: "bg-life-body", className: "bg-life-body", oklch: "oklch(0.72 0.06 340)", oklchDark: "oklch(0.8 0.05 340)" },
+];
+
+const DENSITY_RULES = [
+  {
+    label: "Comfortable — the strict default",
+    body: "Every daily view (board, inbox, quest cards, done wall) uses py-3 rows, gap-3 stacks and a 44×44px minimum touch target. Nothing on a daily screen may go tighter.",
+  },
+  {
+    label: "Compact — audit and backlog only",
+    body: "The data-dense grid exists for reviewing a backlog in bulk. It is never the default view, never the mobile view, and never the first thing a student sees after opening the app.",
+  },
+  {
+    label: "Density moves on the 4px grid",
+    body: "Switching density only swaps 4px multiples on the same component. Components are never forked into a 'dense' variant, so accessible names, focus order and contrast survive the switch.",
+  },
+];
+
 
 const TYPE_SCALE = [
   { label: "Display", cls: "text-4xl font-bold tracking-tight", sample: "Planner-KT" },
