@@ -33,6 +33,8 @@
   --color-neon-foreground: var(--neon-foreground);
   --color-neon-2: var(--neon-2);
   --color-neon-3: var(--neon-3);
+  --color-neon-btn: var(--neon-btn);
+  --color-neon-btn-text: var(--neon-btn-text);
   --color-zone-now: var(--zone-now);
   --color-zone-next: var(--zone-next);
   --color-zone-later: var(--zone-later);
