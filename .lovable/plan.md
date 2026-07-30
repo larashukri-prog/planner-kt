@@ -1,77 +1,51 @@
-# WCAG 2.1 AA color contrast pass
+## Goal
 
-## What I measured
+Every `input`, `textarea`, `button` and `select` in Planner-KT announces its purpose to a screen reader — and, where several identical controls repeat (one per quest), announces *which* quest it acts on.
 
-I computed real contrast ratios for every OKLCH token in `src/styles.css` against `--background` and `--card`, in both themes.
+## What I verified first
 
-**Dark mode passes everywhere.** Foreground 17.3:1, muted-foreground 6.2:1, neon 11.7:1, all zone colors 5.8–12.8:1.
+I ran an accessible-name check against the live board: no control on the default view is currently nameless. The gaps are in states that only appear after interaction (expanded quest card, inbox, Done Wall) and in generic names that repeat.
 
-**Light mode is where it fails.** The vivid neon/zone accents were tuned for a dark canvas but are also used as *text* on the near-white light surfaces:
+The auth screen (`src/components/auth-screen.tsx`) already wraps both fields in `<label>`, and the `/design-system` page already pairs every `Input`, `Switch` and `Checkbox` with a `Label htmlFor` or an `aria-label`. Neither needs changes.
 
-| Token (light) | vs card | AA body (4.5:1) |
-|---|---|---|
-| `--foreground` | 17.1 | pass |
-| `--muted-foreground` | 6.4 | pass |
-| `--primary` | 3.9 | **fail** |
-| `--neon` | 1.7 | **fail** |
-| `--neon-2` | 2.7 | **fail** |
-| `--neon-3` | 1.6 | **fail** |
-| `--zone-now` | 3.2 | **fail** |
-| `--zone-next` | 2.2 | **fail** |
-| `--zone-later` | 3.4 | **fail** |
-| `--inbox` | 2.0 | **fail** |
-| `--destructive` | 4.3 | **fail (marginal)** |
+## Fixes — all in `src/components/quest-app.tsx`
 
-These are used as text in ~14 places in `quest-app.tsx` (zone column headers, "Inbox"/"Done Today" headings, quick-sort arrows, template chip glyphs, links) plus the design-system route.
+### 1. Unnamed inputs (real screen-reader blockers)
 
-A second issue: text whose opacity is reduced below its token value — most notably the Brain Dump placeholder (`placeholder:opacity-60` on `text-muted-foreground`, ~2.6:1) and a few `opacity-50` labels.
+- **"Add a micro-step…" input** in the expanded quest card — placeholder only. Add `aria-label={\`Add a step to ${task.title}\`}`.
+- **Due-date `<input type="date">`** — no name at all. Add `aria-label={\`Due date for ${task.title}\`}`.
 
-## The fix: a parallel set of text-safe accent tokens
+### 2. Names that repeat and give no context
 
-Keep the vivid tokens for what they're good at — gradient fills, glows, borders, checkbox fills, progress bars (non-text, exempt or held to 3:1). Add a `-text` variant of each accent that is automatically contrast-correct per theme, so components never have to think about it.
+Today a screen-reader user tabbing the board hears "Delete, Delete, Delete". Each of these becomes quest-specific:
 
-In `src/styles.css`:
+| Control | Now | Becomes |
+| --- | --- | --- |
+| Inbox delete | `Delete` | `Delete quest: {title}` |
+| Card delete | `Delete quest` | `Delete quest: {title}` |
+| Done Wall delete | `Delete` | `Delete quest: {title}` |
+| Subtask remove | `Remove step` | `Remove step: {text}` |
+| Subtask checkbox | `Mark complete` | `Mark step complete: {text}` |
+| Complete checkbox | `Complete quest` | `Complete quest: {title}` |
+| Rest Day | `Log as rest day` | `Log today as a rest day for Workout` |
 
-```css
-:root {
-  /* text-safe accents — solved for >= 4.5:1 on --background and --card */
-  --neon-text:       oklch(0.495 0.20 195);
-  --neon-2-text:     oklch(0.585 0.24 320);
-  --neon-3-text:     oklch(0.530 0.22 135);
-  --zone-now-text:   oklch(0.580 0.22 30);
-  --zone-next-text:  oklch(0.495 0.20 200);
-  --zone-later-text: oklch(0.570 0.20 290);
-  --inbox-text:      oklch(0.550 0.18 90);
-  --primary:         oklch(0.505 0.18 200);   /* was 0.55 -> 3.9:1 */
-  --destructive:     oklch(0.580 0.22 25);    /* was 0.60 -> 4.3:1 */
-}
+### 3. Buttons whose label is a symbol
 
-.dark {
-  /* dark accents already clear 4.5:1 — the text alias points at the vivid token */
-  --neon-text: var(--neon);
-  --neon-2-text: var(--neon-2);
-  /* ...same for the rest */
-}
-```
+- **`ZoneQuickButton`** renders `← Now`. The arrow is decorative but read aloud. Wrap the arrow in `aria-hidden="true"` and add `aria-label={\`Move ${taskTitle} to ${label}\`}` (needs a new `taskTitle` prop, passed from the three call sites).
+- **Zone move buttons inside the expanded card** (`→ now`) — same treatment: `aria-label={\`Move to ${zoneLabel}\`}`, arrow hidden. Also map the internal status keys to the user-facing zone names so it says "Later"/"Future", not "next"/"later".
+- **Done Wall "undo"** — `aria-label={\`Move ${title} back to Later\`}`.
+- **Template chips** — the emoji span gets `aria-hidden="true"` so the name is just "Laundry Loop", not "basket Laundry Loop".
 
-Register each in the `@theme inline` block (`--color-neon-text: var(--neon-text);` etc.) so `text-neon-text`, `text-zone-now-text` are real Tailwind utilities.
+### 4. State that a name alone can't carry
 
-## Component swaps (presentation only)
-
-- `src/components/quest-app.tsx`: every `style={{ color: "var(--color-neon)" }}`, `color: zone.tint`, `color: tpl.tint`, `color: "var(--color-inbox)"` used on *text or a text-adjacent glyph* switches to the `-text` variant. The zone objects get a `tint` (fills/borders, unchanged) plus a `textTint`. Background/border/glow usages are untouched, so the visual identity holds.
-- `src/lib/linkify.tsx`: `hover:text-neon` -> `hover:text-neon-text`.
-- `src/styles.css`: the `@utility text-neon` rule uses `--neon-text` for `color` and keeps `--neon` for the `text-shadow`.
-- `src/routes/design-system.tsx` and `src/components/design-system/{parts,demos}.tsx`: same swap wherever an accent is the text color.
-- Remove the opacity reductions on text: Brain Dump placeholder drops `opacity-60` (keeps the smaller size), and the `opacity-50` text labels move to `text-muted-foreground` at full opacity. Opacity on *disabled* controls stays — disabled elements are exempt from AA.
-
-## Documentation
-
-Add a small contrast table to the Foundations section of `/design-system` listing each accent's measured ratio in both themes and the rule "vivid token for fills, `-text` token for type," so the constraint is enforced by the system rather than by memory.
+- **Quest title button** (expands the card): add `aria-expanded={open}` and `aria-label={\`${task.title} — ${open ? "collapse" : "expand"} details\`}`, so the toggle role is announced rather than inferred.
+- **View toggle** (Board / Done Wall): add `aria-pressed={active}` to each button so the selected view is announced.
 
 ## Verification
 
-Re-run the ratio computation against the final tokens for both themes, then screenshot the dashboard and `/design-system` in light and dark to confirm nothing looks washed out.
+After the edits I'll re-run the accessible-name sweep in the browser across four states — board, an expanded quest card, the inbox with an unsorted quest, and the Done Wall — asserting that zero controls resolve to an empty name and that no two controls in the same view share an identical one. Then a typecheck.
 
-## Note on scope
+## Not changing
 
-Contrast on *non-text* UI — the XP bar gradient fill, checkbox borders, card borders — is held to the 3:1 non-text threshold, not 4.5:1. Forcing 4.5:1 on the border and gradient tokens would visibly flatten the Quest Log aesthetic for no AA benefit, so I'm leaving those vivid.
+- Colour/contrast work — already completed and documented in Section 01 of `/design-system`.
+- `src/components/ui/*` (shadcn primitives) — Radix already handles ARIA there; the labelling responsibility sits at the call sites listed above.

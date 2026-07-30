@@ -212,7 +212,10 @@ function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void })
         return (
           <button
             key={it.id}
+            type="button"
             onClick={() => onView(it.id)}
+            aria-pressed={active}
+            aria-label={`Show ${it.label}`}
             className="relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
             style={{ color: active ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)" }}
           >
@@ -334,6 +337,7 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
               style={{ boxShadow: isClicked ? `0 0 0 1px ${tpl.tint}, 0 6px 20px -8px ${tpl.tint}` : "none" }}
             >
               <span
+                aria-hidden="true"
                 className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs transition-transform duration-200 group-hover:scale-110"
                 style={{ background: `color-mix(in oklab, ${tpl.tint} 18%, transparent)` }}
               >
@@ -431,15 +435,16 @@ function InboxStrip({
                 >
                   <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
                   <div className="mt-3 flex items-center gap-1">
-                    <ZoneQuickButton label="Now"    tint="var(--color-zone-now)"   textTint="var(--color-zone-now-text)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
-                    <ZoneQuickButton label="Later"  tint="var(--color-zone-next)"  textTint="var(--color-zone-next-text)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
-                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" textTint="var(--color-zone-later-text)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
+                    <ZoneQuickButton label="Now"    taskTitle={task.title} tint="var(--color-zone-now)"   textTint="var(--color-zone-now-text)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
+                    <ZoneQuickButton label="Later"  taskTitle={task.title} tint="var(--color-zone-next)"  textTint="var(--color-zone-next-text)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
+                    <ZoneQuickButton label="Future" taskTitle={task.title} tint="var(--color-zone-later)" textTint="var(--color-zone-later-text)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
                     <button
+                      type="button"
                       onClick={() => handleDelete(task.id)}
-                      aria-label="Delete"
+                      aria-label={`Delete quest: ${task.title}`}
                       className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive-text md:opacity-0 md:group-hover:opacity-100"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 </motion.div>
@@ -452,18 +457,29 @@ function InboxStrip({
   );
 }
 
-function ZoneQuickButton({ label, tint, textTint, direction, onClick }: { label: string; tint: string; textTint: string; direction: 'left' | 'right'; onClick: () => void }) {
+function ZoneQuickButton({ label, taskTitle, tint, textTint, direction, onClick }: { label: string; taskTitle: string; tint: string; textTint: string; direction: 'left' | 'right'; onClick: () => void }) {
   return (
     <motion.button
+      type="button"
       whileTap={{ scale: 0.92 }}
       onClick={onClick}
+      aria-label={`Move ${taskTitle} to ${label}`}
       className="rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       style={{ borderColor: `color-mix(in oklab, ${tint} 35%, var(--color-border))` }}
     >
-      <span style={{ color: textTint }}>{direction === 'left' ? '←' : '→'}</span> {label}
+      <span aria-hidden="true" style={{ color: textTint }}>{direction === 'left' ? '←' : '→'}</span> {label}
     </motion.button>
   );
 }
+
+/** User-facing zone names for the internal status keys — used in button labels. */
+const ZONE_LABELS: Record<TaskStatus, string> = {
+  now: "Now",
+  next: "Later",
+  later: "Future",
+  inbox: "Inbox",
+  completed: "Done Wall",
+};
 
 /* ----------------------------- ZoneBoard ----------------------------- */
 
@@ -786,10 +802,13 @@ function TaskCard({
           tint={zoneTint}
           pulse={readyToClaim}
           completing={completing}
+          title={task.title}
         />
         <button
           type="button"
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
+          aria-expanded={open}
+          aria-label={`${task.title} — ${open ? "collapse" : "expand"} details`}
           className="min-w-0 flex-1 text-left"
         >
           <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
@@ -828,7 +847,7 @@ function TaskCard({
             aria-label="Log as rest day"
             title="Rest Day"
           >
-            <Coffee className="h-3 w-3" />
+            <Coffee className="h-3 w-3" aria-hidden="true" />
             Rest
           </button>
         )}
@@ -837,7 +856,8 @@ function TaskCard({
           onClick={() => { setOpen((o) => !o); clearEscalation(); }}
           animate={{ rotate: open ? 180 : 0 }}
           className="mt-0.5 text-muted-foreground"
-          aria-label={open ? "Collapse" : "Expand"}
+          aria-expanded={open}
+          aria-label={`${open ? "Collapse" : "Expand"} details for ${task.title}`}
         >
           <ChevronDown className="h-4 w-4" />
         </motion.button>
@@ -869,10 +889,11 @@ function TaskCard({
                 }}
                 className="flex items-center gap-2 rounded-md border border-dashed border-border px-2 py-1.5"
               >
-                <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+                <Plus className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                 <input
                   value={subInput}
                   onChange={(e) => setSubInput(e.target.value)}
+                  aria-label={`Add a step to ${task.title}`}
                   placeholder="Add a micro-step…"
                   className="flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
                 />
@@ -906,6 +927,7 @@ function TaskCard({
                 ) : showDatePicker ? (
                   <input
                     type="date"
+                    aria-label={`Due date for ${task.title}`}
                     autoFocus
                     value={pendingDate}
                     min={dateInputValue(Date.now())}
@@ -952,19 +974,22 @@ function TaskCard({
                     .map((s) => (
                       <button
                         key={s}
+                        type="button"
                         onClick={() => { onMove(task.id, s); clearEscalation(); }}
+                        aria-label={`Move ${task.title} to ${ZONE_LABELS[s]}`}
                         className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
                       >
-                        → {s}
+                        <span aria-hidden="true">→</span> {ZONE_LABELS[s]}
                       </button>
                     ))}
                 </div>
                 <button
+                  type="button"
                   onClick={() => onDelete(task.id)}
                   className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
-                  aria-label="Delete quest"
+                  aria-label={`Delete quest: ${task.title}`}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -976,11 +1001,12 @@ function TaskCard({
 }
 
 function CompleteCheckbox({
-  onCheck, tint, pulse, completing,
+  onCheck, tint, pulse, completing, title,
 }: {
   onCheck: (e: React.MouseEvent) => void;
   tint: string;
   pulse: boolean;
+  title: string;
   completing: boolean;
 }) {
   const glow = "var(--color-neon-3)";
@@ -990,7 +1016,7 @@ function CompleteCheckbox({
       whileTap={{ scale: 0.82 }}
       whileHover={{ scale: 1.1 }}
       onClick={onCheck}
-      aria-label={pulse ? "Claim reward" : "Complete quest"}
+      aria-label={pulse ? `Claim reward for ${title}` : `Complete quest: ${title}`}
       animate={
         completing
           ? {
@@ -1068,7 +1094,7 @@ function MicroStepList({
             exit={{ opacity: 0, x: 10 }}
             className="group flex items-center gap-2 rounded-md px-1 py-1 hover:bg-secondary/40"
           >
-            <SubtaskCheckbox checked={s.isCompleted} onClick={() => onToggle(s.id)} tint={tint} />
+            <SubtaskCheckbox checked={s.isCompleted} onClick={() => onToggle(s.id)} tint={tint} label={s.text} />
             <motion.span
               animate={{
                 opacity: s.isCompleted ? 0.45 : 1,
@@ -1079,8 +1105,9 @@ function MicroStepList({
               {renderWithLinks(s.text)}
             </motion.span>
             <button
+              type="button"
               onClick={() => onRemove(s.id)}
-              aria-label="Remove step"
+              aria-label={`Remove step: ${s.text}`}
               className="rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-destructive-text group-hover:opacity-100"
             >
               <X className="h-3 w-3" />
@@ -1092,13 +1119,15 @@ function MicroStepList({
   );
 }
 
-function SubtaskCheckbox({ checked, onClick, tint }: { checked: boolean; onClick: () => void; tint: string }) {
+function SubtaskCheckbox({ checked, onClick, tint, label }: { checked: boolean; onClick: () => void; tint: string; label: string }) {
   return (
     <motion.button
+      type="button"
       whileTap={{ scale: 0.8 }}
       whileHover={{ scale: 1.1 }}
       onClick={onClick}
-      aria-label={checked ? "Mark incomplete" : "Mark complete"}
+      aria-pressed={checked}
+      aria-label={checked ? `Mark step incomplete: ${label}` : `Mark step complete: ${label}`}
       className="relative grid h-4 w-4 shrink-0 place-items-center rounded border-[1.5px] transition-colors"
       style={{
         borderColor: checked ? tint : "var(--color-border)",
@@ -1168,7 +1197,14 @@ function DoneWall({
               </h3>
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 <AnimatePresence initial={false}>
-                  {g.items.map((t) => (
+                  {g.items.map((t) => {
+                    const doneTime = t.completedAt
+                      ? new Date(t.completedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                      : "";
+                    // Two quests can share a title, so the completion time keeps
+                    // each row's action labels distinguishable to a screen reader.
+                    const rowName = doneTime ? `${t.title} (cleared ${doneTime})` : t.title;
+                    return (
                     <motion.li
                       key={t.id}
                       layout
@@ -1183,6 +1219,7 @@ function DoneWall({
                           background: "color-mix(in oklab, var(--color-neon-3) 18%, transparent)",
                           color: "var(--color-neon-3)",
                         }}
+                        aria-hidden="true"
                       >
                         <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
                       </div>
@@ -1191,26 +1228,30 @@ function DoneWall({
                           {t.title}
                         </p>
                         <p className="font-mono text-[10px] text-muted-foreground">
-                          {t.completedAt ? new Date(t.completedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}
+                          {doneTime}
                         </p>
                       </div>
                       <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                         <button
+                          type="button"
                           onClick={() => onMove(t.id, "next")}
+                          aria-label={`Move ${rowName} back to Later`}
                           className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
                         >
                           undo
                         </button>
                         <button
+                          type="button"
                           onClick={() => onDelete(t.id)}
-                          aria-label="Delete"
+                          aria-label={`Delete quest: ${rowName}`}
                           className="rounded p-1 text-muted-foreground hover:text-destructive-text"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
                     </motion.li>
-                  ))}
+                    );
+                  })}
                 </AnimatePresence>
               </ul>
             </div>
