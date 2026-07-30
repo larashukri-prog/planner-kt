@@ -166,7 +166,7 @@
 }
 
 @utility text-neon {
-  color: var(--color-neon);
+  color: var(--color-neon-text);
   text-shadow: 0 0 18px color-mix(in oklab, var(--neon) 55%, transparent);
 }
 
