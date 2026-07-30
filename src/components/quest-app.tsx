@@ -343,8 +343,7 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
                 <motion.span
                   initial={{ opacity: 0, x: -4 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="font-mono text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: tpl.tint }}
+                  className="font-mono text-[10px] font-semibold uppercase tracking-wider text-foreground"
                 >
                   Created!
                 </motion.span>
@@ -1038,7 +1037,7 @@ function CompleteCheckbox({
         <Check
           className="h-3.5 w-3.5"
           strokeWidth={3.5}
-          style={{ color: glow }}
+          style={{ color: "var(--color-neon-3-text)" }}
         />
       )}
     </motion.button>
