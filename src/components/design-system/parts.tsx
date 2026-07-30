@@ -151,11 +151,20 @@ export function Swatch({
   token,
   className,
   border,
+  utility,
+  oklch,
+  oklchDark,
 }: {
   name: string;
   token: string;
   className: string;
   border?: boolean;
+  /** The only thing components are allowed to consume. */
+  utility?: string;
+  /** Raw light-theme value — reference only. */
+  oklch?: string;
+  /** Raw dark-theme value, when it differs. */
+  oklchDark?: string;
 }) {
   return (
     <div className="quest-card overflow-hidden">
@@ -163,10 +172,27 @@ export function Swatch({
         className={cn("h-16 w-full", className, border && "border-b border-border")}
         aria-hidden="true"
       />
-      <div className="px-3 py-2">
+      <div className="flex flex-col gap-1 px-3 py-3">
         <p className="truncate text-xs font-semibold">{name}</p>
+        {utility ? (
+          <code className="truncate font-mono text-[11px] text-foreground">{utility}</code>
+        ) : null}
         <p className="truncate font-mono text-[10px] text-muted-foreground">{token}</p>
+        {oklch ? (
+          <p className="font-mono text-xs leading-snug text-muted-foreground">
+            <span className="sr-only">Raw value, reference only: </span>
+            <span className="block truncate">{oklch}</span>
+            {oklchDark ? (
+              <span className="block truncate">
+                <span aria-hidden="true">dark · </span>
+                <span className="sr-only">Dark theme raw value: </span>
+                {oklchDark}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
       </div>
     </div>
   );
 }
+
