@@ -179,6 +179,17 @@
   --zone-later-text: var(--zone-later);
   --inbox-text: var(--inbox);
 
+  /* Life maintenance — same calm, low-chroma family lifted for the dark surface. */
+  --life: oklch(0.78 0.05 250);
+  --life-surface: oklch(0.245 0.022 250);
+  --life-text: oklch(0.8 0.05 250);
+  --life-laundry: oklch(0.78 0.05 235);
+  --life-laundry-text: oklch(0.8 0.05 235);
+  --life-food: oklch(0.8 0.05 150);
+  --life-food-text: oklch(0.82 0.05 150);
+  --life-body: oklch(0.8 0.05 340);
+  --life-body-text: oklch(0.82 0.05 340);
+
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.22 0.05 280) 0%, oklch(0.14 0.02 270) 60%);
   --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),
                  0 8px 30px -8px color-mix(in oklab, var(--neon) 35%, transparent);
