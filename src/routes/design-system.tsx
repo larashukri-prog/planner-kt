@@ -86,15 +86,15 @@ const CORE_COLORS = [
 
 /** Measured WCAG 2.1 ratios against --card. "Light, as fill" is the pre-fix value. */
 const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }[] = [
-  { token: "--neon", fill: "1.7:1", text: "4.6:1", dark: "11.7:1" },
-  { token: "--neon-2", fill: "2.7:1", text: "4.5:1", dark: "7.9:1" },
-  { token: "--neon-3", fill: "1.6:1", text: "4.7:1", dark: "13.0:1" },
-  { token: "--zone-now", fill: "3.2:1", text: "4.6:1", dark: "5.9:1" },
-  { token: "--zone-next", fill: "2.2:1", text: "4.7:1", dark: "11.7:1" },
-  { token: "--zone-later", fill: "3.4:1", text: "4.7:1", dark: "6.2:1" },
-  { token: "--inbox", fill: "2.0:1", text: "4.6:1", dark: "11.3:1" },
-  { token: "--primary", fill: "3.9:1", text: "4.5:1", dark: "10.0:1" },
-  { token: "--destructive", fill: "4.3:1", text: "4.8:1", dark: "4.9:1" },
+  { token: "--neon", fill: "1.7:1", text: "4.8:1", dark: "11.7:1" },
+  { token: "--neon-2", fill: "2.7:1", text: "4.8:1", dark: "7.9:1" },
+  { token: "--neon-3", fill: "1.6:1", text: "4.9:1", dark: "13.0:1" },
+  { token: "--zone-now", fill: "3.2:1", text: "4.8:1", dark: "5.9:1" },
+  { token: "--zone-next", fill: "2.2:1", text: "4.9:1", dark: "11.7:1" },
+  { token: "--zone-later", fill: "3.4:1", text: "4.9:1", dark: "6.2:1" },
+  { token: "--inbox", fill: "2.0:1", text: "4.9:1", dark: "11.3:1" },
+  { token: "--primary", fill: "3.9:1", text: "4.7:1", dark: "10.0:1" },
+  { token: "--destructive", fill: "4.3:1", text: "4.7:1", dark: "4.9:1" },
 ];
 
 const BRAND_COLORS = [
