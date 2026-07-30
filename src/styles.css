@@ -33,6 +33,8 @@
   --color-neon-foreground: var(--neon-foreground);
   --color-neon-2: var(--neon-2);
   --color-neon-3: var(--neon-3);
+  --color-neon-btn: var(--neon-btn);
+  --color-neon-btn-text: var(--neon-btn-text);
   --color-zone-now: var(--zone-now);
   --color-zone-next: var(--zone-next);
   --color-zone-later: var(--zone-later);
@@ -79,6 +81,9 @@
   --neon-foreground: oklch(0.15 0.02 260);
   --neon-2: oklch(0.72 0.24 320);
   --neon-3: oklch(0.82 0.22 135);
+  /* Teal button fill + label. Light: black on vivid teal. */
+  --neon-btn: oklch(0.78 0.2 195);
+  --neon-btn-text: oklch(0.15 0.02 260);
 
   --zone-now: oklch(0.68 0.22 30);
   --zone-next: oklch(0.7 0.2 200);
@@ -131,6 +136,9 @@
   --neon-foreground: oklch(0.15 0.02 260);
   --neon-2: oklch(0.78 0.22 320);
   --neon-3: oklch(0.88 0.2 130);
+  /* Deepened teal so a white label clears AA in dark mode. */
+  --neon-btn: oklch(0.46 0.13 195);
+  --neon-btn-text: oklch(0.98 0 0);
 
   --zone-now: oklch(0.72 0.22 30);
   --zone-next: oklch(0.82 0.2 180);
