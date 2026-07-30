@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
-  "Living documentation for Planner-KT: design tokens, a 4px base grid, WCAG 2.1 AA atomic components, enterprise UI patterns, standardized motion, and the hook-based middle layer between UI and data.";
+  "Living documentation for Planner-KT, an assistive-technology planner for cognitive accessibility: cognitive-load and density rules, OKLCH semantic tokens, low-anxiety life-maintenance cues, WCAG 2.1 AA components, the recurring life prompt pattern, and the hook-based Daily Spawn Engine.";
 
 
 export const Route = createFileRoute("/design-system")({
