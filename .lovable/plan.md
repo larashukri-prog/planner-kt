@@ -1,40 +1,66 @@
-## What I verified first
+## Goal
 
-Read-only checks against the current code (not assumptions):
+Reposition the `/design-system` documentation so Planner-KT reads as an assistive-technology app for cognitive accessibility and college-life routine management. Tokens are added and documented only — the live board is untouched this round.
 
-- `lang="en"` is already on `<html>` in `src/routes/__root.tsx`.
-- Titles/descriptions exist on the root and on `/` (metadata is set per route via `head()`, there is no `index.html` in this stack).
-- The viewport meta is `width=device-width, initial-scale=1` — no `user-scalable=no`, no `maximum-scale`. Zoom is already allowed.
-- Main content is already wrapped in `<main>`; heading order runs h1 → h2 → h3 with no skips.
-- No `tabIndex` greater than 0 anywhere.
-- Every icon-only button I found already carries an `aria-label`; both text inputs carry `aria-label`s.
-- I measured the muted text token in OKLCH: **6.26:1** on light background, **6.75:1** on dark. It already passes AA, so swapping it for slate colors would be a downgrade in theming with no contrast gain — I don't plan to do that.
+## 1. Foundations — cognitive load & density
 
-So the structural items in the request are largely already satisfied. The honest gap is that no *automated scanner* has actually been run — everything so far was manual review. That's what this plan fixes.
+- Rewrite the page intro and the Foundations section description so the stated primary constraint is **reducing cognitive overwhelm**, not visual polish.
+- Add a short "Density contract" card at the top of Foundations:
+  - **Comfortable density is the strict default** for all daily views: `py-3` rows, minimum 44×44px touch targets, generous line spacing.
+  - **High-density layouts are restricted** to audit/backlog surfaces (the existing data-dense grid) and must never be the default on a daily screen.
+  - Density only ever moves along the 4px grid; components are never forked.
+- Cross-reference this rule from the existing data-dense grid pattern so it's labeled as an audit-only surface.
 
-## Plan
+## 2. Color palette cards show the raw value
 
-1. **Run a real axe-core scan.** Drive the running app with headless Chromium and inject `axe-core` against every route (`/`, `/auth`, `/design-system`) in **both light and dark themes**, including expanded task cards and open panels so hidden controls are scanned too. Export the full violation list with severity, rule ID, and offending selector.
+Extend the `Swatch` component in `src/components/design-system/parts.tsx` to render four things per card:
 
-2. **Triage and fix every violation found.** Expected candidates based on the code read, to be confirmed by the scan rather than pre-emptively "fixed":
-   - Placeholder-only contrast on the Brain Dump and micro-step inputs (placeholders inherit muted; needs measuring against the actual input fill, not the page background).
-   - Accent-tinted labels drawn with inline `style={{ color: var(--color-*-text) }}` on card and column headers.
-   - Low-opacity dashed borders and empty-state text (`border-border/60`) as non-text contrast.
-   - Any control in `/design-system` demos missing a label — that route has the most hand-rolled widgets.
-   Fixes stay in presentation code: semantic tokens in `src/styles.css` and class/attribute changes in `src/components/quest-app.tsx`, `src/routes/design-system.tsx`, `src/components/auth-screen.tsx`. No business-logic changes.
+1. the visual swatch
+2. the semantic name (Primary)
+3. the Tailwind utility class (`bg-primary`) — the thing components are allowed to consume
+4. the raw OKLCH value in `font-mono text-xs text-muted-foreground`, marked "reference only"
 
-3. **Focus rings.** The global `:focus-visible` outline in `src/styles.css` covers standard elements. I'll confirm by tabbing through each route in the scan run and screenshotting the ring on the Add pill, zone chips, checkboxes, and theme toggle — adding per-component `focus-visible:ring-2 focus-visible:ring-ring` only where the global rule is being overridden.
+The core and brand/zone palette arrays get `utility` and `oklch` fields (light-mode value, with dark-mode value shown where it differs). A one-line caption under each grid restates that components consume utilities, never raw values.
 
-4. **Re-scan until clean.** Repeat the axe run after fixes; the exit condition is zero violations at serious/critical level across all routes and both themes, with any remaining minor items listed explicitly rather than silently dropped.
+## 3. Life Maintenance tokens
 
-5. **Rebuild and republish.** Run the production build, confirm it succeeds, then publish so the live URL serves the fixed bundle.
+Add a small, deliberately low-saturation token family to `src/styles.css` (both `:root` and `.dark`, plus `@theme inline` mappings), so recurring college-life prompts read as calm and routine rather than urgent:
+
+- `--life` / `--life-text` — the calm base cue for life maintenance (soft, desaturated, distinct in hue from the vivid quest accents)
+- `--life-surface` — a very quiet tinted surface for the card background
+- Category sub-cues on the same low-chroma family for laundry / food / body (workouts) so they are distinguishable at a glance without adding visual noise
+
+Rules to document alongside them:
+- Life-maintenance cues are **lower chroma than academic/quest accents** — routine work should never compete for attention with deadlines.
+- Every `-text` variant clears 4.5:1 on `--background` and `--card` in both themes (verified with measured ratios added to the existing contrast table).
+- No red/alarm hues in this family; time sensitivity is communicated by a Badge, not by color alone.
+
+Add a "Life maintenance" swatch grid in Foundations using the extended Swatch card.
+
+## 4. New pattern — Recurring Life Prompt
+
+Add a `RecurringLifePromptDemo` to `src/components/design-system/demos.tsx` and a matching `Example` in the Enterprise UI Patterns section. The card composes existing atoms only:
+
+- `Checkbox` for each step, at the 44px comfortable target
+- `Badge` for **frequency** (e.g. "Every Friday", "Daily") and a separate neutral `Badge` for **time sensitivity** ("Flexible" / "Today")
+- Life-maintenance token for the left cue rail and quiet surface tint
+- Strict 4px-grid spacing (`p-4`, `gap-3`, `py-3` rows)
+
+The Example carries the standard accessibility and composable-API notes: group labelled by the card heading, badges as text (not color-only), reduced-motion respected, and the pattern extensible by swapping the badge pair.
+
+## 5. Middle Layer — Daily Spawn Engine
+
+Extend the Middle Layer Architecture section with a "Daily Spawn Engine" subsection documenting `src/lib/use-daily-spawn.ts` as the canonical example of the middle layer removing daily setup work from the student:
+
+- A template table (title, cadence, target zone) mirroring the real recurring quests.
+- The **Anti-Guilt Rule**: an existing uncompleted instance is refreshed in place, never duplicated.
+- The rollover tick: local date key in namespaced storage, subtask reset on scheduled days, template drift reconciliation (missing subtasks added, obsolete ones pruned).
+- Auto-escalation as the second pass of the same tick, and the fact that it never demotes.
+- An annotated code excerpt plus a line added to the ArchitectureDiagram flow showing the timer → hook → persistence path.
+- One sentence framing the accessibility intent: the routine is built, persisted and surfaced automatically, so working memory is never the thing keeping the routine alive.
 
 ## Technical notes
 
-- Scanning uses Playwright + `axe-core` loaded from CDN into the page; results are written to a file and read back, not dumped to the terminal.
-- Contrast math is done in OKLCH → linear sRGB → WCAG relative luminance, so measurements match what the browser renders rather than eyeballed hex approximations.
-- Existing contrast-safe `-text` token pairs (per project memory) are the fix mechanism for any text failure; vivid tokens stay reserved for fills, borders, and glows.
-
-## What I will report back
-
-The scan output before and after, the exact list of violations fixed, and confirmation that the deployed build is the scanned one.
+- Files touched: `src/styles.css` (new tokens + `@theme inline` mappings), `src/components/design-system/parts.tsx` (Swatch), `src/components/design-system/demos.tsx` (new demo), `src/routes/design-system.tsx` (copy, swatch data, new pattern + architecture subsection), and the route `head()` description.
+- No changes to `quest-app.tsx`, `use-tasks.ts`, or `use-daily-spawn.ts` — documentation describes existing behavior.
+- Verification: contrast ratios computed for every new `-text` token in both themes, and an axe-core pass over `/design-system` in light and dark before finishing.
