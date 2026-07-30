@@ -298,7 +298,12 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         type="submit"
         disabled={!hasValue}
         aria-label="Add task"
-        className="flex shrink-0 items-center rounded-full bg-neon px-4 py-2 text-xs font-semibold text-neon-foreground transition-all hover:bg-neon/90 hover:brightness-100 active:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-40"
+        className={
+          "flex shrink-0 items-center rounded-full border px-4 py-2 text-xs font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring " +
+          (hasValue
+            ? "border-neon bg-background text-foreground hover:bg-accent active:bg-muted"
+            : "cursor-not-allowed border-border bg-muted text-muted-foreground")
+        }
         style={{ boxShadow: hasValue ? "var(--shadow-neon)" : "none" }}
       >
         Add
