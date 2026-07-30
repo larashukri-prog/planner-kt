@@ -269,11 +269,12 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       transition={{ duration: 0.35 }}
       className="relative flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-2 pr-1.5 shadow-md transition-all duration-200 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/50"
     >
-      <Plus className="h-5 w-5 shrink-0 text-black dark:text-white" strokeWidth={2.5} />
+      <Plus className="h-5 w-5 shrink-0 text-foreground" strokeWidth={2.5} aria-hidden="true" />
       <input
         ref={ref}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        aria-label="Brain dump a quest"
         placeholder="Brain dump a quest. Press Enter. No tags. No deadlines."
         className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground md:text-lg"
       />
