@@ -965,6 +965,96 @@ const fill = {
               </div>
             </div>
 
+            <div className="flex flex-col gap-3">
+              <SubHeading>The Daily Spawn Engine</SubHeading>
+              <p className="max-w-3xl text-xs leading-relaxed text-muted-foreground">
+                <code className="font-mono text-foreground">src/lib/use-daily-spawn.ts</code> is the
+                clearest example of the middle layer doing assistive work. It owns the recurring
+                life prompts: a 60-second tick compares today's local date key against the last run
+                stored under <code className="font-mono text-foreground">questlog.lastSpawnDate.v1</code>
+                , then builds, persists and surfaces the day's routine. The student never sets up
+                their day manually, and working memory is never the thing keeping the routine alive.
+              </p>
+
+              <div className="quest-card overflow-x-auto scrollbar-quest">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    Recurring life templates owned by the daily spawn engine
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Template
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Cadence
+                      </th>
+                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        Target zone
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {SPAWN_TEMPLATES.map((t) => (
+                      <tr key={t.key}>
+                        <th scope="row" className="px-4 py-3 font-normal">
+                          {t.title}
+                          <span className="mt-0.5 block font-mono text-[10px] text-muted-foreground">
+                            {t.key}
+                          </span>
+                        </th>
+                        <td className="px-4 py-3 text-muted-foreground">{t.cadence}</td>
+                        <td className="px-4 py-3">
+                          <Badge variant="secondary">{t.zone}</Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <ul className="quest-card flex flex-col gap-2.5 p-4 text-sm text-muted-foreground">
+                {SPAWN_RULES.map((rule) => (
+                  <li key={rule} className="flex gap-2.5">
+                    <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
+                    <span>{rule}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <CodeBlock
+                forExample="daily spawn engine"
+                label="src/lib/use-daily-spawn.ts"
+                code={`const todayKey = localDateKey(new Date());              // local, not UTC
+const dateChanged = window.localStorage.getItem(TICK_KEY) !== todayKey;
+
+for (const entry of RECURRING_QUESTS) {
+  const matches = activeSolo.filter((t) => t.recurringKey === entry.key);
+
+  if (matches.length > 0) {
+    // Anti-Guilt Rule: refresh the existing instance in place, never duplicate.
+    const keep = matches[0];
+    reconcileSubtasks(keep, entry);                      // add missing, prune obsolete
+    if (dateChanged && entry.shouldSpawn(today)) {
+      updateTask(keep.id, {
+        subtasks: keep.subtasks.map((s) => ({ ...s, isCompleted: false })),
+        createdAt: Date.now(),                           // resurfaces, guilt-free
+      });
+    }
+  } else if (entry.shouldSpawn(today)) {
+    addRecurringTask({ ...entry, status: entry.zone });  // no active copy — spawn one
+  }
+}
+
+// Second pass of the same tick: auto-escalation. Promotes only, never demotes.
+if (dateChanged) escalateByDueDate(current, updateTask);
+
+if (dateChanged) window.localStorage.setItem(TICK_KEY, todayKey);`}
+              />
+            </div>
+
+
+
             <Example
               title="Live stateful component — persisted preferences"
               className="items-start"
