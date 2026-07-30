@@ -701,15 +701,45 @@ import { Checkbox } from "@/components/ui/checkbox";
             id="patterns"
             eyebrow="03 — Patterns"
             title="Enterprise UI Patterns"
-            description="The same atoms composed into production-scale surfaces: a data-dense task grid, an accessible settings form, and the lighter board-level patterns. Density changes by moving along the 4px grid — never by forking a component."
+            description="The same atoms composed into production-scale surfaces: the recurring life prompt used across daily views, an accessible settings form, and an audit-only data-dense grid. Density changes by moving along the 4px grid — never by forking a component."
           >
+            <Example
+              title="Recurring life prompt"
+              className="items-start"
+              a11y="WCAG 2.1 AA: each card is a section labelled by its own heading, every step is a Checkbox with a real <Label> at a 44px target, and frequency plus time sensitivity are announced as text — color is never the only carrier of meaning. Contrast for the life -text aliases measures ≥ 6.7:1 in both themes."
+              api="Composable API: the cue rail, frequency Badge and sensitivity Badge are independent slots. Swap the badge pair to express a different cadence or urgency without touching the card, and the low-chroma life token keeps routine upkeep visually quieter than academic quests."
+              code={`<section aria-labelledby="laundry-title" className="quest-card bg-life-surface flex gap-3 p-4">
+  <span aria-hidden="true" className="w-1 shrink-0 rounded-full bg-life-laundry" />
+  <div className="flex min-w-0 flex-1 flex-col gap-3">
+    <div className="flex flex-wrap items-center gap-2">
+      <h4 id="laundry-title" className="text-sm font-semibold">Laundry loop</h4>
+      <Badge variant="outline" className="border-life text-life-text">Every Friday</Badge>
+      <Badge variant="secondary">Flexible</Badge>
+    </div>
+    <ul className="flex flex-col">
+      {steps.map((step) => (
+        <li key={step} className="flex min-h-11 items-center gap-3 py-3">
+          <Checkbox id={step} />
+          <Label htmlFor={step} className="text-sm font-normal">{step}</Label>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>`}
+            >
+              <RecurringLifePromptDemo />
+            </Example>
+
             <div className="flex flex-col gap-3">
-              <SubHeading>Data-dense task grid</SubHeading>
+              <SubHeading>Data-dense task grid — audit &amp; backlog only</SubHeading>
               <p className="max-w-2xl text-xs text-muted-foreground">
-                Composes Checkbox, Badge, and Button inside a semantic{" "}
+                Restricted surface: this is for reviewing a backlog in bulk, never a daily view. Per
+                the density contract, daily screens stay at comfortable density. Composes Checkbox,
+                Badge, and Button inside a semantic{" "}
                 <code className="font-mono text-foreground">&lt;table&gt;</code>: scoped column
                 headers, an <code className="font-mono text-foreground">sr-only</code> caption,
                 sortable headers exposing <code className="font-mono text-foreground">aria-sort</code>
+
                 , and a density toggle that only swaps 4px multiples.
               </p>
               <DataGridDemo />
