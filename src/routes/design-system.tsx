@@ -477,6 +477,7 @@ function DesignSystemPage() {
             </div>
 
             <CodeBlock
+              forExample="contrast-safe token"
               label="src/styles.css"
               code={`:root {
   --neon: oklch(0.78 0.2 195);       /* fills, borders, glows */
@@ -543,7 +544,7 @@ import { Label } from "@/components/ui/label";
                 <Label htmlFor="ds-quest">Quest title</Label>
                 <Input id="ds-quest" placeholder="Brain dump a quest…" />
               </div>
-              <Input disabled placeholder="Disabled" />
+              <Input disabled placeholder="Disabled" aria-label="Disabled input example" />
             </Example>
 
             <Example
@@ -665,6 +666,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 
             <CodeBlock
+              forExample="data-dense table pattern"
               label="pattern"
               code={`<table className="w-full text-left">
   <caption className="sr-only">Quests, sortable by title and due date</caption>
@@ -898,6 +900,7 @@ const [prefs, setPrefs] = useLocalStorageState("questlog.ds.demo.v1", {
                 write fails — the component that rendered the checkbox knows none of this.
               </p>
               <CodeBlock
+                forExample="optimistic update"
                 label="src/lib/use-tasks.ts"
                 code={`const updateTask = (id: string, patch: Partial<Task>) => {
   const prev = tasksRef.current.find((t) => t.id === id);
