@@ -452,7 +452,7 @@ function InboxStrip({
   );
 }
 
-function ZoneQuickButton({ label, tint, direction, onClick }: { label: string; tint: string; direction: 'left' | 'right'; onClick: () => void }) {
+function ZoneQuickButton({ label, tint, textTint, direction, onClick }: { label: string; tint: string; textTint: string; direction: 'left' | 'right'; onClick: () => void }) {
   return (
     <motion.button
       whileTap={{ scale: 0.92 }}
@@ -460,7 +460,7 @@ function ZoneQuickButton({ label, tint, direction, onClick }: { label: string; t
       className="rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       style={{ borderColor: `color-mix(in oklab, ${tint} 35%, var(--color-border))` }}
     >
-      <span style={{ color: tint }}>{direction === 'left' ? '←' : '→'}</span> {label}
+      <span style={{ color: textTint }}>{direction === 'left' ? '←' : '→'}</span> {label}
     </motion.button>
   );
 }
