@@ -23,6 +23,7 @@ import {
   StatefulComponentDemo,
   TactileButtonsDemo,
   ToastDemo,
+  RecurringLifePromptDemo,
   XPBarDemo,
 } from "@/components/design-system/demos";
 
