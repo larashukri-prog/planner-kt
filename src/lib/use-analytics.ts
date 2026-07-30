@@ -2,8 +2,7 @@ import posthog from "posthog-js";
 
 const POSTHOG_KEY = import.meta.env.VITE_PUBLIC_POSTHOG_KEY as string | undefined;
 const POSTHOG_HOST =
-  (import.meta.env.VITE_PUBLIC_POSTHOG_HOST as string | undefined) ??
-  "https://us.i.posthog.com";
+  (import.meta.env.VITE_PUBLIC_POSTHOG_HOST as string | undefined) ?? "https://us.i.posthog.com";
 
 let initAttempted = false;
 
@@ -18,9 +17,7 @@ export function initAnalytics() {
   if (!POSTHOG_KEY) {
     if (import.meta.env.DEV) {
       // eslint-disable-next-line no-console
-      console.info(
-        "[analytics] VITE_PUBLIC_POSTHOG_KEY not set — analytics disabled.",
-      );
+      console.info("[analytics] VITE_PUBLIC_POSTHOG_KEY not set — analytics disabled.");
     }
     return;
   }
@@ -65,10 +62,7 @@ export function track(event: string, props?: Record<string, unknown>) {
 /**
  * Capture an event at most once per browser session.
  */
-export function trackOncePerSession(
-  event: string,
-  props?: Record<string, unknown>,
-) {
+export function trackOncePerSession(event: string, props?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   try {
     const key = `__analytics_session:${event}`;

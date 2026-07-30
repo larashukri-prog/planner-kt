@@ -6,9 +6,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Planner-KT\u00a0" },
-      { name: "description", content: "A frictionless, dopamine-friendly task planner for ADHD brains. Capture, prioritize, and ship." },
+      {
+        name: "description",
+        content:
+          "A frictionless, dopamine-friendly task planner for ADHD brains. Capture, prioritize, and ship.",
+      },
       { property: "og:title", content: "Planner-KT\u00a0" },
-      { property: "og:description", content: "Capture quests instantly. Sort into Now / Later / Future. Build a trophy room of wins." },
+      {
+        property: "og:description",
+        content:
+          "Capture quests instantly. Sort into Now / Later / Future. Build a trophy room of wins.",
+      },
     ],
   }),
   component: Index,

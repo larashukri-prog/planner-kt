@@ -74,7 +74,10 @@ function localDateKey(d: Date): string {
 
 function normalizeTitle(s: string): string {
   // strip leading non-letter chars (emoji + whitespace) and lowercase
-  return s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
+  return s
+    .replace(/^[^\p{L}\p{N}]+/u, "")
+    .trim()
+    .toLowerCase();
 }
 
 type Params = {
@@ -119,9 +122,7 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
       const current = tasksRef.current;
 
       for (const entry of RECURRING_QUESTS) {
-        const activeSolo = current.filter(
-          (t) => t.status !== "completed" && t.ownerId === "solo",
-        );
+        const activeSolo = current.filter((t) => t.status !== "completed" && t.ownerId === "solo");
         const normEntry = normalizeTitle(entry.title);
 
         const matches = activeSolo.filter(
@@ -154,9 +155,7 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
             keep.subtasks = prunedSubtasks;
           }
 
-          const existingTexts = new Set(
-            keep.subtasks.map((s) => s.text.trim().toLowerCase()),
-          );
+          const existingTexts = new Set(keep.subtasks.map((s) => s.text.trim().toLowerCase()));
           const missing = entry.subtasks.filter(
             (text) => !existingTexts.has(text.trim().toLowerCase()),
           );
@@ -171,12 +170,13 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
 
           // Anti-Guilt refresh: on rollover days the entry is scheduled for, reset subtasks + bump timestamp.
           if (dateChanged && entry.shouldSpawn(today)) {
-            const refreshed = (missing.length > 0
-              ? [
-                  ...keep.subtasks,
-                  ...missing.map((text) => ({ id: uid(), text, isCompleted: false })),
-                ]
-              : keep.subtasks
+            const refreshed = (
+              missing.length > 0
+                ? [
+                    ...keep.subtasks,
+                    ...missing.map((text) => ({ id: uid(), text, isCompleted: false })),
+                  ]
+                : keep.subtasks
             ).map((s) => ({ ...s, isCompleted: false }));
             updateTask(keep.id, {
               subtasks: refreshed,
@@ -197,7 +197,11 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
 
       // Auto-Escalation Engine — runs once per day rollover.
       if (dateChanged) {
-        const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+        const todayMidnight = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+        ).getTime();
         for (const task of current) {
           if (task.status === "completed") continue;
           if (task.dueDate == null) continue;
@@ -240,4 +244,3 @@ export function useDailySpawn({ tasks, addRecurringTask, updateTask, deleteTask 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
-

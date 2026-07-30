@@ -124,12 +124,16 @@
   --life-body: oklch(0.72 0.06 340);
   --life-body-text: oklch(0.46 0.07 340);
 
-  --gradient-bg: radial-gradient(ellipse at top, oklch(0.97 0.015 260) 0%, oklch(0.95 0.01 250) 60%);
+  --gradient-bg: radial-gradient(
+    ellipse at top,
+    oklch(0.97 0.015 260) 0%,
+    oklch(0.95 0.01 250) 60%
+  );
   --gradient-neon: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
-  --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 45%, transparent),
-                 0 8px 30px -8px color-mix(in oklab, var(--neon) 45%, transparent);
-  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 4%),
-                 0 8px 24px -16px oklch(0 0 0 / 18%);
+  --shadow-neon:
+    0 0 0 1px color-mix(in oklab, var(--neon) 45%, transparent),
+    0 8px 30px -8px color-mix(in oklab, var(--neon) 45%, transparent);
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 4%), 0 8px 24px -16px oklch(0 0 0 / 18%);
 }
 
 /* ---------- Dark Mode override ---------- */
@@ -191,24 +195,34 @@
   --life-body-text: oklch(0.82 0.05 340);
 
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.22 0.05 280) 0%, oklch(0.14 0.02 270) 60%);
-  --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),
-                 0 8px 30px -8px color-mix(in oklab, var(--neon) 35%, transparent);
-  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 4%) inset,
-                 0 8px 24px -12px oklch(0 0 0 / 60%);
+  --shadow-neon:
+    0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),
+    0 8px 30px -8px color-mix(in oklab, var(--neon) 35%, transparent);
+  --shadow-card: 0 1px 0 0 oklch(1 0 0 / 4%) inset, 0 8px 24px -12px oklch(0 0 0 / 60%);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html, body, #root { height: 100%; }
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
   body {
     background: var(--gradient-bg);
     background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-display);
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
-  ::selection { background: color-mix(in oklab, var(--neon) 40%, transparent); }
+  ::selection {
+    background: color-mix(in oklab, var(--neon) 40%, transparent);
+  }
 }
 
 /* Type-safe neon: --color-neon-text clears 4.5:1 in both themes, while the
@@ -223,9 +237,11 @@
 }
 
 @utility quest-card {
-  background: linear-gradient(180deg,
+  background: linear-gradient(
+    180deg,
     color-mix(in oklab, var(--card) 92%, transparent) 0%,
-    color-mix(in oklab, var(--card) 80%, transparent) 100%);
+    color-mix(in oklab, var(--card) 80%, transparent) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -251,8 +267,13 @@
   animation: escalated-pulse 2.2s ease-in-out infinite;
 }
 @keyframes escalated-pulse {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.08); }
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.08);
+  }
 }
 
 /* --- Global keyboard focus ring (WCAG 2.1 AA: 2.4.7 Focus Visible) --------

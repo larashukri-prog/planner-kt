@@ -9,7 +9,7 @@ Plan: Prepare the project for a clean GitHub export
    - Add a short section on the "Daily Spawn Engine" / recurring life prompts and the Anti-Guilt Rule.
 
 2. Complete .gitignore
-   - Ensure node_modules, .env, .env.local, .DS_Store, dist/, build/, .output, .vinxi, and .tanstack/** are excluded.
+   - Ensure node_modules, .env, .env.local, .DS_Store, dist/, build/, .output, .vinxi, and .tanstack/\*\* are excluded.
    - The current .gitignore already covers most of these but is missing an explicit `.env` entry (only `.env.local` is covered by `*.local`). Add `.env` explicitly.
 
 3. Verify package.json scripts

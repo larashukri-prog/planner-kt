@@ -22,4 +22,5 @@ export interface Task {
 }
 
 export const uid = () =>
-  (globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2) + Date.now().toString(36));
+  globalThis.crypto?.randomUUID?.() ??
+  Math.random().toString(36).slice(2) + Date.now().toString(36);

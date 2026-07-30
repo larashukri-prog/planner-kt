@@ -85,13 +85,13 @@ The app will be available at `http://localhost:8080`.
 
 ### Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start the Vite development server |
-| `npm run build` | Create an optimized production build |
-| `npm run lint` | Run ESLint across the project |
+| Script            | Description                          |
+| ----------------- | ------------------------------------ |
+| `npm run dev`     | Start the Vite development server    |
+| `npm run build`   | Create an optimized production build |
+| `npm run lint`    | Run ESLint across the project        |
 | `npm run preview` | Preview the production build locally |
-| `npm run format` | Format the codebase with Prettier |
+| `npm run format`  | Format the codebase with Prettier    |
 
 > **Note:** The project was developed with `bun`, but all scripts are standard npm-compatible commands. You can also use `pnpm` or `yarn` if you prefer.
 

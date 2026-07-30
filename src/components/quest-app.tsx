@@ -3,8 +3,24 @@ import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, LayoutGroup } from "framer-motion";
 
 import {
-  ArrowRight, Check, Inbox, Plus, Sparkles, Swords, Trash2, Trophy, User,
-  ChevronDown, X, Flame, Layers, Hourglass, Sun, Moon, Calendar, Coffee,
+  ArrowRight,
+  Check,
+  Inbox,
+  Plus,
+  Sparkles,
+  Swords,
+  Trash2,
+  Trophy,
+  User,
+  ChevronDown,
+  X,
+  Flame,
+  Layers,
+  Hourglass,
+  Sun,
+  Moon,
+  Calendar,
+  Coffee,
 } from "lucide-react";
 import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
@@ -18,15 +34,48 @@ import { cn } from "@/lib/utils";
 
 type View = "board" | "done";
 
-const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string; textTint: string }[] = [
-  { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)",   textTint: "var(--color-zone-now-text)" },
-  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)",  textTint: "var(--color-zone-next-text)" },
-  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)", textTint: "var(--color-zone-later-text)" },
+const ZONES: {
+  id: Exclude<TaskStatus, "inbox" | "completed">;
+  label: string;
+  sub: string;
+  icon: typeof Flame;
+  tint: string;
+  textTint: string;
+}[] = [
+  {
+    id: "now",
+    label: "NOW",
+    sub: "Active quests",
+    icon: Flame,
+    tint: "var(--color-zone-now)",
+    textTint: "var(--color-zone-now-text)",
+  },
+  {
+    id: "next",
+    label: "LATER",
+    sub: "On deck",
+    icon: Layers,
+    tint: "var(--color-zone-next)",
+    textTint: "var(--color-zone-next-text)",
+  },
+  {
+    id: "later",
+    label: "FUTURE",
+    sub: "Backlog vault",
+    icon: Hourglass,
+    tint: "var(--color-zone-later)",
+    textTint: "var(--color-zone-later-text)",
+  },
 ];
 
 export default function QuestApp() {
   const t = useTasks();
-  useDailySpawn({ tasks: t.tasks, addRecurringTask: t.addRecurringTask, updateTask: t.updateTask, deleteTask: t.deleteTask });
+  useDailySpawn({
+    tasks: t.tasks,
+    addRecurringTask: t.addRecurringTask,
+    updateTask: t.updateTask,
+    deleteTask: t.deleteTask,
+  });
   useTheme();
   const [view, setView] = useState<View>("board");
   const [dragId, setDragId] = useState<string | null>(null);
@@ -35,10 +84,11 @@ export default function QuestApp() {
     trackOncePerSession("app_opened");
   }, []);
 
-
   const filtered = t.tasks.filter((x) => x.ownerId === t.workspace);
   const inbox = filtered.filter((x) => x.status === "inbox");
-  const completed = filtered.filter((x) => x.status === "completed").sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+  const completed = filtered
+    .filter((x) => x.status === "completed")
+    .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
   const activeCount = filtered.filter((x) => x.status !== "completed").length;
 
   return (
@@ -58,55 +108,52 @@ export default function QuestApp() {
         />
 
         <main id="quest-content" className="flex flex-col gap-6">
-        <TemplateChips onCreate={t.addTask} />
-        <QuickAddBar onAdd={t.addTask} />
+          <TemplateChips onCreate={t.addTask} />
+          <QuickAddBar onAdd={t.addTask} />
 
-        <AnimatePresence mode="wait">
-          {view === "board" ? (
-            <motion.div
-              key="board"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22 }}
-              className="flex flex-col gap-6"
-            >
-              <InboxStrip
-                items={inbox}
-                onMove={t.moveTask}
-                onDelete={t.deleteTask}
-                dragId={dragId}
-                setDragId={setDragId}
-              />
-              <DailyXPBar tasks={filtered} />
-              <ZoneBoard
-                tasks={filtered}
-                onMove={t.moveTask}
-                onDelete={t.deleteTask}
-                onAddSubtask={t.addSubtask}
-                onToggleSubtask={t.toggleSubtask}
-                onRemoveSubtask={t.removeSubtask}
-                onUpdate={t.updateTask}
-                dragId={dragId}
-                setDragId={setDragId}
-              />
-
-            </motion.div>
-          ) : (
-            <motion.div
-              key="done"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22 }}
-            >
-              <DoneWall items={completed} onMove={t.moveTask} onDelete={t.deleteTask} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            {view === "board" ? (
+              <motion.div
+                key="board"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22 }}
+                className="flex flex-col gap-6"
+              >
+                <InboxStrip
+                  items={inbox}
+                  onMove={t.moveTask}
+                  onDelete={t.deleteTask}
+                  dragId={dragId}
+                  setDragId={setDragId}
+                />
+                <DailyXPBar tasks={filtered} />
+                <ZoneBoard
+                  tasks={filtered}
+                  onMove={t.moveTask}
+                  onDelete={t.deleteTask}
+                  onAddSubtask={t.addSubtask}
+                  onToggleSubtask={t.toggleSubtask}
+                  onRemoveSubtask={t.removeSubtask}
+                  onUpdate={t.updateTask}
+                  dragId={dragId}
+                  setDragId={setDragId}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="done"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.22 }}
+              >
+                <DoneWall items={completed} onMove={t.moveTask} onDelete={t.deleteTask} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
-
-
 
         <footer className="pt-6 pb-2 text-center text-xs text-muted-foreground">
           <span className="font-mono">Planner v1</span> — built for optimal planning
@@ -118,7 +165,6 @@ export default function QuestApp() {
             Design System
           </Link>
         </footer>
-
       </div>
     </div>
   );
@@ -127,7 +173,10 @@ export default function QuestApp() {
 /* ----------------------------- Header ----------------------------- */
 
 function Header({
-  view, onView, activeCount, doneCount,
+  view,
+  onView,
+  activeCount,
+  doneCount,
 }: {
   view: View;
   onView: (v: View) => void;
@@ -143,7 +192,9 @@ function Header({
           </div>
         </div>
         <div>
-          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">Planner-KT&nbsp;</h1>
+          <h1 className="font-display text-xl font-semibold leading-tight tracking-tight">
+            Planner-KT&nbsp;
+          </h1>
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
             {activeCount} active · {doneCount} cleared
           </p>
@@ -154,7 +205,9 @@ function Header({
         <ViewToggle view={view} onView={onView} />
         <ThemeToggle />
         <button
-          onClick={() => { void signOut(); }}
+          onClick={() => {
+            void signOut();
+          }}
           aria-label="Sign out"
           title="Sign out"
           className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-card/60 backdrop-blur transition-colors hover:bg-card"
@@ -212,7 +265,7 @@ function ThemeToggle() {
 function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void }) {
   const items: { id: View; label: string; icon: typeof Sparkles }[] = [
     { id: "board", label: "Board", icon: Sparkles },
-    { id: "done",  label: "Done Wall", icon: Trophy },
+    { id: "done", label: "Done Wall", icon: Trophy },
   ];
   return (
     <div className="relative flex rounded-xl border border-border bg-card/60 p-1 backdrop-blur">
@@ -227,7 +280,9 @@ function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void })
             aria-pressed={active}
             aria-label={`Show ${it.label}`}
             className="relative z-10 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
-            style={{ color: active ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)" }}
+            style={{
+              color: active ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)",
+            }}
           >
             {active && (
               <motion.span
@@ -245,7 +300,6 @@ function ViewToggle({ view, onView }: { view: View; onView: (v: View) => void })
   );
 }
 
-
 /* --------------------------- QuickAddBar --------------------------- */
 
 function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
@@ -255,7 +309,11 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+      if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
         e.preventDefault();
         ref.current?.focus();
       }
@@ -315,12 +373,47 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
 /* -------------------------- Template Chips -------------------------- */
 
 const QUEST_TEMPLATES = [
-  
-  { icon: "🧺", label: "Laundry Loop", title: "Laundry", subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put in basket", "Put away"], tint: "oklch(0.7 0.16 230)" },
-  { icon: "🛒", label: "Restock Fuel", title: "Grocery Run", subtasks: ["Check fridge & pantry", "Make list", "Go to store", "Unload and put away"], tint: "oklch(0.72 0.18 140)" },
-  { icon: "🧹", label: "15-Min Reset", title: "Room Reset", subtasks: ["Pick up floor", "Clear surfaces", "Make bed", "Empty trash", "Quick vacuum"], tint: "oklch(0.7 0.16 25)" },
-  { icon: "⚔️", label: "Deep Dive", title: "Academic Deep Dive", subtasks: ["Gather materials", "Set timer (90 min)", "No phone zone", "Review notes", "Reward break"], tint: "oklch(0.82 0.2 180)" },
-  { icon: "🗺️", label: "Explore", title: "Explore Burlington", subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"], tint: "oklch(0.7 0.18 290)" },
+  {
+    icon: "🧺",
+    label: "Laundry Loop",
+    title: "Laundry",
+    subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put in basket", "Put away"],
+    tint: "oklch(0.7 0.16 230)",
+  },
+  {
+    icon: "🛒",
+    label: "Restock Fuel",
+    title: "Grocery Run",
+    subtasks: ["Check fridge & pantry", "Make list", "Go to store", "Unload and put away"],
+    tint: "oklch(0.72 0.18 140)",
+  },
+  {
+    icon: "🧹",
+    label: "15-Min Reset",
+    title: "Room Reset",
+    subtasks: ["Pick up floor", "Clear surfaces", "Make bed", "Empty trash", "Quick vacuum"],
+    tint: "oklch(0.7 0.16 25)",
+  },
+  {
+    icon: "⚔️",
+    label: "Deep Dive",
+    title: "Academic Deep Dive",
+    subtasks: [
+      "Gather materials",
+      "Set timer (90 min)",
+      "No phone zone",
+      "Review notes",
+      "Reward break",
+    ],
+    tint: "oklch(0.82 0.2 180)",
+  },
+  {
+    icon: "🗺️",
+    label: "Explore",
+    title: "Explore Burlington",
+    subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"],
+    tint: "oklch(0.7 0.18 290)",
+  },
 ];
 
 function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: string[]) => void }) {
@@ -350,7 +443,11 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
               transition={{ type: "spring", stiffness: 400, damping: 18 }}
               onClick={() => handleClick(tpl)}
               className="group relative flex shrink-0 items-center gap-2 rounded-full border border-border bg-card/70 px-3.5 py-2 text-sm font-medium backdrop-blur-sm transition-colors hover:border-[var(--color-neon)]/40 hover:bg-card"
-              style={{ boxShadow: isClicked ? `0 0 0 1px ${tpl.tint}, 0 6px 20px -8px ${tpl.tint}` : "none" }}
+              style={{
+                boxShadow: isClicked
+                  ? `0 0 0 1px ${tpl.tint}, 0 6px 20px -8px ${tpl.tint}`
+                  : "none",
+              }}
             >
               <span
                 aria-hidden="true"
@@ -380,7 +477,11 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
 /* ----------------------------- Inbox ----------------------------- */
 
 function InboxStrip({
-  items, onMove, onDelete, dragId, setDragId,
+  items,
+  onMove,
+  onDelete,
+  dragId,
+  setDragId,
 }: {
   items: Task[];
   onMove: (id: string, s: TaskStatus) => void;
@@ -390,7 +491,7 @@ function InboxStrip({
 }) {
   if (items.length === 0) return null;
   const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
-  const [sortingIds, setSortingIds] = useState<Map<string, 'left' | 'right'>>(new Map());
+  const [sortingIds, setSortingIds] = useState<Map<string, "left" | "right">>(new Map());
 
   const handleDelete = (id: string) => {
     if (deletingIds.has(id)) return;
@@ -400,7 +501,7 @@ function InboxStrip({
     }, 200);
   };
 
-  const handleSort = (id: string, status: TaskStatus, direction: 'left' | 'right') => {
+  const handleSort = (id: string, status: TaskStatus, direction: "left" | "right") => {
     if (sortingIds.has(id) || deletingIds.has(id)) return;
     setSortingIds((prev) => new Map(prev).set(id, direction));
     setTimeout(() => {
@@ -418,7 +519,10 @@ function InboxStrip({
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Inbox className="h-3.5 w-3.5" style={{ color: "var(--color-inbox-text)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: "var(--color-inbox-text)" }}>
+          <h2
+            className="font-mono text-[11px] uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-inbox-text)" }}
+          >
             Inbox · {items.length}
           </h2>
         </div>
@@ -435,7 +539,11 @@ function InboxStrip({
                   key={task.id}
                   layout
                   initial={{ opacity: 0, scale: 0.95, y: -8 }}
-                  animate={{ opacity: isDeleting ? 0 : sorting ? 0 : 1, scale: isDeleting ? 0.95 : sorting ? 0.95 : 1, y: 0 }}
+                  animate={{
+                    opacity: isDeleting ? 0 : sorting ? 0 : 1,
+                    scale: isDeleting ? 0.95 : sorting ? 0.95 : 1,
+                    y: 0,
+                  }}
                   exit={{ opacity: 0, scale: 0.9, x: -20 }}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   draggable
@@ -443,17 +551,45 @@ function InboxStrip({
                   onDragEnd={() => setDragId(null)}
                   className={cn(
                     "group relative min-w-[240px] max-w-[280px] shrink-0 cursor-grab rounded-lg border border-border bg-card/70 p-3 active:cursor-grabbing transition-all duration-200 ease-out",
-                    isDeleting && "pointer-events-none opacity-0 scale-95 max-h-0 py-0 my-0 overflow-hidden",
-                    sorting === 'left' && "!-translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out",
-                    sorting === 'right' && "!translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out"
+                    isDeleting &&
+                      "pointer-events-none opacity-0 scale-95 max-h-0 py-0 my-0 overflow-hidden",
+                    sorting === "left" &&
+                      "!-translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out",
+                    sorting === "right" &&
+                      "!translate-x-[120%] opacity-0 scale-95 pointer-events-none transition-all duration-[250ms] ease-in-out",
                   )}
-                  style={{ outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined }}
+                  style={{
+                    outline: dragId === task.id ? "1px solid var(--color-inbox)" : undefined,
+                  }}
                 >
-                  <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
+                  <p className="line-clamp-2 text-sm font-medium leading-snug">
+                    {renderWithLinks(task.title)}
+                  </p>
                   <div className="mt-3 flex items-center gap-1">
-                    <ZoneQuickButton label="Now"    taskTitle={task.title} tint="var(--color-zone-now)"   textTint="var(--color-zone-now-text)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
-                    <ZoneQuickButton label="Later"  taskTitle={task.title} tint="var(--color-zone-next)"  textTint="var(--color-zone-next-text)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
-                    <ZoneQuickButton label="Future" taskTitle={task.title} tint="var(--color-zone-later)" textTint="var(--color-zone-later-text)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
+                    <ZoneQuickButton
+                      label="Now"
+                      taskTitle={task.title}
+                      tint="var(--color-zone-now)"
+                      textTint="var(--color-zone-now-text)"
+                      direction="left"
+                      onClick={() => handleSort(task.id, "now", "left")}
+                    />
+                    <ZoneQuickButton
+                      label="Later"
+                      taskTitle={task.title}
+                      tint="var(--color-zone-next)"
+                      textTint="var(--color-zone-next-text)"
+                      direction="right"
+                      onClick={() => handleSort(task.id, "next", "right")}
+                    />
+                    <ZoneQuickButton
+                      label="Future"
+                      taskTitle={task.title}
+                      tint="var(--color-zone-later)"
+                      textTint="var(--color-zone-later-text)"
+                      direction="right"
+                      onClick={() => handleSort(task.id, "later", "right")}
+                    />
                     <button
                       type="button"
                       onClick={() => handleDelete(task.id)}
@@ -473,7 +609,21 @@ function InboxStrip({
   );
 }
 
-function ZoneQuickButton({ label, taskTitle, tint, textTint, direction, onClick }: { label: string; taskTitle: string; tint: string; textTint: string; direction: 'left' | 'right'; onClick: () => void }) {
+function ZoneQuickButton({
+  label,
+  taskTitle,
+  tint,
+  textTint,
+  direction,
+  onClick,
+}: {
+  label: string;
+  taskTitle: string;
+  tint: string;
+  textTint: string;
+  direction: "left" | "right";
+  onClick: () => void;
+}) {
   return (
     <motion.button
       type="button"
@@ -483,7 +633,10 @@ function ZoneQuickButton({ label, taskTitle, tint, textTint, direction, onClick 
       className="rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       style={{ borderColor: `color-mix(in oklab, ${tint} 35%, var(--color-border))` }}
     >
-      <span aria-hidden="true" style={{ color: textTint }}>{direction === 'left' ? '←' : '→'}</span> {label}
+      <span aria-hidden="true" style={{ color: textTint }}>
+        {direction === "left" ? "←" : "→"}
+      </span>{" "}
+      {label}
     </motion.button>
   );
 }
@@ -500,7 +653,15 @@ const ZONE_LABELS: Record<TaskStatus, string> = {
 /* ----------------------------- ZoneBoard ----------------------------- */
 
 function ZoneBoard({
-  tasks, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
+  tasks,
+  onMove,
+  onDelete,
+  onAddSubtask,
+  onToggleSubtask,
+  onRemoveSubtask,
+  onUpdate,
+  dragId,
+  setDragId,
 }: {
   tasks: Task[];
   onMove: (id: string, s: TaskStatus) => void;
@@ -525,7 +686,10 @@ function ZoneBoard({
     children.forEach((c, i) => {
       const mid = c.offsetLeft + c.offsetWidth / 2;
       const d = Math.abs(mid - center);
-      if (d < bestDist) { bestDist = d; bestIdx = i; }
+      if (d < bestDist) {
+        bestDist = d;
+        bestIdx = i;
+      }
     });
     setActiveIdx(bestIdx);
   };
@@ -535,7 +699,10 @@ function ZoneBoard({
     if (!el) return;
     const child = el.children[i] as HTMLElement | undefined;
     if (!child) return;
-    el.scrollTo({ left: child.offsetLeft - (el.clientWidth - child.offsetWidth) / 2, behavior: "smooth" });
+    el.scrollTo({
+      left: child.offsetLeft - (el.clientWidth - child.offsetWidth) / 2,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -587,9 +754,10 @@ function ZoneBoard({
             className="h-1.5 rounded-full transition-all duration-300"
             style={{
               width: i === activeIdx ? 22 : 6,
-              background: i === activeIdx
-                ? z.tint
-                : "color-mix(in oklab, var(--color-foreground) 25%, transparent)",
+              background:
+                i === activeIdx
+                  ? z.tint
+                  : "color-mix(in oklab, var(--color-foreground) 25%, transparent)",
               opacity: i === activeIdx ? 1 : 0.55,
             }}
           />
@@ -599,9 +767,17 @@ function ZoneBoard({
   );
 }
 
-
 function ZoneColumn({
-  zone, items, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, dragId, setDragId,
+  zone,
+  items,
+  onMove,
+  onDelete,
+  onAddSubtask,
+  onToggleSubtask,
+  onRemoveSubtask,
+  onUpdate,
+  dragId,
+  setDragId,
 }: {
   zone: (typeof ZONES)[number];
   items: Task[];
@@ -619,7 +795,10 @@ function ZoneColumn({
 
   return (
     <div
-      onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
       onDragLeave={() => setOver(false)}
       onDrop={() => {
         setOver(false);
@@ -639,12 +818,18 @@ function ZoneColumn({
         <div className="flex items-center gap-2">
           <div
             className="grid h-7 w-7 place-items-center rounded-md"
-            style={{ background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`, color: zone.textTint }}
+            style={{
+              background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`,
+              color: zone.textTint,
+            }}
           >
             <Icon className="h-3.5 w-3.5" />
           </div>
           <div>
-            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: zone.textTint }}>
+            <h3
+              className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]"
+              style={{ color: zone.textTint }}
+            >
               {zone.label}
             </h3>
             <p className="text-[11px] text-muted-foreground">{zone.sub}</p>
@@ -660,7 +845,6 @@ function ZoneColumn({
           </div>
         )}
         <AnimatePresence>
-
           {items.map((task) => (
             <TaskCard
               key={task.id}
@@ -713,7 +897,15 @@ function formatDueLabel(due: number): { text: string; overdue: boolean } {
 }
 
 function TaskCard({
-  task, zoneTint, onMove, onDelete, onAddSubtask, onToggleSubtask, onRemoveSubtask, onUpdate, setDragId,
+  task,
+  zoneTint,
+  onMove,
+  onDelete,
+  onAddSubtask,
+  onToggleSubtask,
+  onRemoveSubtask,
+  onUpdate,
+  setDragId,
 }: {
   task: Task;
   zoneTint: string;
@@ -737,8 +929,7 @@ function TaskCard({
   const readyToClaim = total === 0 || allDone;
 
   // Escalation glow: active for 24h after auto-escalation.
-  const escalatedFresh =
-    !!task.escalatedAt && Date.now() - task.escalatedAt < 86400000;
+  const escalatedFresh = !!task.escalatedAt && Date.now() - task.escalatedAt < 86400000;
   const escalationClass = escalatedFresh
     ? task.status === "now"
       ? "escalated-act"
@@ -771,9 +962,7 @@ function TaskCard({
     if (completing) return;
     track("rest_day_logged");
     setCompleting(true);
-    const restTitle = task.title.includes("[Rest Day]")
-      ? task.title
-      : `${task.title} — [Rest Day]`;
+    const restTitle = task.title.includes("[Rest Day]") ? task.title : `${task.title} — [Rest Day]`;
     window.setTimeout(() => {
       onUpdate(task.id, { title: restTitle });
       onMove(task.id, "completed");
@@ -825,12 +1014,17 @@ function TaskCard({
         />
         <button
           type="button"
-          onClick={() => { setOpen((o) => !o); clearEscalation(); }}
+          onClick={() => {
+            setOpen((o) => !o);
+            clearEscalation();
+          }}
           aria-expanded={open}
           aria-label={`${task.title} — ${open ? "collapse" : "expand"} details`}
           className="min-w-0 flex-1 text-left"
         >
-          <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
+          <p className="line-clamp-2 text-sm font-medium leading-snug">
+            {renderWithLinks(task.title)}
+          </p>
           {dueLabel && (
             <span
               className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
@@ -854,25 +1048,36 @@ function TaskCard({
                   style={{ background: allDone ? "var(--color-neon-3)" : zoneTint }}
                 />
               </div>
-              <span className="font-mono text-[10px] text-muted-foreground">{done}/{total}</span>
+              <span className="font-mono text-[10px] text-muted-foreground">
+                {done}/{total}
+              </span>
             </div>
           )}
         </button>
-        {isWorkout && task.status === "now" && !completing && (() => { const d = new Date().getDay(); return d === 2 || d === 4 || d === 6; })() && (
-          <button
-            type="button"
-            onClick={handleRestDay}
-            className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
-            aria-label="Log as rest day"
-            title="Rest Day"
-          >
-            <Coffee className="h-3 w-3" aria-hidden="true" />
-            Rest
-          </button>
-        )}
+        {isWorkout &&
+          task.status === "now" &&
+          !completing &&
+          (() => {
+            const d = new Date().getDay();
+            return d === 2 || d === 4 || d === 6;
+          })() && (
+            <button
+              type="button"
+              onClick={handleRestDay}
+              className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
+              aria-label="Log as rest day"
+              title="Rest Day"
+            >
+              <Coffee className="h-3 w-3" aria-hidden="true" />
+              Rest
+            </button>
+          )}
         <motion.button
           type="button"
-          onClick={() => { setOpen((o) => !o); clearEscalation(); }}
+          onClick={() => {
+            setOpen((o) => !o);
+            clearEscalation();
+          }}
           animate={{ rotate: open ? 180 : 0 }}
           className="mt-0.5 text-muted-foreground"
           aria-expanded={open}
@@ -920,70 +1125,74 @@ function TaskCard({
 
               {/* Due date control — not shown for recurring tasks */}
               {!task.recurringKey && (
-              <div className="flex items-center gap-2">
-                {task.dueDate && !showDatePicker ? (
-                  <>
+                <div className="flex items-center gap-2">
+                  {task.dueDate && !showDatePicker ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPendingDate(
+                            task.dueDate
+                              ? dateInputValue(task.dueDate)
+                              : dateInputValue(Date.now()),
+                          );
+                          setShowDatePicker(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        <Calendar className="h-3.5 w-3.5" />
+                        Due {new Date(task.dueDate).toLocaleDateString()}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onUpdate(task.id, { dueDate: null, escalatedAt: null })}
+                        className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
+                        aria-label="Clear due date"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </>
+                  ) : showDatePicker ? (
+                    <input
+                      type="date"
+                      aria-label={`Due date for ${task.title}`}
+                      autoFocus
+                      value={pendingDate}
+                      min={dateInputValue(Date.now())}
+                      onChange={(e) => setPendingDate(e.target.value)}
+                      onBlur={() => {
+                        const ms = parseDateInput(pendingDate);
+                        onUpdate(task.id, {
+                          dueDate: ms ? toLocalMidnight(ms) : null,
+                          escalatedAt: null,
+                        });
+                        setShowDatePicker(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          (e.target as HTMLInputElement).blur();
+                        } else if (e.key === "Escape") {
+                          e.preventDefault();
+                          setShowDatePicker(false);
+                        }
+                      }}
+                      className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-foreground outline-none"
+                    />
+                  ) : (
                     <button
                       type="button"
                       onClick={() => {
-                        setPendingDate(task.dueDate ? dateInputValue(task.dueDate) : dateInputValue(Date.now()));
+                        setPendingDate(dateInputValue(Date.now()));
                         setShowDatePicker(true);
                       }}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
                     >
                       <Calendar className="h-3.5 w-3.5" />
-                      Due {new Date(task.dueDate).toLocaleDateString()}
+                      Add date
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => onUpdate(task.id, { dueDate: null, escalatedAt: null })}
-                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
-                      aria-label="Clear due date"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </>
-                ) : showDatePicker ? (
-                  <input
-                    type="date"
-                    aria-label={`Due date for ${task.title}`}
-                    autoFocus
-                    value={pendingDate}
-                    min={dateInputValue(Date.now())}
-                    onChange={(e) => setPendingDate(e.target.value)}
-                    onBlur={() => {
-                      const ms = parseDateInput(pendingDate);
-                      onUpdate(task.id, {
-                        dueDate: ms ? toLocalMidnight(ms) : null,
-                        escalatedAt: null,
-                      });
-                      setShowDatePicker(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        (e.target as HTMLInputElement).blur();
-                      } else if (e.key === "Escape") {
-                        e.preventDefault();
-                        setShowDatePicker(false);
-                      }
-                    }}
-                    className="rounded-md border border-border bg-background px-2 py-1 text-[11px] text-foreground outline-none"
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPendingDate(dateInputValue(Date.now()));
-                      setShowDatePicker(true);
-                    }}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    <Calendar className="h-3.5 w-3.5" />
-                    Add date
-                  </button>
-                )}
-              </div>
+                  )}
+                </div>
               )}
 
               <div className="flex items-center justify-between pt-1">
@@ -994,7 +1203,10 @@ function TaskCard({
                       <button
                         key={s}
                         type="button"
-                        onClick={() => { onMove(task.id, s); clearEscalation(); }}
+                        onClick={() => {
+                          onMove(task.id, s);
+                          clearEscalation();
+                        }}
                         aria-label={`Move ${task.title} to ${ZONE_LABELS[s]}`}
                         className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
                       >
@@ -1020,7 +1232,11 @@ function TaskCard({
 }
 
 function CompleteCheckbox({
-  onCheck, tint, pulse, completing, title,
+  onCheck,
+  tint,
+  pulse,
+  completing,
+  title,
 }: {
   onCheck: (e: React.MouseEvent) => void;
   tint: string;
@@ -1063,8 +1279,13 @@ function CompleteCheckbox({
       }
       className="relative mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 transition-colors"
       style={{
-        borderColor: pulse || completing ? glow : `color-mix(in oklab, ${tint} 65%, var(--color-border))`,
-        background: completing ? glow : pulse ? `color-mix(in oklab, ${glow} 18%, transparent)` : "transparent",
+        borderColor:
+          pulse || completing ? glow : `color-mix(in oklab, ${tint} 65%, var(--color-border))`,
+        background: completing
+          ? glow
+          : pulse
+            ? `color-mix(in oklab, ${glow} 18%, transparent)`
+            : "transparent",
       }}
     >
       <AnimatePresence>
@@ -1093,7 +1314,10 @@ function CompleteCheckbox({
 /* --------------------------- MicroStepList --------------------------- */
 
 function MicroStepList({
-  subtasks, tint, onToggle, onRemove,
+  subtasks,
+  tint,
+  onToggle,
+  onRemove,
 }: {
   subtasks: Task["subtasks"];
   tint: string;
@@ -1113,7 +1337,12 @@ function MicroStepList({
             exit={{ opacity: 0, x: 10 }}
             className="group flex items-center gap-2 rounded-md px-1 py-1 hover:bg-secondary/40"
           >
-            <SubtaskCheckbox checked={s.isCompleted} onClick={() => onToggle(s.id)} tint={tint} label={s.text} />
+            <SubtaskCheckbox
+              checked={s.isCompleted}
+              onClick={() => onToggle(s.id)}
+              tint={tint}
+              label={s.text}
+            />
             <motion.span
               animate={{
                 opacity: s.isCompleted ? 0.45 : 1,
@@ -1138,7 +1367,17 @@ function MicroStepList({
   );
 }
 
-function SubtaskCheckbox({ checked, onClick, tint, label }: { checked: boolean; onClick: () => void; tint: string; label: string }) {
+function SubtaskCheckbox({
+  checked,
+  onClick,
+  tint,
+  label,
+}: {
+  checked: boolean;
+  onClick: () => void;
+  tint: string;
+  label: string;
+}) {
   return (
     <motion.button
       type="button"
@@ -1181,7 +1420,9 @@ function SubtaskCheckbox({ checked, onClick, tint, label }: { checked: boolean; 
 /* ----------------------------- DoneWall ----------------------------- */
 
 function DoneWall({
-  items, onMove, onDelete,
+  items,
+  onMove,
+  onDelete,
 }: {
   items: Task[];
   onMove: (id: string, s: TaskStatus) => void;
@@ -1197,7 +1438,9 @@ function DoneWall({
         <div>
           <h2 className="font-display text-lg font-semibold leading-tight">Done Today</h2>
           <p className="text-xs text-muted-foreground">
-            {items.length === 0 ? "Nothing here yet — that's about to change." : `${items.length} cleared. Look at this.`}
+            {items.length === 0
+              ? "Nothing here yet — that's about to change."
+              : `${items.length} cleared. Look at this.`}
           </p>
         </div>
       </div>
@@ -1218,57 +1461,61 @@ function DoneWall({
                 <AnimatePresence initial={false}>
                   {g.items.map((t) => {
                     const doneTime = t.completedAt
-                      ? new Date(t.completedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                      ? new Date(t.completedAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
                       : "";
                     // Two quests can share a title, so the completion time keeps
                     // each row's action labels distinguishable to a screen reader.
                     const rowName = doneTime ? `${t.title} (cleared ${doneTime})` : t.title;
                     return (
-                    <motion.li
-                      key={t.id}
-                      layout
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      className="group relative flex items-center gap-3 rounded-lg border border-border bg-card/60 px-3 py-2.5"
-                    >
-                      <div
-                        className="grid h-7 w-7 shrink-0 place-items-center rounded-md"
-                        style={{
-                          background: "color-mix(in oklab, var(--color-neon-3) 18%, transparent)",
-                          color: "var(--color-neon-3)",
-                        }}
-                        aria-hidden="true"
+                      <motion.li
+                        key={t.id}
+                        layout
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="group relative flex items-center gap-3 rounded-lg border border-border bg-card/60 px-3 py-2.5"
                       >
-                        <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium" style={{ textDecoration: "line-through", opacity: 0.85 }}>
-                          {t.title}
-                        </p>
-                        <p className="font-mono text-[10px] text-muted-foreground">
-                          {doneTime}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                        <button
-                          type="button"
-                          onClick={() => onMove(t.id, "next")}
-                          aria-label={`Move ${rowName} back to Later`}
-                          className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                        <div
+                          className="grid h-7 w-7 shrink-0 place-items-center rounded-md"
+                          style={{
+                            background: "color-mix(in oklab, var(--color-neon-3) 18%, transparent)",
+                            color: "var(--color-neon-3)",
+                          }}
+                          aria-hidden="true"
                         >
-                          undo
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onDelete(t.id)}
-                          aria-label={`Delete quest: ${rowName}`}
-                          className="rounded p-1 text-muted-foreground hover:text-destructive-text"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        </button>
-                      </div>
-                    </motion.li>
+                          <Check className="h-3.5 w-3.5" strokeWidth={3.5} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className="truncate text-sm font-medium"
+                            style={{ textDecoration: "line-through", opacity: 0.85 }}
+                          >
+                            {t.title}
+                          </p>
+                          <p className="font-mono text-[10px] text-muted-foreground">{doneTime}</p>
+                        </div>
+                        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button
+                            type="button"
+                            onClick={() => onMove(t.id, "next")}
+                            aria-label={`Move ${rowName} back to Later`}
+                            className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                          >
+                            undo
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onDelete(t.id)}
+                            aria-label={`Delete quest: ${rowName}`}
+                            className="rounded p-1 text-muted-foreground hover:text-destructive-text"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </motion.li>
                     );
                   })}
                 </AnimatePresence>
@@ -1282,12 +1529,15 @@ function DoneWall({
 }
 
 function groupByDay(items: Task[]) {
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
   const map = new Map<string, Task[]>();
   for (const t of items) {
     if (!t.completedAt) continue;
-    const d = new Date(t.completedAt); d.setHours(0, 0, 0, 0);
+    const d = new Date(t.completedAt);
+    d.setHours(0, 0, 0, 0);
     let label: string;
     if (d.getTime() === today.getTime()) label = "Today";
     else if (d.getTime() === yesterday.getTime()) label = "Yesterday";
@@ -1304,7 +1554,11 @@ function isToday(ts: number | null | undefined) {
   if (!ts) return false;
   const d = new Date(ts);
   const n = new Date();
-  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+  return (
+    d.getFullYear() === n.getFullYear() &&
+    d.getMonth() === n.getMonth() &&
+    d.getDate() === n.getDate()
+  );
 }
 
 function DailyXPBar({ tasks }: { tasks: Task[] }) {
@@ -1324,7 +1578,10 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
       const a = setTimeout(() => setCelebrate(false), 750);
       const b = setTimeout(() => setShowCleared(false), 1600);
       prev.current = percent;
-      return () => { clearTimeout(a); clearTimeout(b); };
+      return () => {
+        clearTimeout(a);
+        clearTimeout(b);
+      };
     }
     prev.current = percent;
   }, [percent]);
@@ -1341,7 +1598,10 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon-text)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon-text)" }}>
+          <h2
+            className="font-mono text-[11px] uppercase tracking-[0.22em]"
+            style={{ color: "var(--color-neon-text)" }}
+          >
             Daily XP
           </h2>
         </div>
@@ -1398,8 +1658,12 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
               // The centred label overlaps the fill only once the bar is past the
               // midpoint; below that it sits on the empty track, so fall back to
               // --foreground to keep >= 4.5:1 in both themes.
-              color: empty || percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
-              textShadow: empty || percent < 55 ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+              color:
+                empty || percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
+              textShadow:
+                empty || percent < 55
+                  ? "none"
+                  : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
             }}
           >
             {empty
@@ -1433,4 +1697,3 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
     </motion.section>
   );
 }
-

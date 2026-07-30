@@ -102,7 +102,9 @@ export function XPBarDemo() {
               style={{
                 color: percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
                 textShadow:
-                  percent < 55 ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+                  percent < 55
+                    ? "none"
+                    : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
               }}
             >
               {celebrate ? "Campaign cleared!" : `Daily Completion: ${percent}% XP`}
@@ -162,7 +164,6 @@ export function XPBarDemo() {
     </div>
   );
 }
-
 
 /** Tactile press + success flash, expressed only with Tailwind transition utilities. */
 export function TactileButtonsDemo() {
@@ -497,10 +498,7 @@ export function RecurringLifePromptDemo() {
           aria-labelledby={`life-${prompt.id}-title`}
           className="quest-card flex min-w-0 gap-3 overflow-hidden bg-life-surface p-4"
         >
-          <span
-            aria-hidden="true"
-            className={cn("w-1 shrink-0 rounded-full", prompt.cue)}
-          />
+          <span aria-hidden="true" className={cn("w-1 shrink-0 rounded-full", prompt.cue)} />
           <div className="flex min-w-0 flex-1 flex-col gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <h4 id={`life-${prompt.id}-title`} className="text-sm font-semibold">
@@ -526,9 +524,7 @@ export function RecurringLifePromptDemo() {
                     <Checkbox
                       id={id}
                       checked={checked}
-                      onCheckedChange={(v) =>
-                        setDone((d) => ({ ...d, [id]: v === true }))
-                      }
+                      onCheckedChange={(v) => setDone((d) => ({ ...d, [id]: v === true }))}
                     />
                     <Label
                       htmlFor={id}

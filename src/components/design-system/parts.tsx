@@ -4,7 +4,15 @@ import { cn } from "@/lib/utils";
 
 /* ------------------------------ Code block ------------------------------ */
 
-export function CodeBlock({ code, label, forExample }: { code: string; label?: string; forExample?: string }) {
+export function CodeBlock({
+  code,
+  label,
+  forExample,
+}: {
+  code: string;
+  label?: string;
+  forExample?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -26,10 +34,16 @@ export function CodeBlock({ code, label, forExample }: { code: string; label?: s
         <button
           type="button"
           onClick={copy}
-          aria-label={forExample ? `Copy ${forExample} code to clipboard` : "Copy code to clipboard"}
+          aria-label={
+            forExample ? `Copy ${forExample} code to clipboard` : "Copy code to clipboard"
+          }
           className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
-          {copied ? <Check className="size-3" aria-hidden="true" /> : <Copy className="size-3" aria-hidden="true" />}
+          {copied ? (
+            <Check className="size-3" aria-hidden="true" />
+          ) : (
+            <Copy className="size-3" aria-hidden="true" />
+          )}
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
@@ -195,4 +209,3 @@ export function Swatch({
     </div>
   );
 }
-

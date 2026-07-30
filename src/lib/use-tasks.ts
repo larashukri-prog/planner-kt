@@ -60,7 +60,8 @@ function patchToUpdate(patch: Partial<Task>): Record<string, unknown> {
   if (patch.category !== undefined) out.category = patch.category;
   if (patch.ownerId !== undefined) out.owner_id = patch.ownerId;
   if (patch.recurringKey !== undefined) out.recurring_key = patch.recurringKey ?? null;
-  if (patch.dueDate !== undefined) out.due_date = patch.dueDate ? new Date(patch.dueDate).toISOString() : null;
+  if (patch.dueDate !== undefined)
+    out.due_date = patch.dueDate ? new Date(patch.dueDate).toISOString() : null;
   if (patch.completedAt !== undefined)
     out.completed_at = patch.completedAt ? new Date(patch.completedAt).toISOString() : null;
   if (patch.createdAt !== undefined) out.created_at = new Date(patch.createdAt).toISOString();
@@ -84,7 +85,13 @@ async function importLegacyTasks(userId: string): Promise<Task[]> {
     }
     const rows = parsed.map((t) =>
       taskToInsert(
-        { ...t, id: uid(), subtasks: t.subtasks ?? [], category: t.category ?? "champlain", ownerId: t.ownerId ?? "solo" },
+        {
+          ...t,
+          id: uid(),
+          subtasks: t.subtasks ?? [],
+          category: t.category ?? "champlain",
+          ownerId: t.ownerId ?? "solo",
+        },
         userId,
       ),
     );
@@ -176,12 +183,14 @@ export function useTasks() {
   const optimisticAdd = (t: Task) => {
     setTasks((prev) => [t, ...prev]);
     if (!userId) return;
-    void (supabase.from("tasks") as any).insert(taskToInsert(t, userId)).then(({ error }: { error: unknown }) => {
-      if (error) {
-        console.error("[tasks] insert failed", error);
-        setTasks((prev) => prev.filter((x) => x.id !== t.id));
-      }
-    });
+    void (supabase.from("tasks") as any)
+      .insert(taskToInsert(t, userId))
+      .then(({ error }: { error: unknown }) => {
+        if (error) {
+          console.error("[tasks] insert failed", error);
+          setTasks((prev) => prev.filter((x) => x.id !== t.id));
+        }
+      });
   };
 
   const addTask = (title: string, subtaskTexts?: string[]) => {
@@ -189,7 +198,8 @@ export function useTasks() {
       id: uid(),
       title: title.trim(),
       status: "inbox",
-      subtasks: subtaskTexts?.map((text) => ({ id: uid(), text: text.trim(), isCompleted: false })) ?? [],
+      subtasks:
+        subtaskTexts?.map((text) => ({ id: uid(), text: text.trim(), isCompleted: false })) ?? [],
       category: "champlain",
       ownerId: workspace,
       createdAt: Date.now(),
@@ -222,12 +232,15 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.map((t) => (t.id === id ? { ...t, ...patch } : t)));
     if (!userId) return;
-    void (supabase.from("tasks") as any).update(patchToUpdate(patch)).eq("id", id).then(({ error }: { error: unknown }) => {
-      if (error) {
-        console.error("[tasks] update failed", error);
-        if (prev) setTasks((cur) => cur.map((t) => (t.id === id ? prev : t)));
-      }
-    });
+    void (supabase.from("tasks") as any)
+      .update(patchToUpdate(patch))
+      .eq("id", id)
+      .then(({ error }: { error: unknown }) => {
+        if (error) {
+          console.error("[tasks] update failed", error);
+          if (prev) setTasks((cur) => cur.map((t) => (t.id === id ? prev : t)));
+        }
+      });
   };
 
   const moveTask = (id: string, status: TaskStatus) => {
@@ -239,12 +252,16 @@ export function useTasks() {
     const prev = tasksRef.current.find((t) => t.id === id);
     setTasks((cur) => cur.filter((t) => t.id !== id));
     if (!userId) return;
-    void supabase.from("tasks").delete().eq("id", id).then(({ error }: { error: unknown }) => {
-      if (error) {
-        console.error("[tasks] delete failed", error);
-        if (prev) setTasks((cur) => [prev, ...cur]);
-      }
-    });
+    void supabase
+      .from("tasks")
+      .delete()
+      .eq("id", id)
+      .then(({ error }: { error: unknown }) => {
+        if (error) {
+          console.error("[tasks] delete failed", error);
+          if (prev) setTasks((cur) => [prev, ...cur]);
+        }
+      });
   };
 
   const addSubtask = (taskId: string, text: string) => {
@@ -257,7 +274,9 @@ export function useTasks() {
   const toggleSubtask = (taskId: string, subId: string) => {
     const task = tasksRef.current.find((t) => t.id === taskId);
     if (!task) return;
-    const newSubs = task.subtasks.map((s) => (s.id === subId ? { ...s, isCompleted: !s.isCompleted } : s));
+    const newSubs = task.subtasks.map((s) =>
+      s.id === subId ? { ...s, isCompleted: !s.isCompleted } : s,
+    );
     updateTask(taskId, { subtasks: newSubs });
   };
 
