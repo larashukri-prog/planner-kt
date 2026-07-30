@@ -287,8 +287,8 @@ const SPAWN_TEMPLATES = [
   { key: "laundry-loop", title: "🧺 Laundry Loop", cadence: "Fridays", zone: "Now" },
   { key: "restock-fuel", title: "🛒 Restock Fuel", cadence: "Tuesdays + Saturdays", zone: "Now" },
   {
-    key: "explore-burlington",
-    title: "🗺️ Explore Burlington",
+    key: "explore-college-town",
+    title: "🗺️ Explore College Town",
     cadence: "Every other day",
     zone: "Later",
   },
@@ -1622,7 +1622,7 @@ const DATA_ROWS: GridRow[] = [
   },
   {
     id: "q-107",
-    title: "Explore Burlington",
+    title: "Explore College Town",
     zone: "Future",
     due: "Next week",
     owner: "KT",

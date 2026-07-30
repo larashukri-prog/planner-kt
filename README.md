@@ -119,7 +119,7 @@ Recurring schedules include:
 - 💪 Workout — daily, with optional Rest Day mode
 - 🧺 Laundry Loop — Fridays
 - 🛒 Restock Fuel — Tuesdays and Saturdays
-- 🗺️ Explore Burlington — every other day
+- 🗺️ Explore College Town — every other day
 
 ---
 
