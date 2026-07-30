@@ -523,7 +523,10 @@ function ZoneBoard({
   };
 
   return (
-    <div>
+    <section aria-labelledby="board-heading">
+      <h2 id="board-heading" className="sr-only">
+        Quest board
+      </h2>
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
