@@ -59,7 +59,7 @@
   --card-foreground: oklch(0.22 0.02 270);
   --popover: oklch(0.995 0.002 250);
   --popover-foreground: oklch(0.22 0.02 270);
-  --primary: oklch(0.55 0.18 200);
+  --primary: oklch(0.505 0.18 200);
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.94 0.01 250);
   --secondary-foreground: oklch(0.25 0.02 270);
@@ -67,13 +67,13 @@
   --muted-foreground: oklch(0.48 0.02 260);
   --accent: oklch(0.93 0.02 270);
   --accent-foreground: oklch(0.22 0.02 270);
-  --destructive: oklch(0.6 0.22 25);
+  --destructive: oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.9 0.01 260);
   --input: oklch(0.93 0.01 260);
   --ring: oklch(0.6 0.18 200);
 
-  /* Neon accents — kept vivid in BOTH themes */
+  /* Neon accents — kept vivid in BOTH themes (fills, borders, glows) */
   --neon: oklch(0.78 0.2 195);
   --neon-foreground: oklch(0.15 0.02 260);
   --neon-2: oklch(0.72 0.24 320);
@@ -83,6 +83,16 @@
   --zone-next: oklch(0.7 0.2 200);
   --zone-later: oklch(0.65 0.2 290);
   --inbox: oklch(0.78 0.18 90);
+
+  /* Text-safe accents — solved for >= 4.5:1 on --background and --card.
+     Use these whenever an accent colors TYPE; never for fills or glows. */
+  --neon-text: oklch(0.49 0.2 195);
+  --neon-2-text: oklch(0.58 0.24 320);
+  --neon-3-text: oklch(0.525 0.22 135);
+  --zone-now-text: oklch(0.575 0.22 30);
+  --zone-next-text: oklch(0.49 0.2 200);
+  --zone-later-text: oklch(0.565 0.2 290);
+  --inbox-text: oklch(0.545 0.18 90);
 
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.97 0.015 260) 0%, oklch(0.95 0.01 250) 60%);
   --gradient-neon: linear-gradient(135deg, var(--neon) 0%, var(--neon-2) 100%);
