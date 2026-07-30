@@ -291,12 +291,17 @@ function DesignSystemPage() {
               Planner-KT Design System
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              A living, tokenized UI architecture. Every color, radius, and component variant is
+              Planner-KT is assistive technology for a neurodivergent college student, so{" "}
+              <strong className="font-semibold text-foreground">
+                reducing cognitive overwhelm is the primary design constraint
+              </strong>{" "}
+              — ahead of density, ahead of aesthetics. Every color, radius, and component variant is
               defined once in <code className="font-mono text-foreground">src/styles.css</code> and
-              consumed through semantic Tailwind utilities — so the app stays visually consistent in
-              both themes, no matter who (or what) writes the next component.
+              consumed through semantic Tailwind utilities, so a student never has to relearn a
+              surface and no contributor can quietly raise the reading cost of a screen.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
+              <Badge variant="secondary">Cognitive accessibility</Badge>
               <Badge variant="secondary">Tailwind v4</Badge>
               <Badge variant="secondary">shadcn/ui</Badge>
               <Badge variant="secondary">OKLCH tokens</Badge>
@@ -308,11 +313,37 @@ function DesignSystemPage() {
           <Section
             id="foundations"
             eyebrow="01 — Foundations"
-            title="Foundations & Tokens"
-            description="Semantic tokens are the single source of truth. Components never reference raw hex values; they reference roles like primary or muted, which resolve per theme."
+            title="Foundations, Cognitive Load & Color"
+            description="Semantic tokens are the single source of truth, and comfortable density is the default posture. Components never reference raw values; they reference roles like primary, muted or life, which resolve per theme."
           >
             <div>
+              <SubHeading>Density contract</SubHeading>
+              <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Overwhelm is the failure mode this product is designed against. Comfortable density
+                is not a preference here — it is the strict default for anything a student touches
+                daily, and high-density layouts are restricted to audit and backlog surfaces.
+              </p>
+              <ul className="quest-card mt-3 flex flex-col divide-y divide-border">
+                {DENSITY_RULES.map((rule) => (
+                  <li key={rule.label} className="flex gap-3 px-4 py-3">
+                    <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">{rule.label}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {rule.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
               <SubHeading>Core palette</SubHeading>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Components consume the utility class only. The OKLCH value is printed for reference
+                and must never be pasted into a component.
+              </p>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {CORE_COLORS.map((c) => (
                   <Swatch key={c.token} {...c} />
@@ -322,12 +353,36 @@ function DesignSystemPage() {
 
             <div>
               <SubHeading>Brand & zone accents</SubHeading>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Vivid tokens carry fills, borders and glows. When an accent colors type, use its
+                paired <code className="font-mono text-foreground">-text</code> alias.
+              </p>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {BRAND_COLORS.map((c) => (
                   <Swatch key={c.token} {...c} />
                 ))}
               </div>
             </div>
+
+            <div>
+              <SubHeading>Life maintenance</SubHeading>
+              <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Recurring college-life upkeep — laundry, food runs, workouts, morning routine — gets
+                its own deliberately low-chroma family so it is instantly separable from academic and
+                project quests without adding visual noise. Routine upkeep never out-shouts a
+                deadline, there are no red or alarm hues in this family, and time sensitivity is
+                carried by a Badge rather than by color alone. Every{" "}
+                <code className="font-mono text-foreground">-text</code> alias measures at least
+                6.7:1 on both <code className="font-mono text-foreground">--background</code> and{" "}
+                <code className="font-mono text-foreground">--card</code> in both themes.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {LIFE_COLORS.map((c) => (
+                  <Swatch key={c.token} {...c} />
+                ))}
+              </div>
+            </div>
+
 
             <div>
               <SubHeading>Typography scale</SubHeading>
