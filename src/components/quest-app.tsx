@@ -299,10 +299,10 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         disabled={!hasValue}
         aria-label="Add task"
         className={
-          "flex shrink-0 items-center rounded-full border px-4 py-2 text-xs font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring " +
+          "flex shrink-0 items-center rounded-full border border-neon-btn bg-neon-btn px-4 py-2 text-xs font-semibold text-neon-btn-text transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring " +
           (hasValue
-            ? "border-neon-btn bg-neon-btn text-neon-btn-text hover:brightness-95 active:brightness-90"
-            : "cursor-not-allowed border-border bg-muted text-muted-foreground")
+            ? "hover:brightness-95 active:brightness-90"
+            : "cursor-not-allowed brightness-95")
         }
         style={{ boxShadow: hasValue ? "var(--shadow-neon)" : "none" }}
       >
