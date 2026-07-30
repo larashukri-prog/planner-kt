@@ -134,6 +134,16 @@
   --zone-later: oklch(0.7 0.18 290);
   --inbox: oklch(0.85 0.18 95);
 
+  /* Dark accents already clear 4.5:1 on --background/--card, so the
+     text aliases point straight at the vivid tokens. */
+  --neon-text: var(--neon);
+  --neon-2-text: var(--neon-2);
+  --neon-3-text: var(--neon-3);
+  --zone-now-text: var(--zone-now);
+  --zone-next-text: var(--zone-next);
+  --zone-later-text: var(--zone-later);
+  --inbox-text: var(--inbox);
+
   --gradient-bg: radial-gradient(ellipse at top, oklch(0.22 0.05 280) 0%, oklch(0.14 0.02 270) 60%);
   --shadow-neon: 0 0 0 1px color-mix(in oklab, var(--neon) 40%, transparent),
                  0 8px 30px -8px color-mix(in oklab, var(--neon) 35%, transparent);
