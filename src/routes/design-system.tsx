@@ -94,7 +94,7 @@ const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }
   { token: "--zone-later", fill: "3.4:1", text: "4.9:1", dark: "6.2:1" },
   { token: "--inbox", fill: "2.0:1", text: "4.9:1", dark: "11.3:1" },
   { token: "--primary", fill: "3.9:1", text: "4.7:1", dark: "10.0:1" },
-  { token: "--destructive", fill: "4.3:1", text: "4.7:1", dark: "4.9:1" },
+  { token: "--destructive", fill: "4.3:1", text: "5.4:1", dark: "6.2:1" },
 ];
 
 const BRAND_COLORS = [
