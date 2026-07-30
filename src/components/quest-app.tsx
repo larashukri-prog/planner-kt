@@ -297,7 +297,8 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       <button
         type="submit"
         disabled={!hasValue}
-        className="flex shrink-0 items-center rounded-full bg-[var(--color-neon)] px-4 py-2 text-xs font-semibold text-[var(--color-neon-foreground)] transition-all hover:brightness-110 disabled:opacity-40"
+        aria-label="Add task"
+        className="flex shrink-0 items-center rounded-full bg-neon px-4 py-2 text-xs font-semibold text-neon-foreground transition-all hover:bg-neon/90 hover:brightness-100 active:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-40"
         style={{ boxShadow: hasValue ? "var(--shadow-neon)" : "none" }}
       >
         Add
