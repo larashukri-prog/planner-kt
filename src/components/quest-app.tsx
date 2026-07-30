@@ -18,10 +18,10 @@ import { cn } from "@/lib/utils";
 
 type View = "board" | "done";
 
-const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string }[] = [
-  { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)" },
-  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)" },
-  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)" },
+const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string; textTint: string }[] = [
+  { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)",   textTint: "var(--color-zone-now-text)" },
+  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)",  textTint: "var(--color-zone-next-text)" },
+  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)", textTint: "var(--color-zone-later-text)" },
 ];
 
 export default function QuestApp() {
