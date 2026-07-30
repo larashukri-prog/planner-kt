@@ -53,8 +53,8 @@ const RECURRING_QUESTS: Recurring[] = [
     shouldSpawn: (today) => today.getDay() === 2 || today.getDay() === 6,
   },
   {
-    key: "explore-burlington",
-    title: "🗺️ Explore Burlington",
+    key: "explore-college-town",
+    title: "🗺️ Explore College Town",
     subtasks: [
       "Pick a local spot (Church St, Lake Champlain, or a new coffee shop)",
       "Leave the dorm for 30+ minutes",

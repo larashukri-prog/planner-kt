@@ -410,7 +410,7 @@ const QUEST_TEMPLATES = [
   {
     icon: "🗺️",
     label: "Explore",
-    title: "Explore Burlington",
+    title: "Explore College Town",
     subtasks: ["Pick a spot", "Check bus schedule", "Pack bag", "Go adventure"],
     tint: "oklch(0.7 0.18 290)",
   },
