@@ -416,19 +416,67 @@ function DesignSystemPage() {
             </div>
 
 
+            <div>
+              <SubHeading>Contrast &amp; the -text accent rule</SubHeading>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                The vivid accents were tuned for the dark canvas. On the light theme&apos;s
+                near-white surfaces they drop as low as 1.6:1 as type, so every accent ships a
+                paired <code className="font-mono">-text</code> token solved for at least 4.5:1
+                against both <code className="font-mono">--background</code> and{" "}
+                <code className="font-mono">--card</code>. The rule:{" "}
+                <strong className="text-foreground">
+                  vivid token for fills, borders and glows; -text token for type
+                </strong>
+                . In dark mode the <code className="font-mono">-text</code> aliases point straight
+                back at the vivid tokens, which already clear AA.
+              </p>
+
+              <div className="quest-card mt-3 overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    Measured contrast ratios for each accent token in both themes
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Token</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, as fill</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, -text</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Dark</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {CONTRAST_ROWS.map((r) => (
+                      <tr key={r.token}>
+                        <th scope="row" className="px-4 py-2 font-mono text-xs font-normal">{r.token}</th>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.fill}</td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-foreground">{r.text}</td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.dark}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="mt-3 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Non-text UI — the XP gradient fill, checkbox rings, card borders — is held to the
+                3:1 non-text threshold rather than 4.5:1, so the Quest Log aesthetic stays intact.
+              </p>
+            </div>
 
             <CodeBlock
               label="src/styles.css"
               code={`:root {
-  --radius: 0.75rem;
-  --primary: oklch(0.55 0.18 200);
-  --neon: oklch(0.78 0.2 195);
+  --neon: oklch(0.78 0.2 195);       /* fills, borders, glows */
+  --neon-text: oklch(0.49 0.2 195);  /* type — 4.5:1 on card */
+}
+
+.dark {
+  --neon-text: var(--neon);          /* already clears AA */
 }
 
 @theme inline {
-  --color-primary: var(--primary);
   --color-neon: var(--neon);
-  --radius-lg: var(--radius);
+  --color-neon-text: var(--neon-text);
 }`}
             />
           </Section>
