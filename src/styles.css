@@ -38,6 +38,7 @@
   --color-zone-later: var(--zone-later);
   --color-inbox: var(--inbox);
   /* Text-safe accent aliases — always >= 4.5:1 on --background / --card */
+  --color-destructive-text: var(--destructive-text);
   --color-neon-text: var(--neon-text);
   --color-neon-2-text: var(--neon-2-text);
   --color-neon-3-text: var(--neon-3-text);
@@ -86,6 +87,7 @@
 
   /* Text-safe accents — solved for >= 4.5:1 on --background and --card.
      Use these whenever an accent colors TYPE; never for fills or glows. */
+  --destructive-text: oklch(0.545 0.22 25);
   --neon-text: oklch(0.49 0.2 195);
   --neon-2-text: oklch(0.58 0.24 320);
   --neon-3-text: oklch(0.525 0.22 135);
@@ -137,6 +139,7 @@
 
   /* Dark accents already clear 4.5:1 on --background/--card, so the
      text aliases point straight at the vivid tokens. */
+  --destructive-text: oklch(0.7 0.19 25);
   --neon-text: var(--neon);
   --neon-2-text: var(--neon-2);
   --neon-3-text: var(--neon-3);
