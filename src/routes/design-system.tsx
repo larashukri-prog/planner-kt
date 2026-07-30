@@ -939,7 +939,7 @@ const fill = {
             id="middle-layer"
             eyebrow="05 — Architecture"
             title="Middle Layer Architecture"
-            description="No component talks to the database. Every screen reads from a custom hook, and the hook owns fetching, optimistic writes, realtime subscriptions and persistence — the middle layer between the UI surface and the data services."
+            description="No component talks to the database. Every screen reads from a custom hook, and the hook owns fetching, optimistic writes, realtime subscriptions, timers and persistence — including the Daily Spawn Engine that builds the student's routine before they open the app."
           >
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="flex min-w-0 flex-col gap-3">
