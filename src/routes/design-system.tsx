@@ -575,11 +575,11 @@ import { Checkbox } from "@/components/ui/checkbox";
               api="Composable API: controlled (checked + onCheckedChange) or uncontrolled (defaultChecked) — the same component serves optimistic UI and plain forms."
             >
               <div className="flex items-center gap-2">
-                <Switch id="ds-switch" defaultChecked />
+                <Switch id="ds-switch" defaultChecked aria-label="Recurring quest" />
                 <Label htmlFor="ds-switch">Recurring</Label>
               </div>
               <div className="flex items-center gap-2">
-                <Checkbox id="ds-check" />
+                <Checkbox id="ds-check" aria-label="Subtask done" />
                 <Label htmlFor="ds-check">Subtask done</Label>
               </div>
             </Example>
@@ -1039,6 +1039,7 @@ function QuestCardDemo() {
           <li key={s} className="flex items-center gap-2">
             <Checkbox
               id={`ds-sub-${i}`}
+              aria-label={`Mark step complete: ${s}`}
               checked={done[i]}
               onCheckedChange={(v) =>
                 setDone((d) => d.map((x, j) => (j === i ? v === true : x)))
@@ -1078,7 +1079,12 @@ function SettingsRowDemo({
         </Label>
         <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
-      <Switch id={id} defaultChecked={defaultChecked} className="shrink-0" />
+      <Switch
+        id={id}
+        defaultChecked={defaultChecked}
+        aria-label={`Toggle ${title}`}
+        className="shrink-0"
+      />
     </div>
   );
 }

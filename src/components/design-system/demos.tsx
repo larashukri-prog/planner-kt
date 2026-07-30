@@ -406,6 +406,7 @@ export function StatefulComponentDemo() {
         <Switch
           id="ds-ml-compact"
           checked={prefs.compact}
+          aria-label="Toggle compact density"
           onCheckedChange={(compact) => setPrefs((p) => ({ ...p, compact }))}
         />
       </div>
