@@ -95,8 +95,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Planner-KT\u00a0" },
       { name: "twitter:description", content: "A frictionless, dopamine-friendly task planner" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ef4b8e94-79ce-403d-874c-39ad417ea84d" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ef4b8e94-79ce-403d-874c-39ad417ea84d" },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ef4b8e94-79ce-403d-874c-39ad417ea84d",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ef4b8e94-79ce-403d-874c-39ad417ea84d",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -49,7 +49,9 @@ export function AuthScreen() {
             <Swords className="h-5 w-5 text-[var(--color-neon-foreground)]" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">Planner-KT — Sign In</h1>
+            <h1 className="font-display text-2xl font-semibold tracking-tight">
+              Planner-KT — Sign In
+            </h1>
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
               {mode === "signup" ? "Start your quest log" : "Welcome back"}
             </p>
@@ -66,7 +68,8 @@ export function AuthScreen() {
                 className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
                 style={{
                   background: mode === m ? "var(--color-neon)" : "transparent",
-                  color: mode === m ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)",
+                  color:
+                    mode === m ? "var(--color-neon-foreground)" : "var(--color-muted-foreground)",
                 }}
               >
                 {m === "signin" ? "Sign in" : "Sign up"}
@@ -76,7 +79,9 @@ export function AuthScreen() {
 
           <form onSubmit={submit} className="flex flex-col gap-3">
             <label className="flex flex-col gap-1">
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Email</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Email
+              </span>
               <input
                 type="email"
                 required
@@ -87,7 +92,9 @@ export function AuthScreen() {
               />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Password</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Password
+              </span>
               <input
                 type="password"
                 required

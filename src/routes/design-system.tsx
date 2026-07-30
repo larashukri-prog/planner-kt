@@ -9,13 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock, Example, Section, SubHeading, Swatch } from "@/components/design-system/parts";
 import {
   ArchitectureDiagram,
@@ -27,14 +21,12 @@ import {
   XPBarDemo,
 } from "@/components/design-system/demos";
 
-
 import { useTheme } from "@/lib/use-theme";
 import { cn } from "@/lib/utils";
 
 const TITLE = "Design System — Planner-KT";
 const DESCRIPTION =
   "Living documentation for Planner-KT, an assistive-technology planner for cognitive accessibility: cognitive-load and density rules, OKLCH semantic tokens, low-anxiety life-maintenance cues, WCAG 2.1 AA components, the recurring life prompt pattern, and the hook-based Daily Spawn Engine.";
-
 
 export const Route = createFileRoute("/design-system")({
   head: () => ({
@@ -62,27 +54,109 @@ const MOTION_TOKENS = [
   { token: "duration-200", value: "200ms", use: "Hover lift, press scale, list item collapse." },
   { token: "duration-[320ms]", value: "320ms", use: "Quest-complete success flash and card exit." },
   { token: "ease-out", value: "cubic-bezier(0, 0, 0.2, 1)", use: "Default easing for entrances." },
-  { token: "spring 420 / 32", value: "stiffness / damping", use: "Toasts and framer-motion overlays." },
+  {
+    token: "spring 420 / 32",
+    value: "stiffness / damping",
+    use: "Toasts and framer-motion overlays.",
+  },
   { token: "active:scale-95", value: "scale(0.95)", use: "Universal press feedback on buttons." },
-  { token: "animate-fade-in", value: "300ms fade + 10px rise", use: "Content appearing after a skeleton." },
-  { token: "spring 120 / 20", value: "stiffness / damping", use: "Progress width and layout position." },
-  { token: "shimmer", value: "2.4s linear ∞", use: "Indeterminate sheen sweeping a progress fill." },
-  { token: "motion-reduce:*", value: "transition-none", use: "Honors prefers-reduced-motion everywhere." },
+  {
+    token: "animate-fade-in",
+    value: "300ms fade + 10px rise",
+    use: "Content appearing after a skeleton.",
+  },
+  {
+    token: "spring 120 / 20",
+    value: "stiffness / damping",
+    use: "Progress width and layout position.",
+  },
+  {
+    token: "shimmer",
+    value: "2.4s linear ∞",
+    use: "Indeterminate sheen sweeping a progress fill.",
+  },
+  {
+    token: "motion-reduce:*",
+    value: "transition-none",
+    use: "Honors prefers-reduced-motion everywhere.",
+  },
 ];
 
-
-
-
 const CORE_COLORS = [
-  { name: "Background", token: "--background", utility: "bg-background", className: "bg-background", border: true, oklch: "oklch(0.985 0.003 250)", oklchDark: "oklch(0.16 0.02 270)" },
-  { name: "Foreground", token: "--foreground", utility: "text-foreground", className: "bg-foreground", oklch: "oklch(0.22 0.02 270)", oklchDark: "oklch(0.96 0.01 250)" },
-  { name: "Card", token: "--card", utility: "bg-card", className: "bg-card", border: true, oklch: "oklch(0.995 0.002 250)", oklchDark: "oklch(0.21 0.025 270)" },
-  { name: "Primary", token: "--primary", utility: "bg-primary", className: "bg-primary", oklch: "oklch(0.505 0.18 200)", oklchDark: "oklch(0.78 0.18 180)" },
-  { name: "Secondary", token: "--secondary", utility: "bg-secondary", className: "bg-secondary", oklch: "oklch(0.94 0.01 250)", oklchDark: "oklch(0.27 0.03 270)" },
-  { name: "Muted", token: "--muted", utility: "bg-muted", className: "bg-muted", border: true, oklch: "oklch(0.95 0.008 250)", oklchDark: "oklch(0.24 0.025 270)" },
-  { name: "Accent", token: "--accent", utility: "bg-accent", className: "bg-accent", oklch: "oklch(0.93 0.02 270)", oklchDark: "oklch(0.3 0.05 280)" },
-  { name: "Destructive", token: "--destructive", utility: "bg-destructive", className: "bg-destructive", oklch: "oklch(0.58 0.22 25)" },
-  { name: "Border", token: "--border", utility: "border-border", className: "bg-border", oklch: "oklch(0.9 0.01 260)", oklchDark: "oklch(0.3 0.03 270)" },
+  {
+    name: "Background",
+    token: "--background",
+    utility: "bg-background",
+    className: "bg-background",
+    border: true,
+    oklch: "oklch(0.985 0.003 250)",
+    oklchDark: "oklch(0.16 0.02 270)",
+  },
+  {
+    name: "Foreground",
+    token: "--foreground",
+    utility: "text-foreground",
+    className: "bg-foreground",
+    oklch: "oklch(0.22 0.02 270)",
+    oklchDark: "oklch(0.96 0.01 250)",
+  },
+  {
+    name: "Card",
+    token: "--card",
+    utility: "bg-card",
+    className: "bg-card",
+    border: true,
+    oklch: "oklch(0.995 0.002 250)",
+    oklchDark: "oklch(0.21 0.025 270)",
+  },
+  {
+    name: "Primary",
+    token: "--primary",
+    utility: "bg-primary",
+    className: "bg-primary",
+    oklch: "oklch(0.505 0.18 200)",
+    oklchDark: "oklch(0.78 0.18 180)",
+  },
+  {
+    name: "Secondary",
+    token: "--secondary",
+    utility: "bg-secondary",
+    className: "bg-secondary",
+    oklch: "oklch(0.94 0.01 250)",
+    oklchDark: "oklch(0.27 0.03 270)",
+  },
+  {
+    name: "Muted",
+    token: "--muted",
+    utility: "bg-muted",
+    className: "bg-muted",
+    border: true,
+    oklch: "oklch(0.95 0.008 250)",
+    oklchDark: "oklch(0.24 0.025 270)",
+  },
+  {
+    name: "Accent",
+    token: "--accent",
+    utility: "bg-accent",
+    className: "bg-accent",
+    oklch: "oklch(0.93 0.02 270)",
+    oklchDark: "oklch(0.3 0.05 280)",
+  },
+  {
+    name: "Destructive",
+    token: "--destructive",
+    utility: "bg-destructive",
+    className: "bg-destructive",
+    oklch: "oklch(0.58 0.22 25)",
+  },
+  {
+    name: "Border",
+    token: "--border",
+    utility: "border-border",
+    className: "bg-border",
+    oklch: "oklch(0.9 0.01 260)",
+    oklchDark: "oklch(0.3 0.03 270)",
+  },
 ];
 
 /** Measured WCAG 2.1 ratios against --card. "Light, as fill" is the pre-fix value. */
@@ -103,22 +177,107 @@ const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }
 ];
 
 const BRAND_COLORS = [
-  { name: "Neon", token: "--neon", utility: "bg-neon", className: "bg-neon", oklch: "oklch(0.78 0.2 195)", oklchDark: "oklch(0.82 0.2 180)" },
-  { name: "Neon 2", token: "--neon-2", utility: "bg-neon-2", className: "bg-neon-2", oklch: "oklch(0.72 0.24 320)", oklchDark: "oklch(0.78 0.22 320)" },
-  { name: "Neon 3", token: "--neon-3", utility: "bg-neon-3", className: "bg-neon-3", oklch: "oklch(0.82 0.22 135)", oklchDark: "oklch(0.88 0.2 130)" },
-  { name: "Zone · Now", token: "--zone-now", utility: "bg-zone-now", className: "bg-zone-now", oklch: "oklch(0.68 0.22 30)", oklchDark: "oklch(0.72 0.22 30)" },
-  { name: "Zone · Later", token: "--zone-next", utility: "bg-zone-next", className: "bg-zone-next", oklch: "oklch(0.7 0.2 200)", oklchDark: "oklch(0.82 0.2 180)" },
-  { name: "Zone · Future", token: "--zone-later", utility: "bg-zone-later", className: "bg-zone-later", oklch: "oklch(0.65 0.2 290)", oklchDark: "oklch(0.7 0.18 290)" },
-  { name: "Inbox", token: "--inbox", utility: "bg-inbox", className: "bg-inbox", oklch: "oklch(0.78 0.18 90)", oklchDark: "oklch(0.85 0.18 95)" },
+  {
+    name: "Neon",
+    token: "--neon",
+    utility: "bg-neon",
+    className: "bg-neon",
+    oklch: "oklch(0.78 0.2 195)",
+    oklchDark: "oklch(0.82 0.2 180)",
+  },
+  {
+    name: "Neon 2",
+    token: "--neon-2",
+    utility: "bg-neon-2",
+    className: "bg-neon-2",
+    oklch: "oklch(0.72 0.24 320)",
+    oklchDark: "oklch(0.78 0.22 320)",
+  },
+  {
+    name: "Neon 3",
+    token: "--neon-3",
+    utility: "bg-neon-3",
+    className: "bg-neon-3",
+    oklch: "oklch(0.82 0.22 135)",
+    oklchDark: "oklch(0.88 0.2 130)",
+  },
+  {
+    name: "Zone · Now",
+    token: "--zone-now",
+    utility: "bg-zone-now",
+    className: "bg-zone-now",
+    oklch: "oklch(0.68 0.22 30)",
+    oklchDark: "oklch(0.72 0.22 30)",
+  },
+  {
+    name: "Zone · Later",
+    token: "--zone-next",
+    utility: "bg-zone-next",
+    className: "bg-zone-next",
+    oklch: "oklch(0.7 0.2 200)",
+    oklchDark: "oklch(0.82 0.2 180)",
+  },
+  {
+    name: "Zone · Future",
+    token: "--zone-later",
+    utility: "bg-zone-later",
+    className: "bg-zone-later",
+    oklch: "oklch(0.65 0.2 290)",
+    oklchDark: "oklch(0.7 0.18 290)",
+  },
+  {
+    name: "Inbox",
+    token: "--inbox",
+    utility: "bg-inbox",
+    className: "bg-inbox",
+    oklch: "oklch(0.78 0.18 90)",
+    oklchDark: "oklch(0.85 0.18 95)",
+  },
 ];
 
 /** Life maintenance — low-chroma cues for recurring college-life routines. */
 const LIFE_COLORS = [
-  { name: "Life · base", token: "--life", utility: "bg-life", className: "bg-life", oklch: "oklch(0.72 0.06 250)", oklchDark: "oklch(0.78 0.05 250)" },
-  { name: "Life · surface", token: "--life-surface", utility: "bg-life-surface", className: "bg-life-surface", border: true, oklch: "oklch(0.955 0.014 250)", oklchDark: "oklch(0.245 0.022 250)" },
-  { name: "Laundry", token: "--life-laundry", utility: "bg-life-laundry", className: "bg-life-laundry", oklch: "oklch(0.72 0.06 235)", oklchDark: "oklch(0.78 0.05 235)" },
-  { name: "Food & supplies", token: "--life-food", utility: "bg-life-food", className: "bg-life-food", oklch: "oklch(0.72 0.06 150)", oklchDark: "oklch(0.8 0.05 150)" },
-  { name: "Body & movement", token: "--life-body", utility: "bg-life-body", className: "bg-life-body", oklch: "oklch(0.72 0.06 340)", oklchDark: "oklch(0.8 0.05 340)" },
+  {
+    name: "Life · base",
+    token: "--life",
+    utility: "bg-life",
+    className: "bg-life",
+    oklch: "oklch(0.72 0.06 250)",
+    oklchDark: "oklch(0.78 0.05 250)",
+  },
+  {
+    name: "Life · surface",
+    token: "--life-surface",
+    utility: "bg-life-surface",
+    className: "bg-life-surface",
+    border: true,
+    oklch: "oklch(0.955 0.014 250)",
+    oklchDark: "oklch(0.245 0.022 250)",
+  },
+  {
+    name: "Laundry",
+    token: "--life-laundry",
+    utility: "bg-life-laundry",
+    className: "bg-life-laundry",
+    oklch: "oklch(0.72 0.06 235)",
+    oklchDark: "oklch(0.78 0.05 235)",
+  },
+  {
+    name: "Food & supplies",
+    token: "--life-food",
+    utility: "bg-life-food",
+    className: "bg-life-food",
+    oklch: "oklch(0.72 0.06 150)",
+    oklchDark: "oklch(0.8 0.05 150)",
+  },
+  {
+    name: "Body & movement",
+    token: "--life-body",
+    utility: "bg-life-body",
+    className: "bg-life-body",
+    oklch: "oklch(0.72 0.06 340)",
+    oklchDark: "oklch(0.8 0.05 340)",
+  },
 ];
 
 /** Recurring life templates owned by use-daily-spawn.ts. */
@@ -127,7 +286,12 @@ const SPAWN_TEMPLATES = [
   { key: "workout", title: "💪 Workout", cadence: "Daily · rest day Tue/Thu/Sat", zone: "Now" },
   { key: "laundry-loop", title: "🧺 Laundry Loop", cadence: "Fridays", zone: "Now" },
   { key: "restock-fuel", title: "🛒 Restock Fuel", cadence: "Tuesdays + Saturdays", zone: "Now" },
-  { key: "explore-burlington", title: "🗺️ Explore Burlington", cadence: "Every other day", zone: "Later" },
+  {
+    key: "explore-burlington",
+    title: "🗺️ Explore Burlington",
+    cadence: "Every other day",
+    zone: "Later",
+  },
 ];
 
 const SPAWN_RULES = [
@@ -140,7 +304,6 @@ const SPAWN_RULES = [
 ];
 
 const DENSITY_RULES = [
-
   {
     label: "Comfortable — the strict default",
     body: "Every daily view (board, inbox, quest cards, done wall) uses py-3 rows, gap-3 stacks and a 44×44px minimum touch target. Nothing on a daily screen may go tighter.",
@@ -154,7 +317,6 @@ const DENSITY_RULES = [
     body: "Switching density only swaps 4px multiples on the same component. Components are never forked into a 'dense' variant, so accessible names, focus order and contrast survive the switch.",
   },
 ];
-
 
 const TYPE_SCALE = [
   { label: "Display", cls: "text-4xl font-bold tracking-tight", sample: "Planner-KT" },
@@ -388,8 +550,8 @@ function DesignSystemPage() {
               <SubHeading>Life maintenance</SubHeading>
               <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
                 Recurring college-life upkeep — laundry, food runs, workouts, morning routine — gets
-                its own deliberately low-chroma family so it is instantly separable from academic and
-                project quests without adding visual noise. Routine upkeep never out-shouts a
+                its own deliberately low-chroma family so it is instantly separable from academic
+                and project quests without adding visual noise. Routine upkeep never out-shouts a
                 deadline, there are no red or alarm hues in this family, and time sensitivity is
                 carried by a Badge rather than by color alone. Every{" "}
                 <code className="font-mono text-foreground">-text</code> alias measures at least
@@ -402,7 +564,6 @@ function DesignSystemPage() {
                 ))}
               </div>
             </div>
-
 
             <div>
               <SubHeading>Typography scale</SubHeading>
@@ -532,7 +693,6 @@ function DesignSystemPage() {
               </div>
             </div>
 
-
             <div>
               <SubHeading>Contrast &amp; the -text accent rule</SubHeading>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -555,19 +715,47 @@ function DesignSystemPage() {
                   </caption>
                   <thead>
                     <tr className="border-b border-border">
-                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Token</th>
-                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, as fill</th>
-                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, -text</th>
-                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Dark</th>
+                      <th
+                        scope="col"
+                        className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
+                        Token
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
+                        Light, as fill
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
+                        Light, -text
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
+                        Dark
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {CONTRAST_ROWS.map((r) => (
                       <tr key={r.token}>
-                        <th scope="row" className="px-4 py-2 font-mono text-xs font-normal">{r.token}</th>
-                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.fill}</td>
-                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-foreground">{r.text}</td>
-                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.dark}</td>
+                        <th scope="row" className="px-4 py-2 font-mono text-xs font-normal">
+                          {r.token}
+                        </th>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">
+                          {r.fill}
+                        </td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-foreground">
+                          {r.text}
+                        </td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">
+                          {r.dark}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -758,9 +946,9 @@ import { Checkbox } from "@/components/ui/checkbox";
                 Badge, and Button inside a semantic{" "}
                 <code className="font-mono text-foreground">&lt;table&gt;</code>: scoped column
                 headers, an <code className="font-mono text-foreground">sr-only</code> caption,
-                sortable headers exposing <code className="font-mono text-foreground">aria-sort</code>
-
-                , and a density toggle that only swaps 4px multiples.
+                sortable headers exposing{" "}
+                <code className="font-mono text-foreground">aria-sort</code>, and a density toggle
+                that only swaps 4px multiples.
               </p>
               <DataGridDemo />
             </div>
@@ -797,7 +985,6 @@ import { Checkbox } from "@/components/ui/checkbox";
                 </div>
               </div>
             </div>
-
 
             <CodeBlock
               forExample="data-dense table pattern"
@@ -837,19 +1024,31 @@ import { Checkbox } from "@/components/ui/checkbox";
               </div>
               <div className="overflow-x-auto scrollbar-quest">
                 <table className="w-full min-w-[520px] text-left text-xs">
-                  <caption className="sr-only">Standard motion values used across Planner-KT</caption>
+                  <caption className="sr-only">
+                    Standard motion values used across Planner-KT
+                  </caption>
                   <thead className="border-b border-border/70 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                     <tr>
-                      <th scope="col" className="px-4 py-2 font-medium">Token</th>
-                      <th scope="col" className="px-4 py-2 font-medium">Value</th>
-                      <th scope="col" className="px-4 py-2 font-medium">Used for</th>
+                      <th scope="col" className="px-4 py-2 font-medium">
+                        Token
+                      </th>
+                      <th scope="col" className="px-4 py-2 font-medium">
+                        Value
+                      </th>
+                      <th scope="col" className="px-4 py-2 font-medium">
+                        Used for
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {MOTION_TOKENS.map((m) => (
                       <tr key={m.token}>
-                        <td className="px-4 py-2 font-mono text-[11px] text-foreground">{m.token}</td>
-                        <td className="px-4 py-2 font-mono text-[11px] text-muted-foreground">{m.value}</td>
+                        <td className="px-4 py-2 font-mono text-[11px] text-foreground">
+                          {m.token}
+                        </td>
+                        <td className="px-4 py-2 font-mono text-[11px] text-muted-foreground">
+                          {m.value}
+                        </td>
                         <td className="px-4 py-2 text-muted-foreground">{m.use}</td>
                       </tr>
                     ))}
@@ -893,7 +1092,6 @@ const fill = {
 
             <Example
               title="Tactile button — hover lift, press scale, success flash"
-
               a11y="Focus ring is never removed, the success state is announced through aria-pressed and a text change (not color alone), and every transition is disabled under motion-reduce."
               api="Pure Tailwind transition utilities — no JS animation library, so the same classes drop onto any element, including the real Quest card's complete action."
               code={`<button
@@ -990,9 +1188,10 @@ const fill = {
                 <code className="font-mono text-foreground">src/lib/use-daily-spawn.ts</code> is the
                 clearest example of the middle layer doing assistive work. It owns the recurring
                 life prompts: a 60-second tick compares today's local date key against the last run
-                stored under <code className="font-mono text-foreground">questlog.lastSpawnDate.v1</code>
-                , then builds, persists and surfaces the day's routine. The student never sets up
-                their day manually, and working memory is never the thing keeping the routine alive.
+                stored under{" "}
+                <code className="font-mono text-foreground">questlog.lastSpawnDate.v1</code>, then
+                builds, persists and surfaces the day's routine. The student never sets up their day
+                manually, and working memory is never the thing keeping the routine alive.
               </p>
 
               <div className="quest-card overflow-x-auto scrollbar-quest">
@@ -1002,13 +1201,22 @@ const fill = {
                   </caption>
                   <thead>
                     <tr className="border-b border-border">
-                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      <th
+                        scope="col"
+                        className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
                         Template
                       </th>
-                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      <th
+                        scope="col"
+                        className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
                         Cadence
                       </th>
-                      <th scope="col" className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                      <th
+                        scope="col"
+                        className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground"
+                      >
                         Target zone
                       </th>
                     </tr>
@@ -1072,8 +1280,6 @@ if (dateChanged) window.localStorage.setItem(TICK_KEY, todayKey);`}
               />
             </div>
 
-
-
             <Example
               title="Live stateful component — persisted preferences"
               className="items-start"
@@ -1118,10 +1324,10 @@ const [prefs, setPrefs] = useLocalStorageState("questlog.ds.demo.v1", {
             <div className="quest-card flex flex-col gap-3 p-4">
               <h3 className="text-sm font-semibold">The same pattern against the server</h3>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                <code className="font-mono text-foreground">useTasks</code> is the production
-                middle layer. It writes to local state first so the board reacts within a frame,
-                fires the network call in the background, and restores the previous row if the
-                write fails — the component that rendered the checkbox knows none of this.
+                <code className="font-mono text-foreground">useTasks</code> is the production middle
+                layer. It writes to local state first so the board reacts within a frame, fires the
+                network call in the background, and restores the previous row if the write fails —
+                the component that rendered the checkbox knows none of this.
               </p>
               <CodeBlock
                 forExample="optimistic update"
@@ -1154,7 +1360,6 @@ supabase.channel(\`tasks-\${userId}\`)
           <Section
             id="ai"
             eyebrow="06 — Process"
-
             title="AI-Native Contribution Model"
             description="The design system is written to be machine-legible first — and the same properties that make it AI-friendly are what make it safe to scale in an enterprise."
           >
@@ -1171,9 +1376,9 @@ supabase.channel(\`tasks-\${userId}\`)
               <p>
                 That constraint is what makes the system AI-native. An agent such as Cursor or
                 Lovable can read a handful of token definitions and a single component file, then
-                generate an entirely new screen that already matches the product: correct contrast in
-                both themes, correct radii, correct elevation, correct interaction states. There is
-                no tacit design knowledge locked in a Figma file and no opportunity to invent a
+                generate an entirely new screen that already matches the product: correct contrast
+                in both themes, correct radii, correct elevation, correct interaction states. There
+                is no tacit design knowledge locked in a Figma file and no opportunity to invent a
                 one-off shade of blue, so{" "}
                 <strong className="text-foreground">design drift approaches zero</strong> even as
                 contribution velocity goes up.
@@ -1265,16 +1470,11 @@ function QuestCardDemo() {
               id={`ds-sub-${i}`}
               aria-label={`Mark step complete: ${s}`}
               checked={done[i]}
-              onCheckedChange={(v) =>
-                setDone((d) => d.map((x, j) => (j === i ? v === true : x)))
-              }
+              onCheckedChange={(v) => setDone((d) => d.map((x, j) => (j === i ? v === true : x)))}
             />
             <Label
               htmlFor={`ds-sub-${i}`}
-              className={cn(
-                "text-xs font-normal",
-                done[i] && "text-muted-foreground line-through",
-              )}
+              className={cn("text-xs font-normal", done[i] && "text-muted-foreground line-through")}
             >
               {s}
             </Label>
@@ -1338,16 +1538,10 @@ function DensitySample({
         {GRID_ROWS.map((r) => (
           <li
             key={r.title}
-            className={cn(
-              "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center px-4",
-              rowClass,
-            )}
+            className={cn("grid grid-cols-[auto_minmax(0,1fr)_auto] items-center px-4", rowClass)}
           >
             <span
-              className={cn(
-                "rounded-full border border-neon/60",
-                compact ? "size-3" : "size-4",
-              )}
+              className={cn("rounded-full border border-neon/60", compact ? "size-3" : "size-4")}
               aria-hidden="true"
             />
             <span className={cn("min-w-0 truncate", titleClass)}>{r.title}</span>
@@ -1372,14 +1566,78 @@ type GridRow = {
 };
 
 const DATA_ROWS: GridRow[] = [
-  { id: "q-101", title: "Morning Armor", zone: "Now", due: "Today", owner: "KT", xp: 40, status: "In progress" },
-  { id: "q-102", title: "Workout", zone: "Now", due: "Today", owner: "KT", xp: 60, status: "Queued" },
-  { id: "q-103", title: "Academic Deep Dive — level design doc", zone: "Now", due: "Tomorrow", owner: "KT", xp: 120, status: "In progress" },
-  { id: "q-104", title: "Restock Fuel", zone: "Later", due: "Fri", owner: "KT", xp: 20, status: "Queued" },
-  { id: "q-105", title: "Laundry Loop", zone: "Later", due: "Fri", owner: "KT", xp: 30, status: "Blocked" },
-  { id: "q-106", title: "15-Min Room Reset", zone: "Later", due: "Sat", owner: "KT", xp: 15, status: "Queued" },
-  { id: "q-107", title: "Explore Burlington", zone: "Future", due: "Next week", owner: "KT", xp: 50, status: "Queued" },
-  { id: "q-108", title: "Portfolio pass — capstone build", zone: "Future", due: "Aug 12", owner: "KT", xp: 200, status: "Queued" },
+  {
+    id: "q-101",
+    title: "Morning Armor",
+    zone: "Now",
+    due: "Today",
+    owner: "KT",
+    xp: 40,
+    status: "In progress",
+  },
+  {
+    id: "q-102",
+    title: "Workout",
+    zone: "Now",
+    due: "Today",
+    owner: "KT",
+    xp: 60,
+    status: "Queued",
+  },
+  {
+    id: "q-103",
+    title: "Academic Deep Dive — level design doc",
+    zone: "Now",
+    due: "Tomorrow",
+    owner: "KT",
+    xp: 120,
+    status: "In progress",
+  },
+  {
+    id: "q-104",
+    title: "Restock Fuel",
+    zone: "Later",
+    due: "Fri",
+    owner: "KT",
+    xp: 20,
+    status: "Queued",
+  },
+  {
+    id: "q-105",
+    title: "Laundry Loop",
+    zone: "Later",
+    due: "Fri",
+    owner: "KT",
+    xp: 30,
+    status: "Blocked",
+  },
+  {
+    id: "q-106",
+    title: "15-Min Room Reset",
+    zone: "Later",
+    due: "Sat",
+    owner: "KT",
+    xp: 15,
+    status: "Queued",
+  },
+  {
+    id: "q-107",
+    title: "Explore Burlington",
+    zone: "Future",
+    due: "Next week",
+    owner: "KT",
+    xp: 50,
+    status: "Queued",
+  },
+  {
+    id: "q-108",
+    title: "Portfolio pass — capstone build",
+    zone: "Future",
+    due: "Aug 12",
+    owner: "KT",
+    xp: 200,
+    status: "Queued",
+  },
 ];
 
 type SortKey = "title" | "due" | "xp";
@@ -1488,7 +1746,11 @@ function DataGridDemo() {
                   </td>
                   <th
                     scope="row"
-                    className={cn(cell, "max-w-[18rem] truncate font-medium", dense ? "text-xs" : "text-sm")}
+                    className={cn(
+                      cell,
+                      "max-w-[18rem] truncate font-medium",
+                      dense ? "text-xs" : "text-sm",
+                    )}
                   >
                     {r.title}
                   </th>
