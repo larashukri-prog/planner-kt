@@ -50,7 +50,7 @@ export function XPBarDemo() {
         className="w-full"
       >
         <div className="mb-2 flex items-center justify-between">
-          <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-neon">
+          <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-neon-text">
             <Sparkles className="size-3.5" aria-hidden="true" />
             Daily XP
           </span>
@@ -99,8 +99,9 @@ export function XPBarDemo() {
             <span
               className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]"
               style={{
-                color: "var(--color-neon-foreground)",
-                textShadow: "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+                color: percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
+                textShadow:
+                  percent < 55 ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
               }}
             >
               {celebrate ? "Campaign cleared!" : `Daily Completion: ${percent}% XP`}
@@ -188,7 +189,7 @@ export function TactileButtonsDemo() {
         className={cn(
           "inline-flex h-11 items-center gap-2 rounded-md border px-4 text-sm font-medium transition-all duration-[320ms] ease-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none",
           done
-            ? "scale-95 border-neon bg-neon/15 text-neon"
+            ? "scale-95 border-neon bg-neon/15 text-neon-text"
             : "border-border bg-card text-foreground hover:border-neon/60 hover:bg-accent",
         )}
       >
@@ -232,7 +233,7 @@ export function SkeletonDemo() {
         ) : (
           <div className="quest-card flex animate-fade-in gap-3 p-4">
             <div className="grid size-8 shrink-0 place-items-center rounded-full border border-neon/50 bg-neon/10">
-              <Sparkles className="size-4 text-neon" aria-hidden="true" />
+              <Sparkles className="size-4 text-neon-text" aria-hidden="true" />
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
               <p className="truncate text-sm font-semibold">Morning Armor</p>
@@ -289,7 +290,7 @@ export function ToastDemo() {
               className="absolute inset-x-3 top-3 flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2.5 shadow-lg"
             >
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-neon/15">
-                <Check className="size-3.5 text-neon" aria-hidden="true" />
+                <Check className="size-3.5 text-neon-text" aria-hidden="true" />
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">Quest completed</p>
@@ -339,7 +340,7 @@ export function ArchitectureDiagram() {
         <li key={layer.name} className="flex flex-col">
           <div className="quest-card flex gap-3 p-4">
             <span className="grid size-8 shrink-0 place-items-center rounded-md border border-border bg-muted/50">
-              <layer.icon className="size-4 text-neon" aria-hidden="true" />
+              <layer.icon className="size-4 text-neon-text" aria-hidden="true" />
             </span>
             <div className="min-w-0">
               <p className="text-sm font-semibold">{layer.name}</p>

@@ -84,6 +84,19 @@ const CORE_COLORS = [
   { name: "Border", token: "--border", className: "bg-border" },
 ];
 
+/** Measured WCAG 2.1 ratios against --card. "Light, as fill" is the pre-fix value. */
+const CONTRAST_ROWS: { token: string; fill: string; text: string; dark: string }[] = [
+  { token: "--neon", fill: "1.7:1", text: "4.8:1", dark: "11.7:1" },
+  { token: "--neon-2", fill: "2.7:1", text: "4.8:1", dark: "7.9:1" },
+  { token: "--neon-3", fill: "1.6:1", text: "4.9:1", dark: "13.0:1" },
+  { token: "--zone-now", fill: "3.2:1", text: "4.8:1", dark: "5.9:1" },
+  { token: "--zone-next", fill: "2.2:1", text: "4.9:1", dark: "11.7:1" },
+  { token: "--zone-later", fill: "3.4:1", text: "4.9:1", dark: "6.2:1" },
+  { token: "--inbox", fill: "2.0:1", text: "4.9:1", dark: "11.3:1" },
+  { token: "--primary", fill: "3.9:1", text: "4.7:1", dark: "10.0:1" },
+  { token: "--destructive", fill: "4.3:1", text: "5.4:1", dark: "6.2:1" },
+];
+
 const BRAND_COLORS = [
   { name: "Neon", token: "--neon", className: "bg-neon" },
   { name: "Neon 2", token: "--neon-2", className: "bg-neon-2" },
@@ -347,8 +360,8 @@ function DesignSystemPage() {
                     <div className="glow-neon grid h-16 w-32 place-items-center rounded-lg text-xs">
                       glow-neon
                     </div>
-                    <div className="grid h-16 w-32 place-items-center rounded-lg border border-border text-xs text-neon">
-                      text-neon
+                    <div className="neon-type grid h-16 w-32 place-items-center rounded-lg border border-border text-xs">
+                      neon-type
                     </div>
                   </div>
                 </div>
@@ -416,19 +429,67 @@ function DesignSystemPage() {
             </div>
 
 
+            <div>
+              <SubHeading>Contrast &amp; the -text accent rule</SubHeading>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                The vivid accents were tuned for the dark canvas. On the light theme&apos;s
+                near-white surfaces they drop as low as 1.6:1 as type, so every accent ships a
+                paired <code className="font-mono">-text</code> token solved for at least 4.5:1
+                against both <code className="font-mono">--background</code> and{" "}
+                <code className="font-mono">--card</code>. The rule:{" "}
+                <strong className="text-foreground">
+                  vivid token for fills, borders and glows; -text token for type
+                </strong>
+                . In dark mode the <code className="font-mono">-text</code> aliases point straight
+                back at the vivid tokens, which already clear AA.
+              </p>
+
+              <div className="quest-card mt-3 overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <caption className="sr-only">
+                    Measured contrast ratios for each accent token in both themes
+                  </caption>
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Token</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, as fill</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Light, -text</th>
+                      <th scope="col" className="px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Dark</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {CONTRAST_ROWS.map((r) => (
+                      <tr key={r.token}>
+                        <th scope="row" className="px-4 py-2 font-mono text-xs font-normal">{r.token}</th>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.fill}</td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-foreground">{r.text}</td>
+                        <td className="px-4 py-2 font-mono text-xs tabular-nums text-muted-foreground">{r.dark}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="mt-3 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Non-text UI — the XP gradient fill, checkbox rings, card borders — is held to the
+                3:1 non-text threshold rather than 4.5:1, so the Quest Log aesthetic stays intact.
+              </p>
+            </div>
 
             <CodeBlock
               label="src/styles.css"
               code={`:root {
-  --radius: 0.75rem;
-  --primary: oklch(0.55 0.18 200);
-  --neon: oklch(0.78 0.2 195);
+  --neon: oklch(0.78 0.2 195);       /* fills, borders, glows */
+  --neon-text: oklch(0.49 0.2 195);  /* type — 4.5:1 on card */
+}
+
+.dark {
+  --neon-text: var(--neon);          /* already clears AA */
 }
 
 @theme inline {
-  --color-primary: var(--primary);
   --color-neon: var(--neon);
-  --radius-lg: var(--radius);
+  --color-neon-text: var(--neon-text);
 }`}
             />
           </Section>
@@ -779,7 +840,7 @@ const fill = {
                     "No component imports the data client directly; swapping a service touches one hook.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
-                      <Check className="mt-0.5 size-4 shrink-0 text-neon" aria-hidden="true" />
+                      <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
                       <span>{rule}</span>
                     </li>
                   ))}
@@ -928,7 +989,7 @@ supabase.channel(\`tasks-\${userId}\`)
                     "Layout uses grid/flex with min-w-0 and shrink-0 so rows survive mobile widths.",
                   ].map((rule) => (
                     <li key={rule} className="flex gap-2.5">
-                      <Check className="mt-0.5 size-4 shrink-0 text-neon" aria-hidden="true" />
+                      <Check className="mt-0.5 size-4 shrink-0 text-neon-text" aria-hidden="true" />
                       <span>{rule}</span>
                     </li>
                   ))}
@@ -960,7 +1021,7 @@ function QuestCardDemo() {
           className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border-2 border-neon/70"
           aria-hidden="true"
         >
-          <Check className="size-3 text-neon" />
+          <Check className="size-3 text-neon-text" />
         </span>
         <div className="min-w-0">
           <h4 className="truncate text-sm font-semibold">🛡️ Morning Armor</h4>
@@ -1273,7 +1334,7 @@ function SettingsFormDemo() {
             <p
               id="ds-ws-email-error"
               role="alert"
-              className="flex items-center gap-1.5 text-xs text-destructive"
+              className="flex items-center gap-1.5 text-xs text-destructive-text"
             >
               <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
               Enter a valid email address — errors are announced, not just colored.

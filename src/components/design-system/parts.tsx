@@ -60,7 +60,7 @@ export function Section({
 }) {
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="scroll-mt-28 pt-2">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-neon">{eyebrow}</p>
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-neon-text">{eyebrow}</p>
       <h2 id={`${id}-heading`} className="mt-2 text-2xl font-bold tracking-tight md:text-3xl">
         {title}
       </h2>
@@ -102,7 +102,7 @@ export function Example({
         <h3 className="text-sm font-semibold">{title}</h3>
         {a11y ? (
           <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            <ShieldCheck className="size-3 text-neon" aria-hidden="true" />
+            <ShieldCheck className="size-3 text-neon-text" aria-hidden="true" />
             WCAG 2.1 AA
           </span>
         ) : null}
@@ -118,7 +118,7 @@ export function Example({
           {a11y ? (
             <div className="flex gap-2">
               <dt className="shrink-0">
-                <ShieldCheck className="mt-0.5 size-3.5 text-neon" aria-hidden="true" />
+                <ShieldCheck className="mt-0.5 size-3.5 text-neon-text" aria-hidden="true" />
                 <span className="sr-only">Accessibility</span>
               </dt>
               <dd className="min-w-0">{a11y}</dd>
@@ -127,7 +127,7 @@ export function Example({
           {api ? (
             <div className="flex gap-2">
               <dt className="shrink-0">
-                <Blocks className="mt-0.5 size-3.5 text-neon" aria-hidden="true" />
+                <Blocks className="mt-0.5 size-3.5 text-neon-text" aria-hidden="true" />
                 <span className="sr-only">Composable API</span>
               </dt>
               <dd className="min-w-0">{api}</dd>

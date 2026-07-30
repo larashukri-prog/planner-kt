@@ -18,10 +18,10 @@ import { cn } from "@/lib/utils";
 
 type View = "board" | "done";
 
-const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string }[] = [
-  { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)" },
-  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)" },
-  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)" },
+const ZONES: { id: Exclude<TaskStatus, "inbox" | "completed">; label: string; sub: string; icon: typeof Flame; tint: string; textTint: string }[] = [
+  { id: "now",   label: "NOW",   sub: "Active quests",  icon: Flame,     tint: "var(--color-zone-now)",   textTint: "var(--color-zone-now-text)" },
+  { id: "next",  label: "LATER",  sub: "On deck",        icon: Layers,    tint: "var(--color-zone-next)",  textTint: "var(--color-zone-next-text)" },
+  { id: "later", label: "FUTURE", sub: "Backlog vault",  icon: Hourglass, tint: "var(--color-zone-later)", textTint: "var(--color-zone-later-text)" },
 ];
 
 export default function QuestApp() {
@@ -103,7 +103,7 @@ export default function QuestApp() {
           <span className="mx-2 opacity-40">·</span>
           <Link
             to="/design-system"
-            className="underline underline-offset-4 transition-colors hover:text-neon"
+            className="underline underline-offset-4 transition-colors hover:text-neon-text"
           >
             Design System
           </Link>
@@ -177,7 +177,7 @@ function ThemeToggle() {
             exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
             transition={{ duration: 0.2 }}
             className="grid place-items-center"
-            style={{ color: "var(--color-neon)" }}
+            style={{ color: "var(--color-neon-text)" }}
           >
             <Moon className="h-4 w-4" strokeWidth={2.2} />
           </motion.span>
@@ -189,7 +189,7 @@ function ThemeToggle() {
             exit={{ opacity: 0, rotate: -90, scale: 0.6 }}
             transition={{ duration: 0.2 }}
             className="grid place-items-center"
-            style={{ color: "var(--color-zone-now)" }}
+            style={{ color: "var(--color-zone-now-text)" }}
           >
             <Sun className="h-4 w-4" strokeWidth={2.2} />
           </motion.span>
@@ -269,13 +269,14 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
       transition={{ duration: 0.35 }}
       className="relative flex items-center gap-2 rounded-full border border-border bg-card py-1.5 pl-2 pr-1.5 shadow-md transition-all duration-200 focus-within:shadow-lg focus-within:ring-2 focus-within:ring-primary/50"
     >
-      <Plus className="h-5 w-5 shrink-0 text-black dark:text-white" strokeWidth={2.5} />
+      <Plus className="h-5 w-5 shrink-0 text-foreground" strokeWidth={2.5} aria-hidden="true" />
       <input
         ref={ref}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        aria-label="Brain dump a quest"
         placeholder="Brain dump a quest. Press Enter. No tags. No deadlines."
-        className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground placeholder:opacity-60 md:text-lg"
+        className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground md:text-lg"
       />
       <kbd className="hidden rounded-md border border-border bg-card/70 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground md:inline">
         ↵
@@ -343,8 +344,7 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
                 <motion.span
                   initial={{ opacity: 0, x: -4 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="font-mono text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: tpl.tint }}
+                  className="font-mono text-[10px] font-semibold uppercase tracking-wider text-foreground"
                 >
                   Created!
                 </motion.span>
@@ -397,8 +397,8 @@ function InboxStrip({
     <section className="quest-card px-4 py-4 md:px-5">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Inbox className="h-3.5 w-3.5" style={{ color: "var(--color-inbox)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: "var(--color-inbox)" }}>
+          <Inbox className="h-3.5 w-3.5" style={{ color: "var(--color-inbox-text)" }} />
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: "var(--color-inbox-text)" }}>
             Inbox · {items.length}
           </h2>
         </div>
@@ -431,13 +431,13 @@ function InboxStrip({
                 >
                   <p className="line-clamp-2 text-sm font-medium leading-snug">{renderWithLinks(task.title)}</p>
                   <div className="mt-3 flex items-center gap-1">
-                    <ZoneQuickButton label="Now"    tint="var(--color-zone-now)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
-                    <ZoneQuickButton label="Later"  tint="var(--color-zone-next)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
-                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
+                    <ZoneQuickButton label="Now"    tint="var(--color-zone-now)"   textTint="var(--color-zone-now-text)"   direction="left"  onClick={() => handleSort(task.id, "now", "left")} />
+                    <ZoneQuickButton label="Later"  tint="var(--color-zone-next)"  textTint="var(--color-zone-next-text)"  direction="right" onClick={() => handleSort(task.id, "next", "right")} />
+                    <ZoneQuickButton label="Future" tint="var(--color-zone-later)" textTint="var(--color-zone-later-text)" direction="right" onClick={() => handleSort(task.id, "later", "right")} />
                     <button
                       onClick={() => handleDelete(task.id)}
                       aria-label="Delete"
-                      className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive md:opacity-0 md:group-hover:opacity-100"
+                      className="ml-auto grid h-7 w-7 place-items-center rounded text-muted-foreground opacity-100 transition-opacity hover:text-destructive-text md:opacity-0 md:group-hover:opacity-100"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -452,7 +452,7 @@ function InboxStrip({
   );
 }
 
-function ZoneQuickButton({ label, tint, direction, onClick }: { label: string; tint: string; direction: 'left' | 'right'; onClick: () => void }) {
+function ZoneQuickButton({ label, tint, textTint, direction, onClick }: { label: string; tint: string; textTint: string; direction: 'left' | 'right'; onClick: () => void }) {
   return (
     <motion.button
       whileTap={{ scale: 0.92 }}
@@ -460,7 +460,7 @@ function ZoneQuickButton({ label, tint, direction, onClick }: { label: string; t
       className="rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       style={{ borderColor: `color-mix(in oklab, ${tint} 35%, var(--color-border))` }}
     >
-      <span style={{ color: tint }}>{direction === 'left' ? '←' : '→'}</span> {label}
+      <span style={{ color: textTint }}>{direction === 'left' ? '←' : '→'}</span> {label}
     </motion.button>
   );
 }
@@ -604,12 +604,12 @@ function ZoneColumn({
         <div className="flex items-center gap-2">
           <div
             className="grid h-7 w-7 place-items-center rounded-md"
-            style={{ background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`, color: zone.tint }}
+            style={{ background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`, color: zone.textTint }}
           >
             <Icon className="h-3.5 w-3.5" />
           </div>
           <div>
-            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: zone.tint }}>
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: zone.textTint }}>
               {zone.label}
             </h3>
             <p className="text-[11px] text-muted-foreground">{zone.sub}</p>
@@ -797,7 +797,7 @@ function TaskCard({
             <span
               className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
                 dueLabel.overdue
-                  ? "border-destructive/50 bg-destructive/10 text-destructive"
+                  ? "border-destructive/50 bg-destructive/10 text-destructive-text"
                   : "border-border bg-muted text-muted-foreground"
               }`}
             >
@@ -824,7 +824,7 @@ function TaskCard({
           <button
             type="button"
             onClick={handleRestDay}
-            className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-600 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
+            className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700 transition-colors hover:bg-amber-500/10 dark:text-amber-300"
             aria-label="Log as rest day"
             title="Rest Day"
           >
@@ -897,7 +897,7 @@ function TaskCard({
                     <button
                       type="button"
                       onClick={() => onUpdate(task.id, { dueDate: null, escalatedAt: null })}
-                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                      className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
                       aria-label="Clear due date"
                     >
                       <X className="h-3 w-3" />
@@ -961,7 +961,7 @@ function TaskCard({
                 </div>
                 <button
                   onClick={() => onDelete(task.id)}
-                  className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                  className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive-text"
                   aria-label="Delete quest"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -1038,7 +1038,7 @@ function CompleteCheckbox({
         <Check
           className="h-3.5 w-3.5"
           strokeWidth={3.5}
-          style={{ color: glow }}
+          style={{ color: "var(--color-neon-3-text)" }}
         />
       )}
     </motion.button>
@@ -1081,7 +1081,7 @@ function MicroStepList({
             <button
               onClick={() => onRemove(s.id)}
               aria-label="Remove step"
-              className="rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+              className="rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-destructive-text group-hover:opacity-100"
             >
               <X className="h-3 w-3" />
             </button>
@@ -1204,7 +1204,7 @@ function DoneWall({
                         <button
                           onClick={() => onDelete(t.id)}
                           aria-label="Delete"
-                          className="rounded p-1 text-muted-foreground hover:text-destructive"
+                          className="rounded p-1 text-muted-foreground hover:text-destructive-text"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -1280,8 +1280,8 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon)" }}>
+          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon-text)" }} />
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon-text)" }}>
             Daily XP
           </h2>
         </div>
@@ -1335,8 +1335,11 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
           <span
             className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]"
             style={{
-              color: empty ? "var(--color-muted-foreground)" : "var(--color-neon-foreground)",
-              textShadow: empty ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+              // The centred label overlaps the fill only once the bar is past the
+              // midpoint; below that it sits on the empty track, so fall back to
+              // --foreground to keep >= 4.5:1 in both themes.
+              color: empty || percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
+              textShadow: empty || percent < 55 ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
             }}
           >
             {empty

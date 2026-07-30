@@ -16,7 +16,7 @@ export function renderWithLinks(text: string): ReactNode {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="inline-flex max-w-full items-center gap-0.5 align-bottom text-[var(--color-neon)] underline decoration-dotted underline-offset-2 hover:decoration-solid"
+          className="inline-flex max-w-full items-center gap-0.5 align-bottom text-[var(--color-neon-text)] underline decoration-dotted underline-offset-2 hover:decoration-solid"
         >
           <span className="inline-block max-w-[18ch] truncate align-bottom md:max-w-[28ch]">
             {part}
