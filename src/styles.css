@@ -37,6 +37,14 @@
   --color-zone-next: var(--zone-next);
   --color-zone-later: var(--zone-later);
   --color-inbox: var(--inbox);
+  /* Text-safe accent aliases — always >= 4.5:1 on --background / --card */
+  --color-neon-text: var(--neon-text);
+  --color-neon-2-text: var(--neon-2-text);
+  --color-neon-3-text: var(--neon-3-text);
+  --color-zone-now-text: var(--zone-now-text);
+  --color-zone-next-text: var(--zone-next-text);
+  --color-zone-later-text: var(--zone-later-text);
+  --color-inbox-text: var(--inbox-text);
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
