@@ -1,50 +1,26 @@
 ## Goal
 
-The Add pill's label should be **dark in light mode and light in dark mode** — i.e. it follows `text-foreground`. That only works if the fill is a theme-following surface rather than the fixed bright teal it is today, so the fill changes with it.
+Bring back the teal fill on the Brain Dump "Add" pill, with a black label in light mode and a white label in dark mode — while staying AA-compliant.
 
-## Diagnosis (confirmed against your live preview)
+## What changes
 
-The button currently reports:
+**1. New button-fill token pair in `src/styles.css`**
 
-```text
-theme: light          disabled: true        opacity: 0.4
-class: bg-neon text-neon-foreground ... disabled:opacity-40
-text:  rgb(7,11,20)   fill: rgb(0,220,223)
-```
+The current teal (`--neon`) is very light in both themes (L 0.78 light / 0.82 dark). Black text on it passes easily, but white text on it is only ~2.4:1 — so dark mode needs a deeper teal fill behind the white label.
 
-Two separate problems:
+Add:
+- `--neon-btn` — light theme: the existing vivid teal `oklch(0.78 0.2 195)` (unchanged look); dark theme: a deepened teal around `oklch(0.46 0.13 195)` so white text clears 4.5:1.
+- `--neon-btn-text` — light theme: near-black `oklch(0.15 0.02 260)`; dark theme: near-white `oklch(0.98 0 0)`.
+- Register both under `@theme` as `--color-neon-btn` / `--color-neon-btn-text`.
 
-1. **The fill is fixed bright teal in both themes.** `--neon` is a light color in light *and* dark mode, so its paired `--neon-foreground` is dark in both. That is why the dark-mode label is dark instead of light — the token pair can never invert.
-2. **The resting button is faded.** It is disabled whenever the Brain Dump input is empty, and `disabled:opacity-40` fades the whole element — label and fill together — so the text composites to a light gray on near-white, roughly 2.5:1. That is why the light-mode label never looks dark. Earlier measurements only tested the typed-in state, which is why this was missed.
+**2. `QuickAddBar` submit button in `src/components/quest-app.tsx`**
 
-## Changes
+Active state becomes `bg-neon-btn text-neon-btn-text border-neon-btn` with the existing `var(--shadow-neon)` glow and hover/active darkening. Disabled state keeps the current `bg-muted text-muted-foreground` treatment (no opacity fade), and `aria-label="Add task"` plus the `focus-visible:outline` ring stay as-is.
 
-Single file: `src/components/quest-app.tsx`, the submit button in `QuickAddBar` (around line 297). No token file, state, or business-logic changes.
+**3. Verify**
 
-**1. Theme-following fill and label**
+Compute contrast ratios for both themes (target ≥ 4.5:1) and take light/dark screenshots of the pill in resting and typed states.
 
-Replace `bg-neon text-neon-foreground` with a surface fill plus `text-foreground`. The foreground token already inverts per theme, which is exactly the behavior asked for:
+## Note
 
-```text
-light:  --foreground near-black   on a light surface fill
-dark:   --foreground near-white   on a dark surface fill
-```
-
-Keep the pill feeling like the primary action by giving it a neon accent border and retaining the neon glow shadow when the input has text — the accent stays vivid, but it moves to the border and glow instead of the label.
-
-**2. Disabled state — stop fading the label**
-
-Drop `disabled:opacity-40`. Give the disabled pill its own solid treatment: a muted surface with `text-muted-foreground` and `cursor-not-allowed`, and no glow. That pair is AA-compliant in both themes, so the resting button stays legible instead of ghosting out. The button remains genuinely disabled — only its appearance changes.
-
-**3. Hover / active / focus**
-
-- Hover and active shift only the surface fill, leaving `text-foreground` untouched so contrast holds.
-- Keep the existing 2px `focus-visible:outline-ring` with offset (an outline, not a ring, because the glow `box-shadow` would override a ring).
-
-**4. Metadata — already correct, keep as-is**
-
-Native `<button type="submit">` with `aria-label="Add task"`.
-
-## Verification
-
-Measure the computed label and fill colors in **four** states — light/dark × empty input (disabled) and typed input (enabled) — convert to sRGB and compute contrast, confirming all four are at or above 4.5:1. Confirm the label reads dark in light mode and light in dark mode. Confirm the focus outline still renders on keyboard focus, and capture light- and dark-mode screenshots of the pill in both resting and typed states.
+If you'd rather keep the *exact* bright teal in dark mode too, the label there has to stay black to pass AA — white on bright teal fails. The plan above keeps white text by deepening the dark-mode teal slightly; tell me if you prefer the opposite trade-off.
