@@ -113,7 +113,7 @@ export function AuthScreen() {
               {busy ? "…" : mode === "signup" ? "Create account" : "Sign in"}
             </button>
           </form>
-        </div>
+        </main>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Your quests sync privately across devices. Only you can see them.
