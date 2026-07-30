@@ -360,8 +360,8 @@ function DesignSystemPage() {
                     <div className="glow-neon grid h-16 w-32 place-items-center rounded-lg text-xs">
                       glow-neon
                     </div>
-                    <div className="grid h-16 w-32 place-items-center rounded-lg border border-border text-xs text-neon-text">
-                      text-neon-text
+                    <div className="neon-type grid h-16 w-32 place-items-center rounded-lg border border-border text-xs">
+                      neon-type
                     </div>
                   </div>
                 </div>
