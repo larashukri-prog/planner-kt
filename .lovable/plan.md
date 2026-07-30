@@ -1,26 +1,50 @@
-## What I found (verified in the code)
+## Goal
 
-**1. `lang="en"` — already correct.** `src/routes/__root.tsx` renders `<html lang="en">`. No change needed.
+The Add pill's label should be **dark in light mode and light in dark mode** — i.e. it follows `text-foreground`. That only works if the fill is a theme-following surface rather than the fixed bright teal it is today, so the fill changes with it.
 
-**2. One `<h1>` per screen — already correct.**
-- App board/Done Wall: single `<h1>Planner-KT</h1>` in the header.
-- Sign-in screen: single `<h1>Planner-KT — Sign In</h1>`.
-- Design system: single `<h1>Planner-KT Design System</h1>`.
-- 404 and error screens: one `<h1>` each.
+## Diagnosis (confirmed against your live preview)
 
-**3. Heading nesting on the main app screen is wrong.** The board columns ("Now", "Later", "Future") render as `<h3>`, but nothing between the page `<h1>` and them is an `<h2>` for that region — the only `<h2>`s nearby are "Inbox" and "Daily XP", which are sibling regions, not parents. A screen-reader user browsing by heading hears the columns as children of "Daily XP". The Done Wall is correct (`h2` "Done Today" → `h3` day groups) and the design system is correct (`h1` → section `h2` → `h3` → demo `h4`).
+The button currently reports:
 
-**4. No `<main>` landmark on the app screen.** The design-system page has one; the board/Done Wall page does not, so there is no "skip to content" target.
+```text
+theme: light          disabled: true        opacity: 0.4
+class: bg-neon text-neon-foreground ... disabled:opacity-40
+text:  rgb(7,11,20)   fill: rgb(0,220,223)
+```
 
-## What I'll change
+Two separate problems:
 
-1. **Wrap the board in a labelled region.** In `src/components/quest-app.tsx`, `ZoneBoard` gets a `<section aria-labelledby="board-heading">` with a visually hidden `<h2 id="board-heading">Quest board</h2>`. The three column headings stay `<h3>`, which then nest correctly: `h1` → `h2` (Quest board) → `h3` (Now / Later / Future).
-2. **Add the `<main>` landmark.** The content wrapper inside `QuestApp` (currently a plain `div` holding the header, capture bar, board/Done Wall, and footer) becomes `<main>` wrapping just the content below the `<header>`, so there is exactly one `<main>` on the page and the existing `<header>`/`<footer>` stay outside it.
-3. **Add a "Skip to content" link** at the top of the app screen, pointing at the new `<main>` — visible only on keyboard focus, using the focus ring already in place.
-4. **Sign-in screen**: wrap the form card in `<main>` so that route has a landmark too.
+1. **The fill is fixed bright teal in both themes.** `--neon` is a light color in light *and* dark mode, so its paired `--neon-foreground` is dark in both. That is why the dark-mode label is dark instead of light — the token pair can never invert.
+2. **The resting button is faded.** It is disabled whenever the Brain Dump input is empty, and `disabled:opacity-40` fades the whole element — label and fill together — so the text composites to a light gray on near-white, roughly 2.5:1. That is why the light-mode label never looks dark. Earlier measurements only tested the typed-in state, which is why this was missed.
 
-## Technical notes
+## Changes
 
-- A `sr-only` heading is used rather than a visible one so the low-cognitive-load visual layout is unchanged — the columns keep their current look.
-- No changes to `__root.tsx`'s `lang`, no changes to any route `head()` metadata, and no logic/state changes; this is markup and landmark structure only.
-- Verification: re-run the Playwright audit to dump the heading outline of the board view, Done Wall view, sign-in, and `/design-system`, confirming each page reads `h1 → h2 → h3` with no skipped level and exactly one `h1` and one `main`.
+Single file: `src/components/quest-app.tsx`, the submit button in `QuickAddBar` (around line 297). No token file, state, or business-logic changes.
+
+**1. Theme-following fill and label**
+
+Replace `bg-neon text-neon-foreground` with a surface fill plus `text-foreground`. The foreground token already inverts per theme, which is exactly the behavior asked for:
+
+```text
+light:  --foreground near-black   on a light surface fill
+dark:   --foreground near-white   on a dark surface fill
+```
+
+Keep the pill feeling like the primary action by giving it a neon accent border and retaining the neon glow shadow when the input has text — the accent stays vivid, but it moves to the border and glow instead of the label.
+
+**2. Disabled state — stop fading the label**
+
+Drop `disabled:opacity-40`. Give the disabled pill its own solid treatment: a muted surface with `text-muted-foreground` and `cursor-not-allowed`, and no glow. That pair is AA-compliant in both themes, so the resting button stays legible instead of ghosting out. The button remains genuinely disabled — only its appearance changes.
+
+**3. Hover / active / focus**
+
+- Hover and active shift only the surface fill, leaving `text-foreground` untouched so contrast holds.
+- Keep the existing 2px `focus-visible:outline-ring` with offset (an outline, not a ring, because the glow `box-shadow` would override a ring).
+
+**4. Metadata — already correct, keep as-is**
+
+Native `<button type="submit">` with `aria-label="Add task"`.
+
+## Verification
+
+Measure the computed label and fill colors in **four** states — light/dark × empty input (disabled) and typed input (enabled) — convert to sRGB and compute contrast, confirming all four are at or above 4.5:1. Confirm the label reads dark in light mode and light in dark mode. Confirm the focus outline still renders on keyboard focus, and capture light- and dark-mode screenshots of the pill in both resting and typed states.
