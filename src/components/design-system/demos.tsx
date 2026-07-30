@@ -309,11 +309,18 @@ export function ToastDemo() {
 
 const LAYERS = [
   {
+    icon: RefreshCw,
+    name: "Ambient triggers",
+    modules: "60s interval tick · local date rollover · auth session",
+    body: "Nothing here is a user action. The daily spawn engine wakes on a timer, compares today's local date key against the last run, and hands the result to the middle layer — the student never sets up their routine by hand.",
+  },
+  {
     icon: Layers,
     name: "UI surface",
     modules: "quest-app.tsx · design-system/*",
     body: "Presentational only. Renders props and state, emits intent through callbacks. Imports no data client.",
   },
+
   {
     icon: Server,
     name: "Middle layer — custom hooks",
