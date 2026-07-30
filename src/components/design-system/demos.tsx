@@ -99,8 +99,9 @@ export function XPBarDemo() {
             <span
               className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]"
               style={{
-                color: "var(--color-neon-foreground)",
-                textShadow: "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
+                color: percent < 55 ? "var(--color-foreground)" : "var(--color-neon-foreground)",
+                textShadow:
+                  percent < 55 ? "none" : "0 0 8px color-mix(in oklab, var(--color-neon) 60%, transparent)",
               }}
             >
               {celebrate ? "Campaign cleared!" : `Daily Completion: ${percent}% XP`}
