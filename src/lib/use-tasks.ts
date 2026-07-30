@@ -96,7 +96,10 @@ async function importLegacyTasks(userId: string): Promise<Task[]> {
         userId,
       ),
     );
-    const { data, error } = await supabase.from("tasks").insert(rows as TablesInsert<"tasks">[]).select("*");
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert(rows as TablesInsert<"tasks">[])
+      .select("*");
     if (error) {
       console.error("[tasks] legacy import failed", error);
       return [];
