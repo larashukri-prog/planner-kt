@@ -56,7 +56,7 @@ export function AuthScreen() {
           </div>
         </div>
 
-        <div className="quest-card p-6">
+        <main className="quest-card p-6">
           <div className="mb-5 flex rounded-xl border border-border bg-card/60 p-1">
             {(["signin", "signup"] as const).map((m) => (
               <button
