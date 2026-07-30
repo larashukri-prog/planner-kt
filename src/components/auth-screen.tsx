@@ -56,7 +56,7 @@ export function AuthScreen() {
           </div>
         </div>
 
-        <div className="quest-card p-6">
+        <main className="quest-card p-6">
           <div className="mb-5 flex rounded-xl border border-border bg-card/60 p-1">
             {(["signin", "signup"] as const).map((m) => (
               <button
@@ -113,7 +113,7 @@ export function AuthScreen() {
               {busy ? "…" : mode === "signup" ? "Create account" : "Sign in"}
             </button>
           </form>
-        </div>
+        </main>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Your quests sync privately across devices. Only you can see them.
