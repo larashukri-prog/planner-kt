@@ -104,6 +104,9 @@ export default function QuestApp() {
             </motion.div>
           )}
         </AnimatePresence>
+        </main>
+
+
 
         <footer className="pt-6 pb-2 text-center text-xs text-muted-foreground">
           <span className="font-mono">Planner v1</span> — built for optimal planning
