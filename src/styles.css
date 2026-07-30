@@ -212,3 +212,37 @@
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.08); }
 }
+
+/* --- Global keyboard focus ring (WCAG 2.1 AA: 2.4.7 Focus Visible) --------
+   Every interactive element gets a prominent 2px primary ring, offset from
+   the element so it stays visible on dark and light surfaces alike. Mouse
+   clicks never trigger it (:focus-visible only). */
+:where(
+  a[href],
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [role="button"],
+  [role="link"],
+  [role="checkbox"],
+  [role="switch"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring),
+    0 0 18px -2px color-mix(in oklab, var(--ring) 60%, transparent);
+  border-radius: max(var(--radius-sm), 4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(a[href], button, input, textarea):focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  }
+}
