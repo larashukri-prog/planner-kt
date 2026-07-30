@@ -43,6 +43,12 @@ export default function QuestApp() {
 
   return (
     <div className="min-h-screen w-full text-foreground">
+      <a
+        href="#quest-content"
+        className="sr-only rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
+      >
+        Skip to content
+      </a>
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
         <Header
           view={view}
@@ -51,6 +57,7 @@ export default function QuestApp() {
           doneCount={completed.length}
         />
 
+        <main id="quest-content" className="flex flex-col gap-6">
         <TemplateChips onCreate={t.addTask} />
         <QuickAddBar onAdd={t.addTask} />
 
