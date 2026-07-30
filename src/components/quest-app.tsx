@@ -604,12 +604,12 @@ function ZoneColumn({
         <div className="flex items-center gap-2">
           <div
             className="grid h-7 w-7 place-items-center rounded-md"
-            style={{ background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`, color: zone.tint }}
+            style={{ background: `color-mix(in oklab, ${zone.tint} 16%, transparent)`, color: zone.textTint }}
           >
             <Icon className="h-3.5 w-3.5" />
           </div>
           <div>
-            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: zone.tint }}>
+            <h3 className="font-mono text-[11px] font-semibold uppercase tracking-[0.22em]" style={{ color: zone.textTint }}>
               {zone.label}
             </h3>
             <p className="text-[11px] text-muted-foreground">{zone.sub}</p>
