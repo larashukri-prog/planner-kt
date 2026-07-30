@@ -177,7 +177,7 @@ function ThemeToggle() {
             exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
             transition={{ duration: 0.2 }}
             className="grid place-items-center"
-            style={{ color: "var(--color-neon)" }}
+            style={{ color: "var(--color-neon-text)" }}
           >
             <Moon className="h-4 w-4" strokeWidth={2.2} />
           </motion.span>
@@ -189,7 +189,7 @@ function ThemeToggle() {
             exit={{ opacity: 0, rotate: -90, scale: 0.6 }}
             transition={{ duration: 0.2 }}
             className="grid place-items-center"
-            style={{ color: "var(--color-zone-now)" }}
+            style={{ color: "var(--color-zone-now-text)" }}
           >
             <Sun className="h-4 w-4" strokeWidth={2.2} />
           </motion.span>
@@ -275,7 +275,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Brain dump a quest. Press Enter. No tags. No deadlines."
-        className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground placeholder:opacity-60 md:text-lg"
+        className="min-w-0 flex-1 bg-transparent px-1 text-base font-medium outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground md:text-lg"
       />
       <kbd className="hidden rounded-md border border-border bg-card/70 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground md:inline">
         ↵
@@ -397,8 +397,8 @@ function InboxStrip({
     <section className="quest-card px-4 py-4 md:px-5">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Inbox className="h-3.5 w-3.5" style={{ color: "var(--color-inbox)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: "var(--color-inbox)" }}>
+          <Inbox className="h-3.5 w-3.5" style={{ color: "var(--color-inbox-text)" }} />
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: "var(--color-inbox-text)" }}>
             Inbox · {items.length}
           </h2>
         </div>
@@ -1280,8 +1280,8 @@ function DailyXPBar({ tasks }: { tasks: Task[] }) {
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon)" }} />
-          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon)" }}>
+          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--color-neon-text)" }} />
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.22em]" style={{ color: "var(--color-neon-text)" }}>
             Daily XP
           </h2>
         </div>
