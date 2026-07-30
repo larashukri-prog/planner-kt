@@ -48,6 +48,16 @@
   --color-zone-next-text: var(--zone-next-text);
   --color-zone-later-text: var(--zone-later-text);
   --color-inbox-text: var(--inbox-text);
+  /* Life maintenance — low-chroma cues for recurring college-life routines */
+  --color-life: var(--life);
+  --color-life-text: var(--life-text);
+  --color-life-surface: var(--life-surface);
+  --color-life-laundry: var(--life-laundry);
+  --color-life-laundry-text: var(--life-laundry-text);
+  --color-life-food: var(--life-food);
+  --color-life-food-text: var(--life-food-text);
+  --color-life-body: var(--life-body);
+  --color-life-body-text: var(--life-body-text);
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
