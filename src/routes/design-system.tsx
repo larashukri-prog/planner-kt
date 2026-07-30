@@ -121,7 +121,26 @@ const LIFE_COLORS = [
   { name: "Body & movement", token: "--life-body", utility: "bg-life-body", className: "bg-life-body", oklch: "oklch(0.72 0.06 340)", oklchDark: "oklch(0.8 0.05 340)" },
 ];
 
+/** Recurring life templates owned by use-daily-spawn.ts. */
+const SPAWN_TEMPLATES = [
+  { key: "morning-armor", title: "🛡️ Morning Routine", cadence: "Daily", zone: "Now" },
+  { key: "workout", title: "💪 Workout", cadence: "Daily · rest day Tue/Thu/Sat", zone: "Now" },
+  { key: "laundry-loop", title: "🧺 Laundry Loop", cadence: "Fridays", zone: "Now" },
+  { key: "restock-fuel", title: "🛒 Restock Fuel", cadence: "Tuesdays + Saturdays", zone: "Now" },
+  { key: "explore-burlington", title: "🗺️ Explore Burlington", cadence: "Every other day", zone: "Later" },
+];
+
+const SPAWN_RULES = [
+  "Anti-Guilt Rule: if an uncompleted instance already exists, the engine refreshes it in place — resetting subtasks and bumping its timestamp — instead of stacking a duplicate on top of yesterday's unfinished work.",
+  "Rollover is keyed on the local calendar date, stored under the namespaced questlog.lastSpawnDate.v1, so a late night never skips or double-fires a day.",
+  "Template drift reconciles automatically: subtasks added to a template appear on the live quest, and retired subtasks are pruned from it.",
+  "Auto-escalation runs as a second pass of the same tick — later → next at 7 days out, later/next → now at 2 days out. It promotes only and never demotes.",
+  "The engine waits for real data before its first run, with a 1500ms grace period so a brand-new account still gets a day-one routine.",
+  "All of this lives in the hook. The board component renders whatever tasks it is handed and knows nothing about cadence, rollover or escalation.",
+];
+
 const DENSITY_RULES = [
+
   {
     label: "Comfortable — the strict default",
     body: "Every daily view (board, inbox, quest cards, done wall) uses py-3 rows, gap-3 stacks and a 44×44px minimum touch target. Nothing on a daily screen may go tighter.",
