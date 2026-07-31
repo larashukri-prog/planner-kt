@@ -1,8 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { Swords } from "lucide-react";
+import { Sparkles, Swords } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
+import { seedDemoTasks } from "@/lib/demo-seed";
+import { track } from "@/lib/use-analytics";
 
 export function AuthScreen() {
   const navigate = useNavigate();
@@ -12,10 +14,34 @@ export function AuthScreen() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [demoBusy, setDemoBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate({ to: "/" });
-  }, [session, loading, navigate]);
+    if (!loading && session && !demoBusy) navigate({ to: "/" });
+  }, [session, loading, navigate, demoBusy]);
+
+  const startDemo = async () => {
+    setErr(null);
+    setDemoBusy(true);
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+      const userId = data.user?.id;
+      if (!userId) throw new Error("Could not start a guest session");
+      try {
+        await seedDemoTasks(userId);
+      } catch {
+        // seeding is best-effort — an empty demo board is still usable
+      }
+      track("demo_mode_started");
+      navigate({ to: "/" });
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Could not start demo mode");
+    } finally {
+      setDemoBusy(false);
+    }
+  };
+
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -120,7 +146,30 @@ export function AuthScreen() {
               {busy ? "…" : mode === "signup" ? "Create account" : "Sign in"}
             </button>
           </form>
+
+          <div className="my-5 flex items-center gap-3" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              or
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <button
+            type="button"
+            onClick={startDemo}
+            disabled={demoBusy || busy}
+            aria-label="Try demo mode as a guest"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--color-neon)] bg-transparent px-4 py-2.5 text-sm font-semibold text-[var(--color-neon-text)] transition-colors hover:bg-[var(--color-neon)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+          >
+            <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+            {demoBusy ? "Spinning up your demo…" : "Try Demo Mode"}
+          </button>
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            No email needed — explore a sample quest log as a guest.
+          </p>
         </main>
+
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Your quests sync privately across devices. Only you can see them.

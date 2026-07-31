@@ -26,7 +26,7 @@ import { useTheme } from "@/lib/use-theme";
 import { useTasks } from "@/lib/use-tasks";
 import { useDailySpawn } from "@/lib/use-daily-spawn";
 import { track, trackOncePerSession } from "@/lib/use-analytics";
-import { signOut } from "@/lib/use-auth";
+import { signOut, useAuth } from "@/lib/use-auth";
 import { LogOut } from "lucide-react";
 import type { OwnerId, Task, TaskStatus } from "@/lib/quest-types";
 import { renderWithLinks } from "@/lib/linkify";
@@ -108,8 +108,10 @@ export default function QuestApp() {
         />
 
         <main id="quest-content" className="flex flex-col gap-6">
+          <DemoBanner />
           <TemplateChips onCreate={t.addTask} />
           <QuickAddBar onAdd={t.addTask} />
+
 
           <AnimatePresence mode="wait">
             {view === "board" ? (
@@ -1548,7 +1550,42 @@ function groupByDay(items: Task[]) {
   return Array.from(map.entries()).map(([label, items]) => ({ label, items }));
 }
 
+/* ----------------------------- DemoBanner ----------------------------- */
+
+function DemoBanner() {
+  const { isGuest } = useAuth();
+  const [dismissed, setDismissed] = useState(false);
+  if (!isGuest || dismissed) return null;
+  return (
+    <div
+      role="status"
+      className="flex flex-wrap items-center gap-3 rounded-xl border border-[var(--color-neon)]/40 bg-[var(--color-neon)]/5 px-4 py-3 text-xs text-muted-foreground"
+    >
+      <Sparkles className="h-4 w-4 shrink-0 text-[var(--color-neon-text)]" strokeWidth={2.25} />
+      <p className="flex-1">
+        <span className="font-semibold text-[var(--color-neon-text)]">Demo mode</span> — your quests
+        are saved to a guest account on this device. Create an account to keep them.
+      </p>
+      <Link
+        to="/auth"
+        className="rounded-lg border border-[var(--color-neon)] px-3 py-1.5 font-semibold text-[var(--color-neon-text)] transition-colors hover:bg-[var(--color-neon)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)]"
+      >
+        Create account
+      </Link>
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        aria-label="Dismiss demo mode notice"
+        className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)]"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 /* ----------------------------- DailyXPBar ----------------------------- */
+
 
 function isToday(ts: number | null | undefined) {
   if (!ts) return false;
