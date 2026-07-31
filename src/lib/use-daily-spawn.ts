@@ -56,7 +56,7 @@ const RECURRING_QUESTS: Recurring[] = [
     key: "explore-college-town",
     title: "🗺️ Explore College Town",
     subtasks: [
-      "Pick a local spot (Church St, Lake Champlain, or a new coffee shop)",
+      "Pick a local spot",
       "Leave the dorm for 30+ minutes",
       "Take a mental break",
     ],
