@@ -20,7 +20,13 @@ export function useAuth() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  return { session, user, loading };
+  const isGuest = Boolean(
+    (user as (User & { is_anonymous?: boolean }) | null)?.is_anonymous ??
+      (user?.app_metadata?.provider === "anonymous" ? true : false),
+  );
+
+  return { session, user, loading, isGuest };
+
 }
 
 export async function signOut() {
