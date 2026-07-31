@@ -146,7 +146,30 @@ export function AuthScreen() {
               {busy ? "…" : mode === "signup" ? "Create account" : "Sign in"}
             </button>
           </form>
+
+          <div className="my-5 flex items-center gap-3" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              or
+            </span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <button
+            type="button"
+            onClick={startDemo}
+            disabled={demoBusy || busy}
+            aria-label="Try demo mode as a guest"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--color-neon)] bg-transparent px-4 py-2.5 text-sm font-semibold text-[var(--color-neon-text)] transition-colors hover:bg-[var(--color-neon)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+          >
+            <Sparkles className="h-4 w-4" strokeWidth={2.25} />
+            {demoBusy ? "Spinning up your demo…" : "Try Demo Mode"}
+          </button>
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            No email needed — explore a sample quest log as a guest.
+          </p>
         </main>
+
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Your quests sync privately across devices. Only you can see them.
