@@ -108,8 +108,10 @@ export default function QuestApp() {
         />
 
         <main id="quest-content" className="flex flex-col gap-6">
+          <DemoBanner />
           <TemplateChips onCreate={t.addTask} />
           <QuickAddBar onAdd={t.addTask} />
+
 
           <AnimatePresence mode="wait">
             {view === "board" ? (
