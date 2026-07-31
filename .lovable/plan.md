@@ -1,22 +1,16 @@
-Plan: Rename every occurrence of the recurring quest "Explore Burlington" to "Explore College Town"
-
 Scope
-- User-facing title: "🗺️ Explore Burlington" → "🗺️ Explore College Town"
-- Internal recurringKey: "explore-burlington" → "explore-college-town" (for consistency everywhere it is identified)
+- In the recurring "Explore College Town" quest, keep the subtask "Pick a local spot" but remove the parenthetical examples "(Church St, Lake Champlain, or a new coffee shop)" so the subtask is generic and location-agnostic.
 
-Files to edit
-1. src/lib/use-daily-spawn.ts
-   - Line 56: key "explore-burlington" → "explore-college-town"
-   - Line 57: title "🗺️ Explore Burlington" → "🗺️ Explore College Town"
-2. src/components/quest-app.tsx
-   - Line 413: template title "Explore Burlington" → "Explore College Town"
-3. src/routes/design-system.tsx
-   - Lines 290-291: recurring key + title
-   - Line 1625: demo title
-4. README.md
-   - Line 122: bullet text "🗺️ Explore Burlington" → "🗺️ Explore College Town"
+Current state
+- The text only exists in one place: `src/lib/use-daily-spawn.ts`, line 59, inside the `subtasks` array for the `explore-college-town` recurring quest.
+- A codebase search for "Church", "Champlain", "coffee shop", and "pick a local spot" found no other occurrences.
+
+Change
+- `src/lib/use-daily-spawn.ts` line 59
+  - From: `"Pick a local spot (Church St, Lake Champlain, or a new coffee shop)"`
+  - To: `"Pick a local spot"`
 
 Verification
-- Re-run rg "Burlington" and rg "explore-burlington" to confirm zero remaining occurrences.
-- Re-run rg "Explore College Town" and rg "explore-college-town" to confirm all replacements landed.
-- Optionally run bun run build to make sure the rename compiles cleanly.
+- Re-run `rg -n "Church|Champlain|coffee shop" src/` to confirm zero remaining occurrences.
+- Re-run `rg -n "Pick a local spot" src/lib/use-daily-spawn.ts` to confirm the trimmed subtask remains.
+- Optionally run `bun run build` to confirm the change compiles cleanly.
