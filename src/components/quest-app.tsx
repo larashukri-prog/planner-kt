@@ -379,7 +379,7 @@ function QuickAddBar({ onAdd }: { onAdd: (title: string) => void }) {
 const QUEST_TEMPLATES = [
   {
     icon: "🧺",
-    label: "Laundry Loop",
+    label: "Laundry ",
     title: "Laundry",
     subtasks: ["Gather clothes", "Start washer", "Move to dryer", "Put in basket", "Put away"],
     tint: "oklch(0.7 0.16 230)",
