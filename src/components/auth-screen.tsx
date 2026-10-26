@@ -1,5 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
+
+const BTN_BASE =
+  "min-h-11 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50";
+const PRIMARY_BTN = `${BTN_BASE} border-[var(--color-neon)] bg-[var(--color-neon)] text-[var(--color-neon-foreground)] shadow-[var(--shadow-neon)] hover:opacity-90`;
+const SECONDARY_BTN = `${BTN_BASE} border-[var(--color-neon)] bg-transparent text-[var(--color-neon-text)] hover:bg-[var(--color-neon)]/10`;
 import { Sparkles, Swords } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
@@ -15,6 +20,7 @@ export function AuthScreen() {
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [demoBusy, setDemoBusy] = useState(false);
+  const hasInput = email.length > 0 || password.length > 0;
 
   useEffect(() => {
     if (!loading && session && !demoBusy) navigate({ to: "/" });
@@ -141,7 +147,7 @@ export function AuthScreen() {
             <button
               type="submit"
               disabled={busy}
-              className="mt-2 rounded-lg bg-[var(--color-neon)] px-4 py-2.5 text-sm font-semibold text-[var(--color-neon-foreground)] shadow-[var(--shadow-neon)] transition-opacity hover:opacity-90 disabled:opacity-50"
+              className={`mt-2 ${hasInput ? PRIMARY_BTN : SECONDARY_BTN}`}
             >
               {busy ? "…" : mode === "signup" ? "Create account" : "Sign in"}
             </button>
@@ -160,7 +166,7 @@ export function AuthScreen() {
             onClick={startDemo}
             disabled={demoBusy || busy}
             aria-label="Try demo mode as a guest"
-            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--color-neon)] bg-transparent px-4 py-2.5 text-sm font-semibold text-[var(--color-neon-text)] transition-colors hover:bg-[var(--color-neon)]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-neon)] focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+            className={`flex w-full items-center justify-center gap-2 ${hasInput ? SECONDARY_BTN : PRIMARY_BTN}`}
           >
             <Sparkles className="h-4 w-4" strokeWidth={2.25} />
             {demoBusy ? "Spinning up your demo…" : "Try Demo Mode"}
