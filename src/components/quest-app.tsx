@@ -386,7 +386,7 @@ const QUEST_TEMPLATES = [
   },
   {
     icon: "🛒",
-    label: "Restock Fuel",
+    label: "Grocery Run",
     title: "Grocery Run",
     subtasks: ["Check fridge & pantry", "Make list", "Go to store", "Unload and put away"],
     tint: "oklch(0.72 0.18 140)",
