@@ -393,7 +393,7 @@ const QUEST_TEMPLATES = [
   },
   {
     icon: "🧹",
-    label: "15-Min Reset",
+    label: "Room Reset",
     title: "Room Reset",
     subtasks: ["Pick up floor", "Clear surfaces", "Make bed", "Empty trash", "Quick vacuum"],
     tint: "oklch(0.7 0.16 25)",
