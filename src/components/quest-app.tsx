@@ -109,8 +109,10 @@ export default function QuestApp() {
 
         <main id="quest-content" className="flex flex-col gap-6">
           <DemoBanner />
-          <TemplateChips onCreate={t.addTask} />
-          <QuickAddBar onAdd={t.addTask} />
+          <div className="flex flex-col gap-2">
+            <QuickAddBar onAdd={t.addTask} />
+            <TemplateChips onCreate={t.addTask} />
+          </div>
 
 
           <AnimatePresence mode="wait">
@@ -429,32 +431,25 @@ function TemplateChips({ onCreate }: { onCreate: (title: string, subtasks: strin
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1 px-2">
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
         1-Click Quests
       </p>
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-quest">
+      <div className="flex gap-x-5 gap-y-0 overflow-x-auto scrollbar-quest">
         {QUEST_TEMPLATES.map((tpl) => {
           const isClicked = clickedId === tpl.label;
           return (
             <motion.button
               key={tpl.label}
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.88 }}
-              animate={isClicked ? { scale: [1, 1.12, 1], y: [0, -3, 0] } : {}}
+              whileTap={{ scale: 0.92 }}
+              animate={isClicked ? { scale: [1, 1.06, 1] } : {}}
               transition={{ type: "spring", stiffness: 400, damping: 18 }}
               onClick={() => handleClick(tpl)}
-              className="group relative flex shrink-0 items-center gap-2 rounded-full border border-border bg-card/70 px-3.5 py-2 text-sm font-medium backdrop-blur-sm transition-colors hover:border-[var(--color-neon)]/40 hover:bg-card"
-              style={{
-                boxShadow: isClicked
-                  ? `0 0 0 1px ${tpl.tint}, 0 6px 20px -8px ${tpl.tint}`
-                  : "none",
-              }}
+              className="group flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground"
             >
               <span
                 aria-hidden="true"
-                className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs transition-transform duration-200 group-hover:scale-110"
-                style={{ background: `color-mix(in oklab, ${tpl.tint} 18%, transparent)` }}
+                className="text-xs grayscale opacity-70 transition-opacity group-hover:opacity-100"
               >
                 {tpl.icon}
               </span>
